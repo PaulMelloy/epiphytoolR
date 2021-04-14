@@ -23,14 +23,14 @@ calc_fpea_emergence <- function(sowing_date, hemisphere = "south"){
    # calibrate the sowing date to suit the input for northern or southern hemisphere
    # the Schoeny paper was in France and centered on 19/9/2003 8 days before the
    # autumn equinox, hence the adjustment
-   if(hemisphere == "north" | "N" | "North"){
+   if (hemisphere == "north" | "N" | "North") {
       autumn_equinox <- 79 - 8
-   }else{
-      if(hemisphere == "south" | "S" | "South"){
+   } else{
+      if (hemisphere == "south" | "S" | "South") {
          autumn_equinox <- 226 - 8
+      } else{
+         stop("Can't understand 'hemisphere' input/n please input 'north' or 'south'.")
       }
-   }else{
-      stop("Can't understand 'hemisphere' input/n please input 'north' or 'south'." )
    }
 
    sowing_day <- lubridate::yday(as.Date(sowing_date))
