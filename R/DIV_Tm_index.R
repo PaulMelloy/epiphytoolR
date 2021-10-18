@@ -30,7 +30,9 @@ DIV_Tm_index <- function(temp, rainfall = 0.2){
       }else{
          IPt <- ((0.0307*(temp^2)) - (1.195*temp) + 12.1)
       }
-   return(rnorm(n = 1,
-                mean = 1/IPt,
-                sd = 1))
+   # return(abs(rnorm(n = 1,
+   #              mean = 1/IPt,
+   #              sd = 1)))
+   return(1/IPt)
 }
+
