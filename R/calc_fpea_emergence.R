@@ -11,7 +11,8 @@
 #' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
 #'
 #'
-#' @param date number of days after sowing (integer)
+#' @param sowing_date sowing date (date)
+#' @param hemisphere 'North' or 'South' hemishere
 #'
 #' @return number of degree days predicted from time of sowing to emergence
 #' @export
