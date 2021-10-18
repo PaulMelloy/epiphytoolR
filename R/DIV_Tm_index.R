@@ -11,14 +11,14 @@
 #'
 #' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
 #'
-#' @param temp
-#' @param rainfall
-#' @source
+#' @param temp daily average temperature in degrees celcius
+#' @param rainfall rainfall in mm
 #'
-#' @return
+#' @return Temperature index value (numeric), used in calculating DIV
 #' @export
 #'
 #' @examples
+#' DIV_Tm_index(25)
 DIV_Tm_index <- function(temp, rainfall = 0.2){
    if(temp <=0){
       warning("Average temperature below zero, temperature range for growth. NA returned")
