@@ -15,6 +15,7 @@
 #' @examples
 #' disease_aug_soil(50)
 disease_aug_soil <- function(DNA_pg){
+   warning("This formula is directly transcribed from literature however not reproduceable")
    (5.0584 * log(DNA_pg + 1) - 6.0153)/
       27.1
 }
