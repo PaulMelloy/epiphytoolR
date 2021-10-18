@@ -25,7 +25,7 @@ DIV_Tm_index <- function(temp, rainfall = 0.2){
       return(0)
    }
 
-   if(rain >= 0.2){
+   if(rainfall >= 0.2){
       IPt <- ((0.0171*(temp^2)) - (0.6457*temp) + 6.8)
       }else{
          IPt <- ((0.0307*(temp^2)) - (1.195*temp) + 12.1)
