@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples
-#' calc_fpea_emergence(14)
+#' calc_fpea_emergence("2021-05-10")
 calc_fpea_emergence <- function(sowing_date, hemisphere = "south"){
 
    # calibrate the sowing date to suit the input for northern or southern hemisphere
@@ -37,7 +37,11 @@ calc_fpea_emergence <- function(sowing_date, hemisphere = "south"){
       }
    }
 
-   sowing_day <- lubridate::yday(as.Date(sowing_date))
+   tryCatch(
+      {sowing_day <- lubridate::yday(as.Date(sowing_date))},
+      error = function(e){
+         stop("Check 'sowing_date' can be coersed to 'date' class")
+      })
 
    x1 <- (sowing_day - autumn_equinox)/14
 
