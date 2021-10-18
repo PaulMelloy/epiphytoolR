@@ -33,6 +33,11 @@ DIV_Tm_index <- function(temp, rainfall = 0.2){
    # return(abs(rnorm(n = 1,
    #              mean = 1/IPt,
    #              sd = 1)))
-   return(1/IPt)
+   if(1/IPt >= 1){
+      return(1)
+   }else{
+      return(1/IPt)
+   }
+
 }
 
