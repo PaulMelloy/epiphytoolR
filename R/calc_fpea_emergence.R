@@ -6,7 +6,7 @@
 #'
 #' @details
 #' Formula adapted from Schoeny. et al. (2007) in European Journal of Plant
-#' Pathology. Formula is reported to correlate to R^2 = 0.91 for pea cultivae
+#' Pathology. Formula is reported to correlate to R^2 = 0.91 for pea cultivar
 #' Cheyenne grown in the west of France
 #' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
 #'
