@@ -23,7 +23,7 @@ emergence (when 50\% of sown seeds have produces at least one true leaf).
 }
 \details{
 Formula adapted from Schoeny. et al. (2007) in European Journal of Plant
-Pathology. Formula is reported to correlate to R^2 = 0.91 for pea cultivae
+Pathology. Formula is reported to correlate to R^2 = 0.91 for pea cultivar
 Cheyenne grown in the west of France
 }
 \examples{
