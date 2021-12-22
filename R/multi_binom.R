@@ -8,7 +8,7 @@
 #' @param width paddock with in meters
 #' @param px pixel size, length and width of rectangular pixel
 #' @param seeding_r number of plants sown in a pixel (`px`)
-#' @param IO number of infective sites within the pixel
+#' @param IO number of infective sites within the pixel (not functional)
 #' @param m (optional) a matrix representing each plant and the number of
 #'  infective sites for each plant
 #'
@@ -32,7 +32,7 @@ multi_var_binom <- function(row_spacing = 0.3,
                             width = 1,
                             px = 1,
                             seeding_r = 40,
-                            n_inf = 1,
+                            IO = 1,
                             m){
 
    if(missing(m)){
