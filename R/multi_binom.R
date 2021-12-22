@@ -24,6 +24,9 @@
 #' # sample the plant (matrix cell) where the spore may drop
 #' sample(seq_along(mvb), size = 10, prob = mvb, replace = TRUE)
 #' # sample the cardinal coordinates (matrix cell) where the spore may drop
+#' sam_mvb <- sample(seq_along(mvb), size = 30, prob = mvb, replace = TRUE)
+#' data.frame(x = sapply(sam_mvb,FUN = function(x) ceiling(x/ nrow(mvb))),
+#'            y = sapply(sam_mvb,FUN = function(x) x %% nrow(mvb)))
 #' sample(seq_along(mvb), size = 10, prob = mvb, replace = TRUE)
 multi_var_binom <- function(row_spacing = 0.3,
                             width = 1,
