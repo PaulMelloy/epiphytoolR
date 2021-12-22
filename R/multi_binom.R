@@ -17,17 +17,17 @@
 #' @export
 #'
 #' @examples
-#' set.seed(1)
+#' set.seed(7)
 #' # obtain matrix of probabilities
 #' mvb <- multi_var_binom()
 #' image(t(mvb))
 #' # sample the plant (matrix cell) where the spore may drop
 #' sample(seq_along(mvb), size = 10, prob = mvb, replace = TRUE)
 #' # sample the cardinal coordinates (matrix cell) where the spore may drop
-#' sam_mvb <- sample(seq_along(mvb), size = 30, prob = mvb, replace = TRUE)
+#' sam_mvb <- sample(seq_along(mvb), size = 10, prob = mvb, replace = TRUE)
 #' data.frame(x = sapply(sam_mvb,FUN = function(x) ceiling(x/ nrow(mvb))),
 #'            y = sapply(sam_mvb,FUN = function(x) x %% nrow(mvb)))
-#' sample(seq_along(mvb), size = 10, prob = mvb, replace = TRUE)
+#'
 multi_var_binom <- function(row_spacing = 0.3,
                             width = 1,
                             px = 1,
@@ -42,7 +42,7 @@ multi_var_binom <- function(row_spacing = 0.3,
                   seeding_r = seeding_r)
 
       #randomly infect one of the plants
-      m[runif(n_inf, 1, seeding_r)] <- 1
+      m[round(runif(IO, 1, length(m)))] <- 1
       }
 
 
@@ -83,7 +83,7 @@ mat_it <- function(rs = 0.3, px = 1, seeding_r = 40){
 
    plants_per_row <- seeding_r / (px/rs)
 
-   plant_m <- matrix(0, nrow = plants_per_row, ncol = rows)
+   plant_m <- matrix(rep(0,plants_per_row*rows), nrow = plants_per_row, ncol = rows)
 
-   return(plant_m)
+   return(as.matrix(plant_m))
 }
