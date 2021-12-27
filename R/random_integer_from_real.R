@@ -1,4 +1,6 @@
-#' Rounds up or down real numbers depending on the values
+#' Stochastically rounds up or down real numbers.
+#'
+#' Randomly rounds up or down real numbers with weighting to the closest integer
 #'
 #' @keywords internal
 #' @noRd
