@@ -20,4 +20,4 @@ est_primary_inoculum <- function(degree_days, rainfall){
 
    return(IP)
 }
-# might be able to be improved by introducing randomness reporeted in the article
+# might be able to be improved by introducing randomness reported in the article
