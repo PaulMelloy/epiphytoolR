@@ -1,58 +1,57 @@
-#' Format weather data into an an object suitable for use in ascotraceR spore dispersal models
+#' Format weather data into a standardised format.
 #'
-#' Formats raw weather data into an object suitable for use in the
-#' [trace_asco()] function ensuring that the supplied weather data meet the
-#' requirements of the model to run.
+#' Formats raw weather data into an object suitable for use in the affiliated
+#'  spore dispersal packages such as `ascotraceR` and `blackspot.sp`. This
+#'  standardised data format ensures that the supplied weather data meet the
+#'  requirements for functions in the aforementioned packages.
 #'
 #' @param x A [data.frame] object of weather station data for formatting.
-#'   `character`.
-#' @param YYYY Column name or index in `x` that refers to the year when the
-#'   weather was logged. `character`.
-#' @param MM Column name or index in `x` that refers to the month (numerical)
-#'   when the weather was logged. `character`.
-#' @param DD Column name or index in `x` that refers to the day of month when
-#'   the weather was logged. `character`.
-#' @param hh Column name or index in `x` that refers to the hour (24 hour) when
-#'   the weather was logged. `character`.
-#' @param mm Column name or index in `x` that refers to the minute when the
-#'   weather was logged. `character`.
-#' @param POSIXct_time Column name or index in `x` which contains a `POSIXct`
+#' @param YYYY Column name `character` or index in `x` that refers to the year when the
+#'   weather was logged.
+#' @param MM Column name `character` or index in `x` that refers to the month (numerical)
+#'   when the weather was logged.
+#' @param DD Column name `character` or index in `x` that refers to the day of month when
+#'   the weather was logged.
+#' @param hh Column name `character` or index in `x` that refers to the hour (24 hour) when
+#'   the weather was logged.
+#' @param mm Column name `character` or index in `x` that refers to the minute when the
+#'   weather was logged.
+#' @param POSIXct_time Column name `character` or index in `x` which contains a `POSIXct`
 #'   formatted time. This can be used instead of arguments `YYYY`, `MM`, `DD`,
 #'   `hh`, `mm.` `character`.
 #' @param time_zone Time zone (Olsen time zone format) where the weather station
 #'   is located. May be in a column or supplied as a character string. Optional,
 #'   see also `r`. `character`. See details.
-#' @param temp Column name or index in `x` that refers to temperature in degrees
-#'   Celsius. `character`.
-#' @param rain Column name or index in `x` that refers to rainfall in mm.
-#'   `character`.
-#' @param ws Column name or index in `x` that refers to wind speed in km / h.
-#'   `character`.
-#' @param wd Column name or index in `x` that refers to wind direction in
-#'   degrees. `character`.
-#' @param wd_sd Column name or index in `x` that refers to wind speed columns
-#'   standard deviation .`character`.  This is only applicable if weather data
+#' @param temp Column name `character` or index in `x` that refers to temperature in degrees
+#'   Celsius.
+#' @param rain Column name `character` or index in `x` that refers to rainfall in mm.
+#' @param ws Column name `character` or index in `x` that refers to wind speed in km / h.
+#' @param wd Column name `character` or index in `x` that refers to wind direction in
+#'   degrees.
+#' @param wd_sd Column name `character` or index in `x` that refers to wind speed columns
+#'   standard deviation.  This is only applicable if weather data
 #'   is already summarised to hourly increments. See details.
-#' @param station Column name or index in `x` that refers to the weather station
-#'   name or identifier. `character`. See details.
-#' @param lon Column name or index in `x` that refers to weather station's
-#'   longitude. `character`. See details.
-#' @param lat Column name or index in `x` that refers to weather station's
-#'   latitude. `character`. See details.
+#' @param station Column name `character` or index in `x` that refers to the weather station
+#'   name or identifier. See details.
+#' @param lon Column name `character` or index in `x` that refers to weather station's
+#'   longitude. See details.
+#' @param lat Column name `character` or index in `x` that refers to weather station's
+#'   latitude. See details.
 #' @param r Spatial raster which is intended to be used with this weather data
 #'   for use in the blackspot model. Used to set `time_zone` if it is not
-#'   supplied in data. `character`. Optional, see also `time_zone`.
-#' @param lonlat_file A file path to a \acronym{CSV} which included station
+#'   supplied in data. Optional, see also `time_zone`.
+#' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
-#'   the data. `character`. Optional, see also `lon` and `lat`.
+#'   the data. Optional, see also `lon` and `lat`.
 #'
 #' @details `time_zone` All weather stations must fall within the same time
 #'   zone.  If the required stations are located in differing time zones,
-#'   separate `ascotraceR.weather` objects must be created for each time zone.
+#'   separate `epiphy.weather` objects must be created for each time zone.
 #'   If a raster object, `r`, of previous crops is provided that spans time
 #'   zones, an error will be emitted.
 #'
-#' @details `wd_sd` If weather data is provided in hourly increments, a column
+#' @details `wd_sd` If weather data is
+#'   provided in hourly increments, a column
 #'   with the standard deviation of the wind direction over the hour is required
 #'   to be provided. If the weather data are sub-hourly, the standard deviation
 #'   will be calculated and returned automatically.
@@ -63,11 +62,11 @@
 #'   location `NA` can be specified and the function will drop these column
 #'   variables.  If these data are not included, (`NULL`) a separate file may be
 #'   provided that contains the longitude, latitude and matching station name to
-#'   provide station locations in the final `ascotraceR.weather` object that is
+#'   provide station locations in the final `epiphy.weather` object that is
 #'   created by specifying the file path to a \acronym{CSV} file using
 #'   `lonlat_file`.
 #'
-#' @return A `ascotraceR.weather` object (an extension of \CRANpkg{data.table})
+#' @return A `epiphy.weather` object (an extension of \CRANpkg{data.table})
 #'   containing the supplied weather aggregated to each hour in a suitable
 #'   format for use with [trace_asco()] containing the following columns:
 #'   \tabular{rl}{
@@ -114,7 +113,7 @@
 #' )
 #'
 #' # Saving weather data and reimporting can lose the object class
-#' # Reimported data can be quickly reformatted, adding the 'asco.weather' class
+#' # Reimported data can be quickly reformatted, adding the 'epiphy.weather' class
 #' #  with this same function
 #' temp_file_path <- paste0(tempdir(),"weather_file.csv")
 #' write.csv(weather, file = temp_file_path, row.names = FALSE)
@@ -181,7 +180,7 @@ format_weather <- function(x,
     }
 
     .check_weather(x)
-    setattr(x, "class", union("asco.weather", class(x)))
+    setattr(x, "class", union("epiphy.weather", class(x)))
 
     return(x)
   }
@@ -560,7 +559,7 @@ format_weather <- function(x,
 
   .check_weather(x_out)
 
-  setattr(x_out, "class", union("asco.weather", class(x_out)))
+  setattr(x_out, "class", union("epiphy.weather", class(x_out)))
   return(x_out[])
 }
 
