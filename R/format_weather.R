@@ -217,9 +217,9 @@ format_weather <- function(x,
   if (is.null(r) & is.null(time_zone)) {
     stop(
       call. = FALSE,
-      "Please ensure that either a raster object for the area of interest, ",
-      "`r`, or `time_zone` is provided to calculate the time zone for the ",
-      "area of interest."
+      "Please include either a `time_zone` (Olsen time zone format) for where",
+      "the weather station is located, or a raster object for the area of",
+      "interest to calculate the time zone."
     )
   }
 
@@ -581,7 +581,7 @@ format_weather <- function(x,
                    temp > 60, ]) != 0)
     stop(
       call. = FALSE,
-      "Temperature inputs are outside expected ranges (-30 and +60 degrees C); \n",
+      "Temperature inputs are outside expected ranges (-30 and +60 degrees Celcius); \n",
       paste(as.character(final_w[temp < -30 |
                                    temp > 60, times])),
       "\nplease correct these inputs and run again"
