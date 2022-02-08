@@ -6,9 +6,9 @@
 #'
 #' @param row_spacing Crop row spacing in meters
 #' @param width paddock with in meters
-#' @param px pixel size, length and width of rectangular pixel
+#' @param px pixel size, length and width of square pixel
 #' @param seeding_r number of plants sown in a pixel (`px`)
-#' @param IO number of infective sites within the pixel (not functional)
+#' @param IO number of infective sites within the pixel
 #' @param m (optional) a matrix representing each plant and the number of
 #'  infective sites for each plant
 #'
@@ -43,7 +43,10 @@ multi_var_binom <- function(row_spacing = 0.3,
 
       #randomly infect one of the plants
       m[round(runif(IO, 1, length(m)))] <- 1
-      }
+   }
+
+  # Check m is a matrix
+  if(is.matrix(m) == FALSE) stop("'m' is not a matrix")
 
 
    # return incidies for locations which are greater than 0
@@ -74,7 +77,7 @@ multi_var_binom <- function(row_spacing = 0.3,
       return(new_m)
   })
 
-  return(out[[1]])
+  return(Reduce('+',out)/length(out))
 }
 
 mat_it <- function(rs = 0.3, px = 1, seeding_r = 40){
