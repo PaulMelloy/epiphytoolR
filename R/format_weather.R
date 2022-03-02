@@ -89,38 +89,52 @@
 #' # included in ascotraceR. The weather data files both are of the same format,
 #' # so they will be combined for formatting here.
 #'
-#' Newmarracarra <- read.csv(
-#'  system.file("extdata",
-#'              "1998_Newmarracarra_weather_table.csv",
-#'              package = "ascotraceR")
-#')
+#' # load a raster for the area of interest
+#' eyre <- terra::rast(system.file("extdata", "eyre.tif", package = "epiphytoolR"))
 #'
-#' station_data <- system.file("extdata",
-#'                             "stat_dat.csv",
-#'                             package = "ascotraceR")
+#' # load the weather data to be formatted
+#' scaddan <-
+#'    system.file("extdata", "scaddan_weather.csv",package = "epiphytoolR")
+#' naddacs <-
+#'    system.file("extdata", "naddacs_weather.csv",package = "epiphytoolR")
+#'
+#' weather_file_list <- list(scaddan, naddacs)
+#' weather_station_data <-
+#'    lapply(X = weather_file_list, FUN = read.csv)
+#'
+#' weather_station_data <- do.call("rbind", weather_station_data)
+#'
+#' weather_station_data$Local.Time <-
+#'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%dT%H:%M:%S")
 #'
 #' weather <- format_weather(
-#'   x = Newmarracarra,
-#'   POSIXct_time = "Local.Time",
-#'   temp = "mean_daily_temp",
-#'   rain = "rain_mm",
-#'   ws = "ws",
-#'   wd = "wd",
-#'   wd_sd = "wd_sd",
-#'   station = "Location",
-#'   time_zone = "Australia/Perth",
-#'   lonlat_file = station_data
+#'    w = weather_station_data,
+#'    POSIXct_time = "Local.Time",
+#'    ws = "meanWindSpeeds",
+#'    wd_sd = "stdDevWindDirections",
+#'    rain = "Rainfall",
+#'    wd = "meanWindDirections",
+#'    lon = "Station.Longitude",
+#'    lat = "Station.Latitude",
+#'    station = "StationID",
+#'    r = eyre
 #' )
 #'
-#' # Saving weather data and reimporting can lose the object class
-#' # Reimported data can be quickly reformatted, adding the 'epiphy.weather' class
-#' #  with this same function
-#' temp_file_path <- paste0(tempdir(),"weather_file.csv")
-#' write.csv(weather, file = temp_file_path, row.names = FALSE)
-#' weather_imported <- read.csv(temp_file_path)
-#' weather <- format_weather(weather_imported,
-#'                           time_zone = "Australia/Perth")
-#' unlink(temp_file_path) # remove temporary weather file
+#' # Reformat saved weather
+#'
+#' # Create file path and save data
+#' file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\")
+#' write.csv(weather,
+#'           file = file_path_name,
+#'           row.names = FALSE)
+#'
+#' # Read data back in to
+#' weather2 <- read.csv(file_path_name, stringsAsFactors = FALSE)
+#'
+#' # reformat the data to have appropriate column classes and data class
+#' weather2 <- format_weather(weather2,
+#'                            time_zone = "Australia/Adelaide")
+#' unlink(file_path_name) # remove temporary weather file
 
 format_weather <- function(x,
                            YYYY = NULL,
