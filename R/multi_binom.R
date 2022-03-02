@@ -14,6 +14,7 @@
 #'
 #' @return probabilty matrix where each entry gives the probabiltiy of splash
 #'  dispersal from infective sites to the respective entry
+#' @import stats
 #' @export
 #'
 #' @examples

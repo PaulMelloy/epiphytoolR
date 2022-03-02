@@ -5,8 +5,12 @@
 #'
 #' @param RH Relative humidity
 #' @param Tm Temperature in degrees celcius
+#' @param eq Type of equation to use while calculation VPD. defaults `"Murray"`.
+#'  Other option `"Sapak"`
+#' @param verbose prints saturated vapour pressure (SVP) and vapour pressure
+#'  in kPa before returning the VPD result
 #'
-#' @return Vapour-pressure deficit in KPa
+#' @return Vapour-pressure deficit in kPa
 #' @references
 #'  https://doi.org/10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2
 #' @export
