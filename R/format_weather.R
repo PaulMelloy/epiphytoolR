@@ -65,7 +65,7 @@
 #'   provide station locations in the final `epiphy.weather` object that is
 #'   created by specifying the file path to a \acronym{CSV} file using
 #'   `lonlat_file`.
-#'
+#' @import data.table
 #' @return A `epiphy.weather` object (an extension of \CRANpkg{data.table})
 #'   containing the supplied weather aggregated to each hour in a suitable
 #'   format for use with [trace_asco()] containing the following columns:
