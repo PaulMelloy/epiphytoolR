@@ -15,13 +15,16 @@
 #' @examples
 #' calc_vpd()
 #' calc_vpd(RH = 99, Tm = 30)
-calc_vpd <- function(RH = 70, Tm = 24, eq = "Murray"){
+calc_vpd <- function(RH = 70, Tm = 24, eq = "Murray", verbose = FALSE){
    if(eq == "Sapak"){
       SVP <- 610.7*(10^((7.5*Tm)/237.3 + Tm))
       return((1-(RH/100))*SVP)
    }else{
       # Murray 1967
       SVP <- (10^(((Tm * 7.5)/(Tm + 237.3))+0.7858))*0.1
+      if(verbose){
+         cat("SVP =",SVP, "\n VP =",SVP*(RH/100),"\n")
+      }
       return((1-(RH/100))*SVP)
    }
 
