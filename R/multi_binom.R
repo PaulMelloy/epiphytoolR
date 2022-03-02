@@ -5,7 +5,7 @@
 #'  probability distribution with each entry representing a single plant
 #'
 #' @param row_spacing Crop row spacing in meters
-#' @param width paddock with in meters
+#' @param width paddock width in meters
 #' @param px pixel size, length and width of square pixel
 #' @param seeding_r number of plants sown in a pixel (`px`)
 #' @param IO number of infective sites within the pixel
@@ -28,6 +28,20 @@
 #' data.frame(x = sapply(sam_mvb,FUN = function(x) ceiling(x/ nrow(mvb))),
 #'            y = sapply(sam_mvb,FUN = function(x) x %% nrow(mvb)))
 #'
+#' # simulate spore dispersal over 40 spread events
+#' for(sp in 1:40){
+#' if(sp == 1){
+#'   m1 <- multi_var_binom()
+#'   m0 <- matrix(0,nrow = nrow(m1),ncol = ncol(m1))
+#'   ind1 <- sample(seq_along(m1), size = 1, prob = m1, replace = TRUE)
+#'   m0[ind1] <- 1
+#' }else{
+#'   m1 <- multi_var_binom(m = m0)
+#'   ind1 <- sample(seq_along(m1), size = 1, prob = m1, replace = TRUE)
+#'   m0[ind1] <- m0[ind1] + 1
+#' }
+#' }
+#' image(t(m1))
 multi_var_binom <- function(row_spacing = 0.3,
                             width = 1,
                             px = 1,
