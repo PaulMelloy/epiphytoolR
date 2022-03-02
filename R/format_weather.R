@@ -68,7 +68,7 @@
 #' @import data.table
 #' @return A `epiphy.weather` object (an extension of \CRANpkg{data.table})
 #'   containing the supplied weather aggregated to each hour in a suitable
-#'   format for use with [trace_asco()] containing the following columns:
+#'   format for use with `trace_asco()` containing the following columns:
 #'   \tabular{rl}{
 #'   **times**: \tab Time in POSIXct format \cr
 #'   **rain**: \tab Rainfall in mm \cr
@@ -121,7 +121,7 @@
 #' weather <- format_weather(weather_imported,
 #'                           time_zone = "Australia/Perth")
 #' unlink(temp_file_path) # remove temporary weather file
-#' @export
+
 format_weather <- function(x,
                            YYYY = NULL,
                            MM = NULL,
