@@ -135,7 +135,7 @@
 #' weather2 <- format_weather(weather2,
 #'                            time_zone = "Australia/Adelaide")
 #' unlink(file_path_name) # remove temporary weather file
-
+#' @export
 format_weather <- function(x,
                            YYYY = NULL,
                            MM = NULL,
