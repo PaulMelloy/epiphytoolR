@@ -1,0 +1,58 @@
+Statistic Element,January,February,March,April,May,June,July,August,September,October,November,December,Annual,Number of Years,Start Year,End Year
+Mean maximum temperature (Degrees C) for years 1941 to 2022 ,36.5,35.2,32.8,28.4,23.2,19.9,19.9,22.8,27.4,31.2,33.8,35.5,28.9,80,1941,2022
+Highest temperature (Degrees C) for years 1941 to 2022 ,45.6,44.7,42.7,39.9,35,31.6,31.8,35.2,38.8,42.6,44.9,45.7,45.7,80,1941,2022
+Date of Highest temperature for years 1941 to 2022 ,3-Jan-19,2-Feb-98,11-Mar-19,2-Apr-05,4-May-42,21-Jun-96,31-Jul-21,22-Aug-09,22-Sep-12,10-Oct-13,13-Nov-14,25-Dec-19,25-Dec-19,N/A,1941,2022
+Lowest maximum temperature (Degrees C) for years 1941 to 2022 ,16.2,16.7,14.9,11.8,9.6,7.7,7,7,11.6,11.7,12.8,17.1,7,80,1941,2022
+Date of Lowest maximum temperature for years 1941 to 2022 ,6-Jan-53,22-Feb-49,21-Mar-01,25-Apr-83,30-May-09,22-Jun-56,6-Jul-10,6-Aug-66,16-Sep-10,8-Oct-68,18-Nov-81,30-Dec-57,6-Aug-66,N/A,1941,2022
+Decile 1 maximum temperature (Degrees C) for years 1941 to 2021 ,30.9,29.6,27.2,22.4,17.7,15.1,14.7,16.8,20.6,24.3,27.3,29.8, ,78,1941,2021
+Decile 9 maximum temperature (Degrees C) for years 1941 to 2021 ,41,39.7,37.8,33.8,28.9,25.6,25.9,29.1,33.8,37.4,39.5,40.3, ,78,1941,2021
+Mean number of days >= 30 Degrees C for years 1941 to 2022 ,28.7,25.3,24,11.7,2,0.2,0.1,2.4,10.7,18.8,23.7,27.7,175.3,80,1941,2022
+Mean number of days >= 35 Degrees C for years 1941 to 2022 ,21.5,16.7,10.3,1.7,0,0,0,0,1.7,8.2,13.5,18.5,92.1,80,1941,2022
+Mean number of days >= 40 Degrees C for years 1941 to 2022 ,6.4,2.6,0.6,0,0,0,0,0,0,0.3,2.2,4.4,16.5,80,1941,2022
+Mean minimum temperature (Degrees C) for years 1941 to 2022 ,21.6,20.8,17.6,12.6,8.2,4.9,4,5.9,10.3,14.8,17.9,20.3,13.2,80,1941,2022
+Lowest temperature (Degrees C) for years 1941 to 2022 ,10,8.5,6.1,1.4,-2.7,-6,-7.5,-4.1,-1,1.3,3.5,9.3,-7.5,80,1941,2022
+Date of Lowest temperature for years 1941 to 2022 ,3-Jan-70,24-Feb-49,25-Mar-67,23-Apr-01,30-May-87,30-Jun-02,17-Jul-76,16-Aug-02,7-Sep-75,1-Oct-82,2-Nov-74,12-Dec-02,17-Jul-76,N/A,1941,2022
+Highest minimum temperature (Degrees C) for years 1941 to 2022 ,32.8,31.6,29.6,25.9,22.1,21.8,20.4,23.1,27.4,30,31.3,31,32.8,80,1941,2022
+Date of Highest minimum temperature for years 1941 to 2022 ,3-Jan-60,8-Feb-94,3-Mar-09,13-Apr-56,3-May-18,12-Jun-19,13-Jul-95,16-Aug-09,21-Sep-09,27-Oct-59,16-Nov-96,14-Dec-06,3-Jan-60,N/A,1941,2022
+Decile 1 minimum temperature (Degrees C) for years 1941 to 2021 ,16.3,15.6,12.3,7,2.8,-0.5,-1.1,0.7,4.2,8.6,12.1,14.9, ,78,1941,2021
+Decile 9 minimum temperature (Degrees C) for years 1941 to 2021 ,26.6,25.6,22.6,18.6,14.2,11.3,10.2,12.6,17.2,21.1,23.8,25.4, ,78,1941,2021
+Mean number of days <= 2 Degrees C for years 1941 to 2022 ,0,0,0,0.1,2.2,9.4,11.7,6.8,0.7,0,0,0,30.9,80,1941,2022
+Mean number of days <= 0 Degrees C for years 1941 to 2022 ,0,0,0,0,0.5,4.3,6.1,2,0.1,0,0,0,13,80,1941,2022
+Mean daily ground minimum temperature Degrees C for years 1951 to 2016 ,18.2,17.6,14.4,9.7,5.1,1.8,0.5,2.2,6.5,11.2,14.5,16.8,9.9,65,1951,2016
+Lowest ground temperature Degrees C for years 1951 to 2016 ,0.2,2.1,1.4,-2.9,-7.2,-10.8,-12.4,-10.1,-7.2,-5.7,-0.3,4,-12.4,65,1951,2016
+Date of Lowest ground temperature  for years 1951 to 2016 ,28-Jan-93,23-Feb-58,5-Mar-61,22-Apr-56,31-May-87,17-Jun-58,17-Jul-76,13-Aug-76,1-Sep-58,2-Oct-82,2-Nov-82,26-Dec-59,17-Jul-76,N/A,1951,2016
+Mean number of days ground min. temp. <= -1 Degrees C for years 1951 to 2016 ,0,0,0,0.2,3.3,10.2,13.9,9.7,2.4,0.2,0,0,39.9,65,1951,2016
+Mean rainfall (mm) for years 1941 to 2022 ,41.2,40.9,31.9,16.2,18,12.8,14.5,8.4,8.7,19.9,30.7,38.5,282.3,77,1941,2022
+Highest rainfall (mm) for years 1941 to 2022 ,251.4,241.6,356.8,269.2,103.6,101.2,144,114.1,60.8,73.4,218.2,228.9,782.5,80,1941,2022
+Date of Highest rainfall for years 1941 to 2022 ,2001,2000,1983,2000,1990,1973,1986,1947,1947,2005,2021,1975,1974,N/A,1941,2022
+Lowest rainfall (mm) for years 1941 to 2022 ,0,0,0,0,0,0,0,0,0,0,0,0,76.8,80,1941,2022
+Date of Lowest rainfall for years 1941 to 2022 ,1994,2019,2017,2021,2021,2020,2021,2021,2017,2019,2019,1955,2009,N/A,1941,2022
+Decile 1 monthly rainfall (mm) for years 1941 to 2022 ,2.1,0.4,0,0,0,0,0,0,0,0,1.2,2.6,124.7,80,1941,2022
+Decile 5 (median) monthly rainfall (mm) for years 1941 to 2022 ,21.4,14.8,11.2,1,4.4,3.6,2.4,1,1.4,16.8,20.2,25.2,237.9,80,1941,2022
+Decile 9 monthly rainfall (mm) for years 1941 to 2022 ,106.3,146.6,73.2,42.1,60.9,36.6,42.2,20.8,28.2,53.8,65.9,85.6,455,80,1941,2022
+Highest daily rainfall (mm) for years 1941 to 2022 ,99.6,111.8,204.8,85.6,56.6,70.6,76.8,63,29,38.8,100.2,135.8,204.8,80,1941,2022
+Date of Highest daily rainfall for years 1941 to 2022 ,30-Jan-01,12-Feb-00,31-Mar-88,21-Apr-00,21-May-90,15-Jun-73,1-Jul-86,16-Aug-47,22-Sep-93,2-Oct-93,10-Nov-21,17-Dec-75,31-Mar-88,N/A,1941,2022
+Mean number of days of rain for years 1941 to 2022 ,4.9,4.5,3.3,2.1,2.9,2.6,2.5,1.8,2.3,4.4,5.5,6,42.8,80,1941,2022
+Mean number of days of rain >= 1 mm for years 1941 to 2022 ,3.5,3.4,2.3,1.5,2.1,1.6,1.6,1.2,1.4,2.7,3.8,4.2,29.3,80,1941,2022
+Mean number of days of rain >= 10 mm for years 1941 to 2022 ,1.2,1.2,0.8,0.5,0.6,0.4,0.4,0.2,0.3,0.6,0.8,1.1,8.1,80,1941,2022
+Mean number of days of rain >= 25 mm for years 1941 to 2022 ,0.5,0.5,0.4,0.1,0.1,0.1,0.1,0.1,0,0.1,0.2,0.3,2.5,80,1941,2022
+Mean daily wind run (km) for years 1959 to 2022 ,312,324,294,254,230,222,223,245,279,296,302,306,274,31,1959,2022
+Maximum wind gust speed (km/h) for years 1952 to 2021 ,121,122,104,78,121,95,91,97,102,104,174,131,174,68,1952,2021
+Date of Maximum wind gust speed for years 1952 to 2021 ,10-Jan-66,2-Feb-97,31-Mar-88,18-Apr-72,19-May-67,10-Jun-58,25-Jul-96,26-Aug-73,22-Sep-08,17-Oct-86,21-Nov-64,15-Dec-58,21-Nov-64,N/A,1952,2021
+Mean daily sunshine (hours) for years 1954 to 2016 ,10.2,9.8,9.7,9.5,8.5,8.4,9.1,9.9,10,10.1,10.1,10,9.6,62,1954,2016
+Mean daily solar exposure (MJ/(m*m)) for years 1990 to 2022 ,27.1,25.6,23.5,20,16.2,14.6,15.8,18.9,22.1,25.2,26.5,26.6,21.8,32,1990,2022
+Mean number of clear days for years 1954 to 2014 ,13.1,12.1,16.6,16.7,15.8,17,21,22.5,20.6,17.8,13.3,12.9,199.4,56,1954,2014
+Mean number of cloudy days for years 1954 to 2014 ,6.5,6.5,5.3,5,7.4,5.6,4.3,3.3,3,4.3,5.3,6.9,63.4,56,1954,2014
+Mean daily evaporation (mm) for years 1959 to 2021 ,12.9,11.9,10.4,7.7,4.9,3.7,4.1,5.7,8.2,10.3,11.6,12.2,8.6,53,1959,2021
+Mean 9am temperature (Degrees C) for years 1954 to 2014 ,28.9,27.6,24.6,19.9,14.4,10.7,10.1,13.4,18.8,23.3,26.4,28.1,20.5,56,1954,2014
+Mean 9am wet bulb temperature (Degrees C) for years 1954 to 2014 ,18.1,18,15.9,13,10,7.6,6.6,8,10.9,13.4,15.6,16.9,12.8,56,1954,2014
+Mean 9am dew point temperature (Degrees C) for years 1954 to 2014 ,9,10.1,8.2,6.1,5,3.7,1.7,0.8,1.1,2.1,4.8,6.6,4.9,56,1954,2014
+Mean 9am relative humidity (%) for years 1954 to 2014 ,34,39,39,44,56,64,59,46,35,30,30,30,42,56,1954,2014
+Mean 9am cloud cover (okas) for years 1954 to 2014 ,2.8,2.9,2.3,2.4,2.9,2.6,2,1.7,1.8,2.2,2.7,2.9,2.4,56,1954,2014
+Mean 9am wind speed (km/h) for years 1941 to 2014 ,14.1,12.1,10,7.6,5.7,4.6,5.1,8.2,13.4,16.9,17.1,15.8,10.9,69,1941,2014
+Mean 3pm temperature (Degrees C) for years 1954 to 2014 ,35.2,34.1,31.7,27.7,22.4,19.2,19,21.8,26.3,30,32.5,34,27.8,56,1954,2014
+Mean 3pm wet bulb temperature (Degrees C) for years 1954 to 2014 ,19.7,19.7,18.1,15.8,13.3,11.4,10.7,11.8,13.9,15.9,17.5,18.7,15.5,56,1954,2014
+Mean 3pm dew point temperature (Degrees C) for years 1954 to 2014 ,7.1,8,6.3,4.5,3.6,2.4,0.4,-0.6,-0.3,1,3.3,5.4,3.4,56,1954,2014
+Mean 3pm relative humidity (%) for years 1954 to 2014 ,22,25,24,26,33,35,32,25,21,19,19,21,25,56,1954,2014
+Mean 3pm cloud cover (oktas) for years 1954 to 2014 ,3.7,3.8,3,2.7,3,2.5,1.9,1.7,1.9,2.6,3.4,3.6,2.8,56,1954,2014
+Mean 3pm wind speed (km/h) for years 1941 to 2014 ,16.1,16.5,16,14.4,13.3,12.9,13.6,14.8,15.6,16,15.5,14.8,15,69,1941,2014
