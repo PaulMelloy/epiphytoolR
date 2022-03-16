@@ -5,4 +5,6 @@ test_that("calc_vpd returns expected output", {
                          Tm = 20), 0.7012911,tolerance = 1e-06)
    expect_equal(calc_vpd(RH = 38.6,
                          Tm = 30), 2.604469,tolerance = 1e-06)
+   expect_equal(calc_vpd(RH = 50,
+                         Tm = 25), calc_svp(25)- calc_vp(50,25),tolerance = 1e-06)
 })
