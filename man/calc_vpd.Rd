@@ -4,7 +4,7 @@
 \alias{calc_vpd}
 \title{Calculate Vapour-pressure deficit from relative humidity and temperature}
 \usage{
-calc_vpd(RH = 70, Tm = 24, eq = "Murray", verbose = FALSE)
+calc_vpd(RH, Tm, eq = "Murray", verbose = FALSE)
 }
 \arguments{
 \item{RH}{Relative humidity}
@@ -25,7 +25,6 @@ This formula uses Tetens (1930) equation as described by Murray
 (1967)
 }
 \examples{
-calc_vpd()
 calc_vpd(RH = 99, Tm = 30)
 }
 \references{
