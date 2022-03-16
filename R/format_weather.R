@@ -48,8 +48,6 @@
 #'   stations in `x` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
 #'   on each object, then data can be combined after formatting.
-#'   If a raster object, `r`, of previous crops is provided that spans time
-#'   zones, an error will be emitted.
 #'
 #' @details `wd_sd` If weather data is
 #'   provided in hourly increments, a column
