@@ -17,8 +17,7 @@
 #' calc_svp(Tm = 30, eq = "Sapak)
 calc_svp <- function(Tm, eq = "Murray"){
    if(eq == "Sapak"){
-      SVP <- 610.7*(10^((7.5*Tm)/237.3 + Tm))
-      return((1-(RH/100))*SVP)
+      return(610.7*(10^((7.5*Tm)/237.3 + Tm)))
    }else{
       # Murray 1967
       return((10^(((Tm * 7.5)/(Tm + 237.3))+0.7858))*0.1)}
