@@ -22,9 +22,9 @@
 #' @param POSIXct_time Column name `character` or index in `x` which contains a `POSIXct`
 #'   formatted time. This can be used instead of arguments `YYYY`, `MM`, `DD`,
 #'   `hh`, `mm.`.
-#' @param time_zone Time zone (Olsen time zone format) `character` where the
-#'   weather station is located. May be in a column or supplied as a character string.
-#'   Optional, see also `r`. See details.
+#' @param time_zone Local time zone (Olsen time zone format) `character` which was used
+#'   for `times` when recording observations times at the weather station. If unsure
+#'   and time data has continuity, use "UTC".
 #' @param temp Column name `character` or index in `x` that refers to temperature in degrees
 #'   Celsius.
 #' @param rain Column name `character` or index in `x` that refers to rainfall in millimetres.
@@ -40,16 +40,14 @@
 #'   longitude. See details.
 #' @param lat Column name `character` or index in `x` that refers to weather station's
 #'   latitude. See details.
-#' @param r Spatial raster which is intended to be used with this weather data
-#'   for use in the blackspot model. Used to set `time_zone` if it is not
-#'   supplied in data. Optional, see also `time_zone`.
 #' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
 #'
-#' @details `time_zone` All weather stations in `x` must fall within the same time
-#'   zone.  If the required stations are located in differing time zones,
-#'   separate `epiphy.weather` objects must be created for each time zone.
+#' @details `time_zone` The time-zone in which the `time` was recorded. All weather
+#'   stations in `x` must fall within the same time-zone.  If the required stations
+#'   are located in differing time zones, `format_weather()` should be run separately
+#'   on each object, then data can be combined after formatting.
 #'   If a raster object, `r`, of previous crops is provided that spans time
 #'   zones, an error will be emitted.
 #'
@@ -75,7 +73,7 @@
 #'   will be given to the output object to indicate which models it meets the data
 #'   requirements for. Some of the columns returned are as follows:
 #'   \tabular{rl}{
-#'   **times**: \tab Time in POSIXct format \cr
+#'   **times**: \tab Time in POSIXct format with "UTC" time-zone\cr
 #'   **rain**: \tab Rainfall in mm \cr
 #'   **temp**: \tab Temperature in degrees celcius \cr
 #'   **ws**: \tab Wind speed in km / h \cr
@@ -111,7 +109,8 @@
 #' weather_station_data <- do.call("rbind", weather_station_data)
 #'
 #' weather_station_data$Local.Time <-
-#'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%dT%H:%M:%S")
+#'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%d %H:%M:%S",
+#'               tz = "Australia/Adelaide")
 #'
 #' weather <- format_weather(
 #'    x = weather_station_data,
@@ -123,7 +122,7 @@
 #'    lon = "Station.Longitude",
 #'    lat = "Station.Latitude",
 #'    station = "StationID",
-#'    r = eyre
+#'    time_zone = "Australia/Adelaide"
 #' )
 #'
 #' # Reformat saved weather
@@ -158,7 +157,6 @@ format_weather <- function(x,
                            station,
                            lon = NULL,
                            lat = NULL,
-                           r = NULL,
                            lonlat_file = NULL) {
   # CRAN Note avoidance
   times <- NULL #nocov
@@ -223,23 +221,11 @@ format_weather <- function(x,
     )
   }
 
-  # Ensure only one object is provided for a time zone (raster or time_zone)
-  if (!is.null(r) & !is.null(time_zone)) {
+  if (is.null(time_zone)) {
     stop(
       call. = FALSE,
-      "Please only provide one way of determining the time zone.\n",
-      "Either the time zone as a character string, in a column or ",
-      "provide a raster of the area of interest for the time zone to be ",
-      "automatically derived from."
-    )
-  }
-
-  if (is.null(r) & is.null(time_zone)) {
-    stop(
-      call. = FALSE,
-      "Please include either a `time_zone` (Olsen time zone format) for where",
-      "the weather station is located, or a raster object for the area of",
-      "interest to calculate the time zone."
+      "Please include the `time_zone` (Olsen time zone format) for which",
+      "the weather station `time` was recorded."
     )
   }
 
@@ -251,19 +237,6 @@ format_weather <- function(x,
     )
   }
 
-
-  # Assign a `time_zone` based on the raster centroid and check to ensure only
-  # one time zone is provided
-  if (is.null(time_zone)) {
-    time_zone <-
-      unique(
-        lutz::tz_lookup_coords(
-          lat = stats::median(as.vector(terra::ext(r))[3:4]),
-          lon = stats::median(as.vector(terra::ext(r))[1:2]),
-          method = "accurate"
-        )
-      )
-  }
   if (length(time_zone) > 1) {
     stop(call. = FALSE,
          "Separate weather inputs for the model are required for",
@@ -392,20 +365,13 @@ format_weather <- function(x,
              old = POSIXct_time,
              new = "times",
              skip_absent = TRUE)
-    x[, times := as.POSIXct(times)]
+    x[, times := as.POSIXct(times, tz = time_zone)]
     x[, YYYY := lubridate::year(x[, times])]
     x[, MM := lubridate::month(x[, times])]
     x[, DD := lubridate::day(x[, times])]
     x[, hh :=  lubridate::hour(x[, times])]
     x[, mm := lubridate::minute(x[, times])]
 
-    # Add time_zone if there is no timezone for the station and coerce to
-    # POSIXct class
-    if (lubridate::tz(x[, times]) == "" ||
-        lubridate::tz(x[, times]) == "UTC") {
-      x[, times := lubridate::force_tz(x[, times],
-                                       tzone = time_zone)]
-    }
   } else {
     # if POSIX formatted times were not supplied, create a POSIXct
     # formatted column named 'times'
@@ -417,15 +383,19 @@ format_weather <- function(x,
                        mm, sep = "")][, times :=
                                         lubridate::ymd_hm(times,
                                                           tz = time_zone)]
-
   }
 
-  if (any(is.na(x[, times]))) {
+  # set times into UTC
+  x[,times := lubridate::with_tz(times,
+                                 tzone = "UTC")]
+
+  if (any(is.na(x[, times])) ||
+      any(x[, duplicated(times), by = station][,V1])) {
     stop(
       call. = FALSE,
       times,
-      "Time records contain NA values or impossible time combinations,",
-      "e.g., 11:60 am. Check time inputs"
+      "Time records contain NA values or duplicated times. Check you are entering",
+      "the correct `time_zone` and the continuity of weather station logging time"
     )
   }
 
