@@ -3,9 +3,12 @@
 #' Formats raw weather data into an object suitable for use in the affiliated
 #'  spore dispersal packages such as `ascotraceR` and `blackspot.sp`. This
 #'  standardised data format ensures that the supplied weather data meet the
-#'  requirements for functions in the aforementioned packages.
+#'  requirements for functions in the aforementioned packages. Input weather
+#'  data expects a 'long' data format, where each line is an observation at
+#'  a point in time.
 #'
-#' @param x A [data.frame] object of weather station data for formatting.
+#' @param x a \code{\link{data.frame}} object of weather station data for
+#'  formatting.
 #' @param YYYY Column name `character` or index in `x` that refers to the year when the
 #'   weather was logged.
 #' @param MM Column name `character` or index in `x` that refers to the month (numerical)
@@ -18,13 +21,13 @@
 #'   weather was logged.
 #' @param POSIXct_time Column name `character` or index in `x` which contains a `POSIXct`
 #'   formatted time. This can be used instead of arguments `YYYY`, `MM`, `DD`,
-#'   `hh`, `mm.` `character`.
-#' @param time_zone Time zone (Olsen time zone format) where the weather station
-#'   is located. May be in a column or supplied as a character string. Optional,
-#'   see also `r`. `character`. See details.
+#'   `hh`, `mm.`.
+#' @param time_zone Time zone (Olsen time zone format) `character` where the
+#'   weather station is located. May be in a column or supplied as a character string.
+#'   Optional, see also `r`. See details.
 #' @param temp Column name `character` or index in `x` that refers to temperature in degrees
 #'   Celsius.
-#' @param rain Column name `character` or index in `x` that refers to rainfall in mm.
+#' @param rain Column name `character` or index in `x` that refers to rainfall in millimetres.
 #' @param ws Column name `character` or index in `x` that refers to wind speed in km / h.
 #' @param wd Column name `character` or index in `x` that refers to wind direction in
 #'   degrees.
@@ -44,7 +47,7 @@
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
 #'
-#' @details `time_zone` All weather stations must fall within the same time
+#' @details `time_zone` All weather stations in `x` must fall within the same time
 #'   zone.  If the required stations are located in differing time zones,
 #'   separate `epiphy.weather` objects must be created for each time zone.
 #'   If a raster object, `r`, of previous crops is provided that spans time
@@ -68,10 +71,13 @@
 #' @import data.table
 #' @return A `epiphy.weather` object (an extension of \CRANpkg{data.table})
 #'   containing the supplied weather aggregated to each hour in a suitable
-#'   format for use with `trace_asco()` containing the following columns:
+#'   format for use with disease models. Depending on the input weather, classes
+#'   will be given to the output object to indicate which models it meets the data
+#'   requirements for. Some of the columns returned are as follows:
 #'   \tabular{rl}{
 #'   **times**: \tab Time in POSIXct format \cr
 #'   **rain**: \tab Rainfall in mm \cr
+#'   **temp**: \tab Temperature in degrees celcius \cr
 #'   **ws**: \tab Wind speed in km / h \cr
 #'   **wd**: \tab Wind direction in compass degrees \cr
 #'   **wd_sd**: \tab Wind direction standard deviation in compass degrees \cr
