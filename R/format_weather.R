@@ -112,7 +112,7 @@
 #'
 #' weather_file_list <- list(scaddan, naddacs)
 #' weather_station_data <-
-#'    lapply(w = weather_file_list, FUN = read.csv)
+#'    lapply(X = weather_file_list, FUN = read.csv)
 #'
 #' weather_station_data <- do.call("rbind", weather_station_data)
 #'
