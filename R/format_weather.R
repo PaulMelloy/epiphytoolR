@@ -190,7 +190,20 @@ format_weather <- function(w,
               was pre-formatted, use 'UTC'"
       )
     } else{
+<<<<<<< HEAD
       w[, times := lubridate::ymd_hms(times, tz = "UTC")]
+=======
+      x[, times := lubridate::ymd_hms(times, tz = "UTC")]
+    }
+    if (any(is.na(x[, times])) ||
+        any(x[, duplicated(times), by = factor(station)][,V1])) {
+       stop(
+          call. = FALSE,
+          times,
+          "Time records contain NA values or duplicated times. If this was ",
+          "previously formatted with `format_weather()` enter `time_zone = 'UTC'`"
+       )
+>>>>>>> c46ea39 (update examples and preformat check)
     }
     if (any(is.na(w[, times])) ||
         any(w[, duplicated(times), by = factor(station)][,V1])) {
