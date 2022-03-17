@@ -20,9 +20,14 @@
 #' .capture_warnings(f(1))
 #' warn$captured_warnings
 .capture_warnings <- function(f, silent = FALSE) {
-   if(!exists("logs",where = warn)){
+   if(exists("warn") == FALSE) {
       warn <- new.env(parent = .GlobalEnv)
       warn$logs <- list()
+   } else{
+      if (exists("logs", where = warn) == FALSE) {
+         warn <- new.env(parent = .GlobalEnv)
+         warn$logs <- list()
+      }
    }
    res <- withCallingHandlers(
       f,
