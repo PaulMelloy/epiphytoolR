@@ -43,6 +43,17 @@
 #' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
+#' @param print_warnings default is `TRUE`. If `FALSE`, warnings will not be
+#'  printed to the console while aggregating weather data into hourly time
+#'  intervals but instead will be captured and exported to object
+#'  warn$captured_warnings and can be retrieved with function
+#'  `check_weather_warnings()`.
+#' @param muffle_warnings default is `FALSE`. IF `TRUE` any warnings or messages
+#'  will be muffled and not printed to console. Only use if there is a lot of NA
+#'  wind data which you are aware about and happy to ignore.
+#' @param data_check If `TRUE`, it checks for NA values in rain and wind data or
+#'  any values which are unlikely. If FALSE it ignores data values which could
+#'  cause models to fail.
 #'
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
@@ -153,7 +164,10 @@ format_weather <- function(w,
                            station,
                            lon = NULL,
                            lat = NULL,
-                           lonlat_file = NULL) {
+                           lonlat_file = NULL,
+                           print_warnings = TRUE,
+                           muffle_warnings = FALSE,
+                           data_check = TRUE) {
   # CRAN Note avoidance
   times <- NULL #nocov
 
@@ -161,6 +175,11 @@ format_weather <- function(w,
   if (!is.data.frame(w)) {
     stop(call. = FALSE,
          "`w` must be provided as a `data.frame` object for formatting.")
+  }
+
+  # If a warnings object exists delete it
+  if(exists("warn")){
+     warn <- NULL
   }
 
   # is this a pre-formatted data.frame that needs to be reformatted?
@@ -203,8 +222,9 @@ format_weather <- function(w,
        )
     }
 
-    .check_weather(w)
     setattr(w, "class", union("epiphy.weather", class(w)))
+
+    if(data_check) .check_weather(w)
 
     return(w)
   }
@@ -432,40 +452,72 @@ format_weather <- function(w,
 
     # if the logging frequency is less than 50 minutes aggregate to hourly
     if (log_freq < 50) {
-      w_dt_agg <- x_dt[, list(
-        times = unique(lubridate::floor_date(times,
-                                             unit = "hours")),
-        temp = mean(temp, na.rm = TRUE),
-        rain = sum(as.numeric(rain), na.rm = TRUE),
-        ws = mean(ws, na.rm = TRUE),
-        wd = as.numeric(
-          circular::mean.circular(
-            circular::circular(wd,
-                               units = "degrees",
-                               modulo = "2pi"),
-            na.rm = TRUE
-          ) # ** see line 310 below
-        ),
-        wd_sd = as.numeric(
-          circular::sd.circular(
-            circular::circular(wd,
-                               units = "degrees",
-                               modulo = "2pi"),
-            na.rm = TRUE
-          )
-        ) * 57.29578,
-        # this is equal to (180 / pi)
-        # why multiply by (180 / pi) here but not on mean.circular above **
-        lon = unique(lon),
-        lat = unique(lat)
-      ),
-      by = list(YYYY, MM, DD, hh, station)]
+       w_dt_agg <- x_dt[, list(
+          rain = sum(rain, na.rm = TRUE),
+          ws = mean(ws, na.rm = TRUE),
+          wd = if (print_warnings == FALSE) {
+             if(muffle_warnings) {
+                as.numeric(.capture_warnings(circular::mean.circular(
+                   circular::circular(wd,
+                                      units = "degrees",
+                                      modulo = "2pi"),
+                   na.rm = TRUE
+                ), silent = muffle_warnings))
+             } else{
+                as.numeric(.capture_warnings(circular::mean.circular(
+                   circular::circular(wd,
+                                      units = "degrees",
+                                      modulo = "2pi"),
+                   na.rm = TRUE
+                )))
+             }
+          } else{
+             as.numeric(circular::mean.circular(
+                circular::circular(wd,
+                                   units = "degrees",
+                                   modulo = "2pi"),
+                na.rm = TRUE
+             ))
+          },
+          wd_sd = if (print_warnings == FALSE) {
+             if(muffle_warnings){
+                as.numeric(.capture_warnings(
+                   circular::sd.circular(
+                      circular::circular(wd,
+                                         units = "degrees",
+                                         modulo = "2pi"),
+                      na.rm = TRUE
+                   ),silent = muffle_warnings
+                )) * 57.29578
+             }else{
+                as.numeric(.capture_warnings(
+                   circular::sd.circular(
+                      circular::circular(wd,
+                                         units = "degrees",
+                                         modulo = "2pi"),
+                      na.rm = TRUE
+                   )
+                )) * 57.29578}
+          } else{
+             as.numeric(circular::sd.circular(
+                circular::circular(wd,
+                                   units = "degrees",
+                                   modulo = "2pi"),
+                na.rm = TRUE
+             )) * 57.29578
+          },
+          # this is equal to (180 / pi), this is because
+          # sd.circular returns in radians, but mean.circular returns degrees
+          lon = unique(lon),
+          lat = unique(lat)
+       ),
+       by = list(times = lubridate::floor_date(times,unit = "hours"), station)]
 
-      # insert a minute col that was removed during this aggregation
-      w_dt_agg[, mm := rep(0, .N)]
-      mm <- "mm"
+       # insert a minute col that was removed during this aggregation
+       w_dt_agg[, mm := rep(0, .N)]
+       mm <- "mm"
 
-      return(w_dt_agg)
+       return(.fill_times(w_dt_agg))
 
     } else{
       if (all(is.na(x_dt[, wd_sd]))) {
@@ -475,7 +527,7 @@ format_weather <- function(w,
           "Please supply a standard deviation of wind direction."
         )
       }
-      return(x_dt)
+      return(.fill_times(x_dt))
     }
   }
 
@@ -553,10 +605,37 @@ format_weather <- function(w,
     x_out[, lon := NULL]
   }
 
-  .check_weather(x_out)
+  if(data_check) .check_weather(x_out)
 
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
   return(x_out[])
+}
+
+# Function to fill times
+.fill_times <- function(w_dt){
+
+   # Create a sequence of times by each hour
+   tseq_dt <- data.table(times = seq(from = w_dt[1,times],
+                                     to = w_dt[.N,times],
+                                     by = "hours"))
+
+   if(length(tseq_dt$times) != length(w_dt$times)) {
+      # merge in missing times
+      w_dt <- merge(
+         x = tseq_dt,
+         y = w_dt,
+         by.x = "times",
+         by.y = "times",
+         all.x = TRUE
+      )
+
+      # fill station and time data
+      w_dt[is.na(station) &
+              is.na(lon) &
+              is.na(lat), c("lon", "lat", "station") :=
+              list(w_dt[1, lon], w_dt[1, lat], w_dt[1, station])]
+   }
+   return(w_dt)
 }
 
 .check_weather <- function(final_w) {
@@ -565,17 +644,21 @@ format_weather <- function(w,
 
   # Check temperatures
   # For NAs
-  if ("temp" %in% colnames(final_w) &
-      nrow(final_w[is.na(temp), ]) != 0)
-    stop(
-      call. = FALSE,
-      "NA values in temperature; \n",
-      paste(as.character(final_w[is.na(temp), times])),
-      "\nplease use a complete dataset"
-    )
+  if (nrow(final_w[is.na(temp),]) != 0) {
+     if (all(is.na(final_w[, temp]))) {
+        warning("All temperature values are 'NA' or missing, check data if this",
+                " is not intentional")
+     } else{
+        stop(
+           call. = FALSE,
+           "NA values in temperature; \n",
+           paste(as.character(final_w[is.na(temp), times])),
+           "\nplease use a complete dataset"
+        )
+     }
+  }
   # for outside range
-  if ("temp" %in% colnames(final_w) &
-     nrow(final_w[temp < -30 |
+  if (nrow(final_w[temp < -30 |
                    temp > 60, ]) != 0)
     stop(
       call. = FALSE,
