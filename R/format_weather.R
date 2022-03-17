@@ -427,13 +427,13 @@ format_weather <- function(w,
     # if POSIX formatted times were not supplied, create a POSIXct
     # formatted column named 'times'
 
-    w[, times := paste(YYYY, "-",
+     w[, times := paste(YYYY, "-",
                        MM, "-",
                        DD, " ",
                        hh, ":",
                        mm, ":",
                        ss,sep = "")][, times :=
-                                        lubridate::ymd_hm(times,
+                                        lubridate::ymd_hms(times,
                                                           tz = time_zone)]
   }
 
