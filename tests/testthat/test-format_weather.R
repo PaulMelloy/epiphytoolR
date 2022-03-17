@@ -1,4 +1,3 @@
-
 # identify lon lat from file ---------------------------------------------------
 test_that("`format_weather()` is able to identify the correct lat and lon values
           from file", {
@@ -419,7 +418,7 @@ test_that("`format_weather() creates a `mm` column if not provided", {
    dat_minutes <- 10080 # equal to, 7 * 24 * 60
 
    time1 <- seq(from = as.POSIXct("2020-06-10 00:00:00"),
-                to = as.POSIXct("2020-06-17 00:00:00"),
+                to = as.POSIXct("2020-06-16 23:59:59"),
                 length.out = 10080)
 
    weather_station_data <- data.table(
@@ -427,6 +426,7 @@ test_that("`format_weather() creates a `mm` column if not provided", {
       Local.Time.MM = month(time1),
       Local.Time.DD = as.numeric(format(time1, format = "%d")),
       Local.Time.HH24 = hour(time1),
+      Local.Time.mm = minute(time1),
       Precipitation.since.last.observation.in.mm = round(abs(rnorm(
          dat_minutes, mean = 0, sd = 0.2
       )), 1),
@@ -448,7 +448,9 @@ test_that("`format_weather() creates a `mm` column if not provided", {
          MM = "Local.Time.MM",
          DD = "Local.Time.DD",
          hh = "Local.Time.HH24",
+         mm = "Local.Time.mm",
          rain = "Precipitation.since.last.observation.in.mm",
+         temp = "Temperature",
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
          station = "Station.Number",
@@ -458,6 +460,7 @@ test_that("`format_weather() creates a `mm` column if not provided", {
       ),
       c(
          "times",
+         "temp",
          "rain",
          "ws",
          "wd",
@@ -491,30 +494,26 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
       Ptime = seq(ISOdate(2000, 1, 1), by = "1 min", length.out = dat_minutes),
       lon = 135.7243,
       lat = -33.26625,
-      time_zone = c("Australia/Adelaide")
+      time_zone = c("Australia/Adelaide"),
+      Temperature = rnorm(dat_minutes,20,10)
    )
 
    expect_named(
-      weather_dt <- format_weather(
+      format_weather(
          w = weather_station_data,
-         YYYY = "Local.Time.YYYY",
-         MM = "Local.Time.MM",
-         DD = "Local.Time.DD",
-         hh = "Local.Time.HH24",
          rain = "Precipitation.since.last.observation.in.mm",
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
+         temp = "Temperature",
          station = "Station.Number",
          lat = "lat",
          lon = "lon",
          POSIXct_time = "Ptime",
-         r = rast(
-            system.file("extdata", "eyre.tif",
-                        package = "blackspot.sp")
-         )
+         time_zone = "Australia/Brisbane"
       ),
       c(
          "times",
+         "temp",
          "rain",
          "ws",
          "wd",
@@ -547,7 +546,7 @@ test_that("`format_weather() stops if `wd_sd` is not available", {
    )
 
    expect_error(
-      weather_dt <- format_weather(
+      format_weather(
          w = weather_station_data,
          YYYY = "Local.Time.YYYY",
          MM = "Local.Time.MM",
@@ -560,12 +559,9 @@ test_that("`format_weather() stops if `wd_sd` is not available", {
          lat = "lat",
          lon = "lon",
          POSIXct_time = "Ptime",
-         r = rast(
-            system.file("extdata", "eyre.tif",
-                        package = "blackspot.sp")
-         )
+         time_zone = "Australia/Brisbane"
       ),
-      regexp = "`format_weather*"
+      regexp = "* was unable to detect or calculate `wd_sd`.*"
    )
 })
 
@@ -585,7 +581,7 @@ test_that("`format_weather() stops if `time_zone` cannot be determined", {
    )
 
    expect_error(
-      weather_dt <- format_weather(
+      format_weather(
          w = weather_station_data,
          YYYY = "Local.Time.YYYY",
          MM = "Local.Time.MM",
@@ -599,7 +595,7 @@ test_that("`format_weather() stops if `time_zone` cannot be determined", {
          lon = "lon",
          POSIXct_time = "Ptime"
       ),
-      regexp =  "Please ensure that either a raster object for the area of * "
+      regexp =  "Please include the `time_zone*"
    )
 })
 
@@ -634,11 +630,8 @@ test_that("format_weather detects impossible times", {
          lon = "StationLongitude",
          lat = "StationLatitude",
          station = "stationID",
-         r = rast(
-            system.file("extdata", "eyre.tif",
-                        package = "blackspot.sp")
-         )
-      )
+         time_zone = "Australia/Darwin"
+      ), regexp = "Time records contain NA values or duplicated times *"
    ))
 })
 
@@ -647,18 +640,16 @@ set.seed(27)
 write.csv(data.frame(
    station = c("069061", "016096"),
    lon = c(134.2734, 135.7243),
-   lat = c(-33.52662, -33.26625)
+   lat = c(-33.52662,-33.26625)
 ),
 file = file.path(tempdir(), "stat_coord.csv"))
 
-dat_minutes <- 10080 # equal to, 7 * 24 * 60
+dat_minutes <- 60 * 24 * 365
 
 weather_station_data <- data.table(
-   Local.Time.YYYY = rep(2020, dat_minutes),
-   Local.Time.MM = rep(6, dat_minutes),
-   Local.Time.DD = rep(10:16, each = 24 * 60),
-   Local.Time.HH24 = rep(1:24, each = 60, times = 7),
-   Local.Time.MI = rep(0:59, times = 7 * 24),
+   Time = seq(from = as.POSIXct("2020-01-01 01:00:00", format = "%Y-%m-%d %H:%M:%S"),
+              length.out = dat_minutes,
+              by = "1 min"),
    Precipitation.since.last.observation.in.mm = round(abs(rnorm(
       dat_minutes, mean = 0, sd = 0.2
    )), 1),
@@ -672,19 +663,16 @@ weather_station_data <- data.table(
 
 test10 <- format_weather(
    w = weather_station_data,
-   YYYY = "Local.Time.YYYY",
-   MM = "Local.Time.MM",
-   DD = "Local.Time.DD",
-   hh = "Local.Time.HH24",
-   mm = "Local.Time.MI",
+   POSIXct_time = "Time",
    rain = "Precipitation.since.last.observation.in.mm",
    ws = "Wind.speed.in.km.h",
    wd = "Wind.direction.in.degrees.true",
    station = "Station.Number",
    lonlat_file = file.path(tempdir(), "stat_coord.csv"),
-   r = rast(system.file("extdata", "eyre.tif",
-                        package = "blackspot.sp"))
+   time_zone = "Australia/Sydney",
+   data_check = FALSE
 )
+
 
 test_that("lat and lon are correctly parsed from file to dataset", {
    expect_false(test10[, any(is.na(lat))])
@@ -695,51 +683,53 @@ test_that("lat and lon are correctly parsed from file to dataset", {
    expect_error(
       test10.1 <- format_weather(
          w = weather_station_data,
-         YYYY = "Local.Time.YYYY",
-         MM = "Local.Time.MM",
-         DD = "Local.Time.DD",
-         hh = "Local.Time.HH24",
-         mm = "Local.Time.MI",
+         POSIXct_time = "Time",
          rain = "Precipitation.since.last.observation.in.mm",
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
          station = "Station.Number",
          lonlat_file = file.path(tempdir(), "stat_coord.csv"),
-         r = rast(
-            system.file("extdata", "eyre.tif",
-                        package = "blackspot.sp")
-         )
+         time_zone = "Australia/Sydney"
       ),
-      regexp = "'station' name '16096' cannot be found in 'latlon_file"
+      regexp = "'station' name '16096' cannot be found in latlon_file."
    )
 })
 
 test_that("preformated weather read back in can be reformatted",{
-   write.csv(weather, file = paste(tempdir(), "weather_saved.csv", sep = "\\"),
+   write.csv(test10, file = paste(tempdir(), "weather_saved.csv", sep = "\\"),
              row.names = FALSE)
    weather2 <- read.csv(paste(tempdir(), "weather_saved.csv", sep = "\\"),
                         stringsAsFactors = FALSE)
-   test11 <- format_weather(weather2, time_zone = "Australia/Adelaide")
-   expect_equal(class(test11), c("blackspot.weather", "data.table", "data.frame"))
+   expect_warning(test11 <- format_weather(weather2, time_zone = "UTC"),
+                  regexp = "All temperature values are 'NA' or missing*")
+   expect_warning(format_weather(weather2, time_zone = "Australia/Perth"),
+                     regexp = "All temperature values are 'NA' or missing*")
+
+
+   expect_equal(class(test11), c("epiphy.weather", "data.table", "data.frame"))
    expect_equal(class(test11[,times]), c("POSIXct", "POSIXt"))
-   expect_equal(dim(test11), c(8784,13))
+   expect_equal(dim(test11), c(8760,14))
+
+   expect_warning(format_weather(weather2, time_zone = "Australia/Sydney"),
+                     regexp = "All temperature values are 'NA' or missing*")
 })
 
 
 test_that("`format_weather()` fills missing time", {
    scaddan <-
-      system.file("extdata", "scaddan_weather.csv", package = "blackspot.sp")
+      system.file("extdata", "scaddan_weather.csv", package = "epiphytoolR")
 
    weather_station_data <- read.csv(scaddan)
 
    weather_station_data$Local.Time <-
-      as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%dT%H:%M:%S",tz = "Australia/Brisbane")
+      as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%d %H:%M:%S",tz = "Australia/Brisbane")
 
    # remove ten readings
    weather_station_data <-
       weather_station_data[-(10:19),]
 
   expect_error(
+   expect_warning(
      weather_dat <- format_weather(
         w = weather_station_data,
         POSIXct_time = "Local.Time",
@@ -750,40 +740,9 @@ test_that("`format_weather()` fills missing time", {
         lon = "Station.Longitude",
         lat = "Station.Latitude",
         station = "StationID",
-        time_zone = "Australia/Brisbane"
+        time_zone = "Australia/Brisbane"),
+     regexp = "All temperature values are 'NA' or missing*"
+  ), regexp = "NA values in rainfall")
 
-     ),regexp = "NA values in rainfall"
-  )
-
-   # expect_is(weather_dat, "blackspot.weather")
-   # expect_equal(
-   #    names(weather_dat),
-   #    c(
-   #       "times",
-   #       "rain",
-   #       "ws",
-   #       "wd",
-   #       "wd_sd",
-   #       "lon",
-   #       "lat",
-   #       "station",
-   #       "YYYY",
-   #       "MM",
-   #       "DD",
-   #       "hh",
-   #       "mm"
-   #    )
-   # )
-   # expect_equal(dim(weather_dat), c(4392, 13))
-   # expect_true(anyNA(weather_dat$lon) == FALSE)
-   # expect_true(anyNA(weather_dat$lat) == FALSE)
-   # expect_equal(round(unique(weather_dat$lon), 1), 135.7)
-   # expect_equal(round(unique(weather_dat$lat), 1), -33.1)
-   # expect_equal(sum(is.na(weather_dat$rain)), 10)
-   # expect_equal(sum(is.na(weather_dat$wd)), 10)
-   # expect_equal(sum(is.na(weather_dat$ws)), 10)
-   # expect_equal(sum(is.na(weather_dat$wd_sd)), 10)
-   # expect_equal(weather_dat[is.na(rain),times][1],
-   #              weather_station_data$Local.Time[9] + lubridate::dhours(1))
 
 })
