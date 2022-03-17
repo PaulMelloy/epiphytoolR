@@ -3,52 +3,64 @@
 #' Formats raw weather data into an object suitable for use in the affiliated
 #'  spore dispersal packages such as `ascotraceR` and `blackspot.sp`. This
 #'  standardised data format ensures that the supplied weather data meet the
-#'  requirements for functions in the aforementioned packages.
+#'  requirements for functions in the aforementioned packages. Input weather
+#'  data expects a 'long' data format, where each line is an observation at
+#'  a point in time.
 #'
-#' @param x A [data.frame] object of weather station data for formatting.
-#' @param YYYY Column name `character` or index in `x` that refers to the year when the
+#' @param w a \code{\link{data.frame}} object of weather station data for
+#'  formatting.
+#' @param YYYY Column name `character` or index in `w` that refers to the year when the
 #'   weather was logged.
-#' @param MM Column name `character` or index in `x` that refers to the month (numerical)
+#' @param MM Column name `character` or index in `w` that refers to the month (numerical)
 #'   when the weather was logged.
-#' @param DD Column name `character` or index in `x` that refers to the day of month when
+#' @param DD Column name `character` or index in `w` that refers to the day of month when
 #'   the weather was logged.
-#' @param hh Column name `character` or index in `x` that refers to the hour (24 hour) when
+#' @param hh Column name `character` or index in `w` that refers to the hour (24 hour) when
 #'   the weather was logged.
-#' @param mm Column name `character` or index in `x` that refers to the minute when the
+#' @param mm Column name `character` or index in `w` that refers to the minute when the
 #'   weather was logged.
-#' @param POSIXct_time Column name `character` or index in `x` which contains a `POSIXct`
+#' @param ss Column name `character` or index in `w` that refers to the second when the
+#'   weather was logged.
+#' @param POSIXct_time Column name `character` or index in `w` which contains a `POSIXct`
 #'   formatted time. This can be used instead of arguments `YYYY`, `MM`, `DD`,
-#'   `hh`, `mm.` `character`.
-#' @param time_zone Time zone (Olsen time zone format) where the weather station
-#'   is located. May be in a column or supplied as a character string. Optional,
-#'   see also `r`. `character`. See details.
-#' @param temp Column name `character` or index in `x` that refers to temperature in degrees
+#'   `hh`, `mm.`.
+#' @param time_zone Local time zone (Olsen time zone format) `character` which was used
+#'   for `times` when recording observations times at the weather station. If unsure
+#'   and time data has continuity, use "UTC".
+#' @param temp Column name `character` or index in `w` that refers to temperature in degrees
 #'   Celsius.
-#' @param rain Column name `character` or index in `x` that refers to rainfall in mm.
-#' @param ws Column name `character` or index in `x` that refers to wind speed in km / h.
-#' @param wd Column name `character` or index in `x` that refers to wind direction in
+#' @param rain Column name `character` or index in `w` that refers to rainfall in millimetres.
+#' @param ws Column name `character` or index in `w` that refers to wind speed in km / h.
+#' @param wd Column name `character` or index in `w` that refers to wind direction in
 #'   degrees.
-#' @param wd_sd Column name `character` or index in `x` that refers to wind speed columns
+#' @param wd_sd Column name `character` or index in `w` that refers to wind speed columns
 #'   standard deviation.  This is only applicable if weather data
 #'   is already summarised to hourly increments. See details.
-#' @param station Column name `character` or index in `x` that refers to the weather station
+#' @param station Column name `character` or index in `w` that refers to the weather station
 #'   name or identifier. See details.
-#' @param lon Column name `character` or index in `x` that refers to weather station's
+#' @param lon Column name `character` or index in `w` that refers to weather station's
 #'   longitude. See details.
-#' @param lat Column name `character` or index in `x` that refers to weather station's
+#' @param lat Column name `character` or index in `w` that refers to weather station's
 #'   latitude. See details.
-#' @param r Spatial raster which is intended to be used with this weather data
-#'   for use in the blackspot model. Used to set `time_zone` if it is not
-#'   supplied in data. Optional, see also `time_zone`.
 #' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
+#' @param print_warnings default is `TRUE`. If `FALSE`, warnings will not be
+#'  printed to the console while aggregating weather data into hourly time
+#'  intervals but instead will be captured and exported to object
+#'  warn$captured_warnings and can be retrieved with function
+#'  `check_weather_warnings()`.
+#' @param muffle_warnings default is `FALSE`. IF `TRUE` any warnings or messages
+#'  will be muffled and not printed to console. Only use if there is a lot of NA
+#'  wind data which you are aware about and happy to ignore.
+#' @param data_check If `TRUE`, it checks for NA values in rain and wind data or
+#'  any values which are unlikely. If FALSE it ignores data values which could
+#'  cause models to fail.
 #'
-#' @details `time_zone` All weather stations must fall within the same time
-#'   zone.  If the required stations are located in differing time zones,
-#'   separate `epiphy.weather` objects must be created for each time zone.
-#'   If a raster object, `r`, of previous crops is provided that spans time
-#'   zones, an error will be emitted.
+#' @details `time_zone` The time-zone in which the `time` was recorded. All weather
+#'   stations in `w` must fall within the same time-zone.  If the required stations
+#'   are located in differing time zones, `format_weather()` should be run separately
+#'   on each object, then data can be combined after formatting.
 #'
 #' @details `wd_sd` If weather data is
 #'   provided in hourly increments, a column
@@ -56,7 +68,7 @@
 #'   to be provided. If the weather data are sub-hourly, the standard deviation
 #'   will be calculated and returned automatically.
 #'
-#' @details `lon`, `lat` and `lonlat_file` If `x` provides longitude and
+#' @details `lon`, `lat` and `lonlat_file` If `w` provides longitude and
 #'   latitude values for station locations, these may be specified in the `lon`
 #'   and `lat` columns.  If the coordinates are not relevant to the study
 #'   location `NA` can be specified and the function will drop these column
@@ -68,10 +80,13 @@
 #' @import data.table
 #' @return A `epiphy.weather` object (an extension of \CRANpkg{data.table})
 #'   containing the supplied weather aggregated to each hour in a suitable
-#'   format for use with `trace_asco()` containing the following columns:
+#'   format for use with disease models. Depending on the input weather, classes
+#'   will be given to the output object to indicate which models it meets the data
+#'   requirements for. Some of the columns returned are as follows:
 #'   \tabular{rl}{
-#'   **times**: \tab Time in POSIXct format \cr
+#'   **times**: \tab Time in POSIXct format with "UTC" time-zone\cr
 #'   **rain**: \tab Rainfall in mm \cr
+#'   **temp**: \tab Temperature in degrees celcius \cr
 #'   **ws**: \tab Wind speed in km / h \cr
 #'   **wd**: \tab Wind direction in compass degrees \cr
 #'   **wd_sd**: \tab Wind direction standard deviation in compass degrees \cr
@@ -89,9 +104,6 @@
 #' # included in ascotraceR. The weather data files both are of the same format,
 #' # so they will be combined for formatting here.
 #'
-#' # load a raster for the area of interest
-#' eyre <- terra::rast(system.file("extdata", "eyre.tif", package = "epiphytoolR"))
-#'
 #' # load the weather data to be formatted
 #' scaddan <-
 #'    system.file("extdata", "scaddan_weather.csv",package = "epiphytoolR")
@@ -105,19 +117,21 @@
 #' weather_station_data <- do.call("rbind", weather_station_data)
 #'
 #' weather_station_data$Local.Time <-
-#'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%dT%H:%M:%S")
+#'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%d %H:%M:%S",
+#'               tz = "Australia/Adelaide")
 #'
 #' weather <- format_weather(
-#'    x = weather_station_data,
+#'    w = weather_station_data,
 #'    POSIXct_time = "Local.Time",
 #'    ws = "meanWindSpeeds",
 #'    wd_sd = "stdDevWindDirections",
 #'    rain = "Rainfall",
+#'    temp = "Temperature",
 #'    wd = "meanWindDirections",
 #'    lon = "Station.Longitude",
 #'    lat = "Station.Latitude",
 #'    station = "StationID",
-#'    r = eyre
+#'    time_zone = "Australia/Adelaide"
 #' )
 #'
 #' # Reformat saved weather
@@ -133,15 +147,16 @@
 #'
 #' # reformat the data to have appropriate column classes and data class
 #' weather2 <- format_weather(weather2,
-#'                            time_zone = "Australia/Adelaide")
+#'                            time_zone = "UTC")
 #' unlink(file_path_name) # remove temporary weather file
 #' @export
-format_weather <- function(x,
+format_weather <- function(w,
                            YYYY = NULL,
                            MM = NULL,
                            DD = NULL,
                            hh = NULL,
                            mm = NULL,
+                           ss = NULL,
                            POSIXct_time = NULL,
                            time_zone = NULL,
                            temp,
@@ -152,15 +167,22 @@ format_weather <- function(x,
                            station,
                            lon = NULL,
                            lat = NULL,
-                           r = NULL,
-                           lonlat_file = NULL) {
+                           lonlat_file = NULL,
+                           print_warnings = TRUE,
+                           muffle_warnings = FALSE,
+                           data_check = TRUE) {
   # CRAN Note avoidance
-  times <- NULL #nocov
+  times <- V1 <- NULL #nocov
 
-  # Check x class
-  if (!is.data.frame(x)) {
+  # Check w class
+  if (!is.data.frame(w)) {
     stop(call. = FALSE,
-         "`x` must be provided as a `data.frame` object for formatting.")
+         "`w` must be provided as a `data.frame` object for formatting.")
+  }
+
+  # If a warnings object exists delete it
+  if(exists("warn")){
+     warn <- NULL
   }
 
   # is this a pre-formatted data.frame that needs to be reformatted?
@@ -172,17 +194,18 @@ format_weather <- function(x,
       "ws",
       "wd",
       "wd_sd",
-      "wet_hours",
+      "lon",
+      "lat",
       "station",
       "YYYY",
       "MM",
       "DD",
       "hh",
       "mm"
-    ) %in% colnames(x)
+    ) %in% colnames(w)
   )) {
     # set as data.table
-    x <- data.table(x)
+    w <- data.table(w)
 
     if (is.null(time_zone)) {
       stop(
@@ -190,13 +213,23 @@ format_weather <- function(x,
               was pre-formatted, use 'UTC'"
       )
     } else{
-      x[, times := lubridate::ymd_hms(times, tz = time_zone)]
+      w[, times := lubridate::ymd_hms(times, tz = "UTC")]
+    }
+    if (any(is.na(w[, times])) ||
+        any(w[, duplicated(times), by = factor(station)][,V1])) {
+       stop(
+          call. = FALSE,
+          times,
+          "Time records contain NA values or duplicated times. If this was ",
+          "previously formatted with `format_weather()` enter `time_zone = 'UTC'`"
+       )
     }
 
-    .check_weather(x)
-    setattr(x, "class", union("epiphy.weather", class(x)))
+    setattr(w, "class", union("epiphy.weather", class(w)))
 
-    return(x)
+    if(data_check) .check_weather(w)
+
+    return(w)
   }
 
   # Check for missing inputs before proceeding
@@ -217,23 +250,11 @@ format_weather <- function(x,
     )
   }
 
-  # Ensure only one object is provided for a time zone (raster or time_zone)
-  if (!is.null(r) & !is.null(time_zone)) {
+  if (is.null(time_zone)) {
     stop(
       call. = FALSE,
-      "Please only provide one way of determining the time zone.\n",
-      "Either the time zone as a character string, in a column or ",
-      "provide a raster of the area of interest for the time zone to be ",
-      "automatically derived from."
-    )
-  }
-
-  if (is.null(r) & is.null(time_zone)) {
-    stop(
-      call. = FALSE,
-      "Please include either a `time_zone` (Olsen time zone format) for where",
-      "the weather station is located, or a raster object for the area of",
-      "interest to calculate the time zone."
+      "Please include the `time_zone` (Olsen time zone format) for which",
+      "the weather station `time` was recorded."
     )
   }
 
@@ -245,19 +266,6 @@ format_weather <- function(x,
     )
   }
 
-
-  # Assign a `time_zone` based on the raster centroid and check to ensure only
-  # one time zone is provided
-  if (is.null(time_zone)) {
-    time_zone <-
-      unique(
-        lutz::tz_lookup_coords(
-          lat = stats::median(as.vector(terra::ext(r))[3:4]),
-          lon = stats::median(as.vector(terra::ext(r))[1:2]),
-          method = "accurate"
-        )
-      )
-  }
   if (length(time_zone) > 1) {
     stop(call. = FALSE,
          "Separate weather inputs for the model are required for",
@@ -265,31 +273,53 @@ format_weather <- function(x,
   }
 
   # convert to data.table and start renaming and reformatting -----------------
-  x <- data.table(x)
+  w <- data.table(w)
 
   # check missing args
   # If some input are missing input defaults
   if (missing(mm)) {
-    x[, mm := rep(0, .N)]
+    w[, mm := rep(0, .N)]
     mm <- "mm"
+  }else{
+     if(mm %in% colnames(w) == FALSE){
+        stop("colname `mm`:", mm, " not found in 'w'")
+     }
+  }
+  if (missing(ss)) {
+     w[, ss := rep(0, .N)]
+     ss <- "ss"
+  }else{
+     if(ss %in% colnames(w) == FALSE){
+        stop("colname `ss`:", ss, " not found in 'w'")
+     }
   }
   if (missing(wd_sd)) {
-    x$wd_sd <- NA
+    w$wd_sd <- NA
     wd_sd <- "wd_sd"
+  }else{
+     if(wd_sd %in% colnames(w) == FALSE){
+        stop("colname `wd_sd`:", wd_sd, " not found in 'w'")
+     }
   }
   if (missing(temp)) {
-    x[, temp := rep(NA, .N)]
+    w[, temp := rep(NA, .N)]
     temp <- "temp"
+  }else{
+     if(temp %in% colnames(w) == FALSE){
+        stop("colname `temp`:", temp, " not found in 'w'")
+     }
   }
 
-  if (all(c(temp, rain, ws, wd, wd_sd, station) %in% colnames(x)) == FALSE) {
-    stop(call. = FALSE,
-         "Supplied column names are not found in column names of `x`.")
+  # make sure other column names supplied in arguments are in the supplied '
+  #  w' data
+  if (all(c(rain, ws, wd, station) %in% colnames(w)) == FALSE) {
+     stop(call. = FALSE,
+          "Supplied column names are not found in column names of `w`.")
   }
 
   # import and assign longitude and latitude from a file if provided
   if (!is.null(lonlat_file)) {
-    ll_file <- data.table(fread(lonlat_file))
+    ll_file <- data.table(fread(lonlat_file,keepLeadingZeros = TRUE))
 
     if (any(c("station", "lon", "lat") %notin% colnames(ll_file))) {
       stop(
@@ -299,28 +329,28 @@ format_weather <- function(x,
       )
     }
 
-    if (any(as.character(unique(x[, get(station)])) %notin%
+    if (any(as.character(unique(w[, get(station)])) %notin%
             as.character(ll_file[, station]))) {
       stop(
         call. = FALSE,
-        "The CSV file of weather station coordinates should contain ",
-        "station coordinates for each weather station identifier."
+        "'station' name '",as.character(unique(w[, get(station)])),"' cannot be ",
+        "found in latlon_file."
       )
     }
 
     r_num <-
       which(as.character(ll_file[, station]) ==
-              as.character(unique(x[, get(station)])))
+              as.character(unique(w[, get(station)])))
 
-    x[, lat := rep(ll_file[r_num, lat], .N)]
-    x[, lon := rep(ll_file[r_num, lon], .N)]
+    w[, lat := rep(ll_file[r_num, lat], .N)]
+    w[, lon := rep(ll_file[r_num, lon], .N)]
   }
 
   # If lat and long are specified as NA
   if (!is.null(lat) & !is.null(lon)) {
     if (is.na(lat) & is.na(lon)) {
-      x[, lat := rep(NA, .N)]
-      x[, lon := rep(NA, .N)]
+      w[, lat := rep(NA, .N)]
+      w[, lon := rep(NA, .N)]
       lat <- "lat"
       lon <- "lon"
     }
@@ -329,97 +359,95 @@ format_weather <- function(x,
   # rename the columns if needed
   if (!is.null(YYYY)) {
     setnames(
-      x,
-      old = c(YYYY, MM, DD, hh, mm),
-      new = c("YYYY", "MM", "DD", "hh", "mm"),
+      w,
+      old = c(YYYY, MM, DD, hh, mm,ss),
+      new = c("YYYY", "MM", "DD", "hh", "mm", "ss"),
       skip_absent = TRUE
     )
   }
 
 
-  setnames(x,
+  setnames(w,
            old = temp,
            new = "temp",
            skip_absent = TRUE)
 
-  setnames(x,
+  setnames(w,
            old = rain,
            new = "rain",
            skip_absent = TRUE)
 
-  setnames(x,
+  setnames(w,
            old = ws,
            new = "ws",
            skip_absent = TRUE)
 
-  setnames(x,
+  setnames(w,
            old = wd,
            new = "wd",
            skip_absent = TRUE)
 
-  setnames(x,
+  setnames(w,
            old = wd_sd,
            new = "wd_sd",
            skip_absent = TRUE)
 
-  setnames(x,
+  setnames(w,
            old = station,
            new = "station",
            skip_absent = TRUE)
 
   if (!is.null(lat)) {
-    setnames(x,
+    setnames(w,
              old = lat,
              new = "lat",
              skip_absent = TRUE)
   }
 
   if (!is.null(lon)) {
-    setnames(x,
+    setnames(w,
              old = lon,
              new = "lon",
              skip_absent = TRUE)
   }
 
   if (!is.null(POSIXct_time)) {
-    setnames(x,
+    setnames(w,
              old = POSIXct_time,
              new = "times",
              skip_absent = TRUE)
-    x[, times := as.POSIXct(times)]
-    x[, YYYY := lubridate::year(x[, times])]
-    x[, MM := lubridate::month(x[, times])]
-    x[, DD := lubridate::day(x[, times])]
-    x[, hh :=  lubridate::hour(x[, times])]
-    x[, mm := lubridate::minute(x[, times])]
+    w[, times := as.POSIXct(times, tz = time_zone)]
+    w[, YYYY := lubridate::year(w[, times])]
+    w[, MM := lubridate::month(w[, times])]
+    w[, DD := lubridate::day(w[, times])]
+    w[, hh :=  lubridate::hour(w[, times])]
+    w[, mm := lubridate::minute(w[, times])]
 
-    # Add time_zone if there is no timezone for the station and coerce to
-    # POSIXct class
-    if (lubridate::tz(x[, times]) == "" ||
-        lubridate::tz(x[, times]) == "UTC") {
-      x[, times := lubridate::force_tz(x[, times],
-                                       tzone = time_zone)]
-    }
   } else {
     # if POSIX formatted times were not supplied, create a POSIXct
     # formatted column named 'times'
 
-    x[, times := paste(YYYY, "-",
+     w[, times := paste(YYYY, "-",
                        MM, "-",
                        DD, " ",
                        hh, ":",
-                       mm, sep = "")][, times :=
-                                        lubridate::ymd_hm(times,
+                       mm, ":",
+                       ss,sep = "")][, times :=
+                                        lubridate::ymd_hms(times,
                                                           tz = time_zone)]
-
   }
 
-  if (any(is.na(x[, times]))) {
+  # set times into UTC
+  w[,times := lubridate::with_tz(times,
+                                 tzone = "UTC")]
+
+  if (any(is.na(w[, times])) ||
+      any(w[, duplicated(times), by = station][,V1])) {
     stop(
       call. = FALSE,
       times,
-      "Time records contain NA values or impossible time combinations,",
-      "e.g., 11:60 am. Check time inputs"
+      "Time records contain NA values or duplicated times. Check you are entering",
+      " the correct `time_zone` and the continuity of weather station logging time"
     )
   }
 
@@ -450,40 +478,78 @@ format_weather <- function(x,
 
     # if the logging frequency is less than 50 minutes aggregate to hourly
     if (log_freq < 50) {
-      w_dt_agg <- x_dt[, list(
-        times = unique(lubridate::floor_date(times,
-                                             unit = "hours")),
-        temp = mean(temp, na.rm = TRUE),
-        rain = sum(as.numeric(rain), na.rm = TRUE),
-        ws = mean(ws, na.rm = TRUE),
-        wd = as.numeric(
-          circular::mean.circular(
-            circular::circular(wd,
-                               units = "degrees",
-                               modulo = "2pi"),
-            na.rm = TRUE
-          ) # ** see line 310 below
-        ),
-        wd_sd = as.numeric(
-          circular::sd.circular(
-            circular::circular(wd,
-                               units = "degrees",
-                               modulo = "2pi"),
-            na.rm = TRUE
-          )
-        ) * 57.29578,
-        # this is equal to (180 / pi)
-        # why multiply by (180 / pi) here but not on mean.circular above **
-        lon = unique(lon),
-        lat = unique(lat)
-      ),
-      by = list(YYYY, MM, DD, hh, station)]
+       w_dt_agg <- x_dt[, list(
+          rain = sum(rain, na.rm = TRUE),
+          temp = mean(temp, na.rm = TRUE),
+          ws = mean(ws, na.rm = TRUE),
+          wd = if (print_warnings == FALSE) {
+             if(muffle_warnings) {
+                as.numeric(.capture_warnings(circular::mean.circular(
+                   circular::circular(wd,
+                                      units = "degrees",
+                                      modulo = "2pi"),
+                   na.rm = TRUE
+                ), silent = muffle_warnings))
+             } else{
+                as.numeric(.capture_warnings(circular::mean.circular(
+                   circular::circular(wd,
+                                      units = "degrees",
+                                      modulo = "2pi"),
+                   na.rm = TRUE
+                )))
+             }
+          } else{
+             as.numeric(circular::mean.circular(
+                circular::circular(wd,
+                                   units = "degrees",
+                                   modulo = "2pi"),
+                na.rm = TRUE
+             ))
+          },
+          wd_sd = if (print_warnings == FALSE) {
+             if(muffle_warnings){
+                as.numeric(.capture_warnings(
+                   circular::sd.circular(
+                      circular::circular(wd,
+                                         units = "degrees",
+                                         modulo = "2pi"),
+                      na.rm = TRUE
+                   ),silent = muffle_warnings
+                )) * 57.29578
+             }else{
+                as.numeric(.capture_warnings(
+                   circular::sd.circular(
+                      circular::circular(wd,
+                                         units = "degrees",
+                                         modulo = "2pi"),
+                      na.rm = TRUE
+                   )
+                )) * 57.29578}
+          } else{
+             as.numeric(circular::sd.circular(
+                circular::circular(wd,
+                                   units = "degrees",
+                                   modulo = "2pi"),
+                na.rm = TRUE
+             )) * 57.29578
+          },
+          # this is equal to (180 / pi), this is because
+          # sd.circular returns in radians, but mean.circular returns degrees
+          lon = unique(lon),
+          lat = unique(lat),
+          YYYY = unique(YYYY),
+          MM = unique(MM),
+          DD = unique(DD),
+          hh = unique(hh)
 
-      # insert a minute col that was removed during this aggregation
-      w_dt_agg[, mm := rep(0, .N)]
-      mm <- "mm"
+       ),
+       by = list(times = lubridate::floor_date(times,unit = "hours"), station)]
 
-      return(w_dt_agg)
+       # insert a minute col that was removed during this aggregation
+       w_dt_agg[, mm := rep(0, .N)]
+       mm <- "mm"
+
+       return(.fill_times(w_dt_agg))
 
     } else{
       if (all(is.na(x_dt[, wd_sd]))) {
@@ -493,16 +559,16 @@ format_weather <- function(x,
           "Please supply a standard deviation of wind direction."
         )
       }
-      return(x_dt)
+      return(.fill_times(x_dt))
     }
   }
 
-  if (length(unique(x[, "station"])) > 1) {
+  if (length(unique(w[, "station"])) > 1) {
     # split data by weather station
-    x <- split(x, by = "station")
+    w <- split(w, by = "station")
 
     x_out <- lapply(
-      X = x,
+      X = w,
       FUN = .do_format,
       YYYY = YYYY,
       MM = MM,
@@ -524,7 +590,7 @@ format_weather <- function(x,
     x_out <- rbindlist(x_out)
   } else {
     x_out <- .do_format(
-      x_dt = x,
+      x_dt = w,
       YYYY = YYYY,
       MM = MM,
       DD = DD,
@@ -545,23 +611,22 @@ format_weather <- function(x,
   }
 
   setcolorder(
-    x_out,
-    c(
-      "times",
-      "temp",
-      "rain",
-      "ws",
-      "wd",
-      "wd_sd",
-      "lon",
-      "lat",
-      "station",
-      "YYYY",
-      "MM",
-      "DD",
-      "hh",
-      "mm"
-    )
+     x_out,
+     c("times",
+       "temp",
+        "rain",
+        "ws",
+        "wd",
+        "wd_sd",
+        "lon",
+        "lat",
+        "station",
+        "YYYY",
+        "MM",
+        "DD",
+        "hh",
+        "mm"
+     )
   )
 
   # remove lat lon columns if they are NA. Presume that if lat is `NA` then the
@@ -571,10 +636,39 @@ format_weather <- function(x,
     x_out[, lon := NULL]
   }
 
-  .check_weather(x_out)
+  if(data_check) .check_weather(x_out)
 
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
   return(x_out[])
+}
+
+# Function to fill times
+.fill_times <- function(w_dt){
+   # nocov on Cran
+   times <- station <- lon <- lat <- NULL
+
+   # Create a sequence of times by each hour
+   tseq_dt <- data.table(times = seq(from = w_dt[1,times],
+                                     to = w_dt[.N,times],
+                                     by = "hours"))
+
+   if(length(tseq_dt$times) != length(w_dt$times)) {
+      # merge in missing times
+      w_dt <- merge(
+         x = tseq_dt,
+         y = w_dt,
+         by.x = "times",
+         by.y = "times",
+         all.x = TRUE
+      )
+
+      # fill station and time data
+      w_dt[is.na(station) &
+              is.na(lon) &
+              is.na(lat), c("lon", "lat", "station") :=
+              list(w_dt[1, lon], w_dt[1, lat], w_dt[1, station])]
+   }
+   return(w_dt)
 }
 
 .check_weather <- function(final_w) {
@@ -583,13 +677,19 @@ format_weather <- function(x,
 
   # Check temperatures
   # For NAs
-  if (nrow(final_w[is.na(temp), ]) != 0)
-    stop(
-      call. = FALSE,
-      "NA values in temperature; \n",
-      paste(as.character(final_w[is.na(temp), times])),
-      "\nplease use a complete dataset"
-    )
+  if (nrow(final_w[is.na(temp),]) != 0) {
+     if (all(is.na(final_w[, temp]))) {
+        warning("All temperature values are 'NA' or missing, check data if this",
+                " is not intentional")
+     } else{
+        stop(
+           call. = FALSE,
+           "NA values in temperature; \n",
+           paste(as.character(final_w[is.na(temp), times])),
+           "\nplease use a complete dataset"
+        )
+     }
+  }
   # for outside range
   if (nrow(final_w[temp < -30 |
                    temp > 60, ]) != 0)
