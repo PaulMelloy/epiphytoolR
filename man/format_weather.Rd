@@ -173,7 +173,7 @@ weather_station_data$Local.Time <-
               tz = "Australia/Adelaide")
 
 weather <- format_weather(
-   x = weather_station_data,
+   w = weather_station_data,
    POSIXct_time = "Local.Time",
    ws = "meanWindSpeeds",
    wd_sd = "stdDevWindDirections",
