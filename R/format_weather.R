@@ -91,9 +91,6 @@
 #' # included in ascotraceR. The weather data files both are of the same format,
 #' # so they will be combined for formatting here.
 #'
-#' # load a raster for the area of interest
-#' eyre <- terra::rast(system.file("extdata", "eyre.tif", package = "epiphytoolR"))
-#'
 #' # load the weather data to be formatted
 #' scaddan <-
 #'    system.file("extdata", "scaddan_weather.csv",package = "epiphytoolR")
@@ -116,6 +113,7 @@
 #'    ws = "meanWindSpeeds",
 #'    wd_sd = "stdDevWindDirections",
 #'    rain = "Rainfall",
+#'    temp = "Temperature",
 #'    wd = "meanWindDirections",
 #'    lon = "Station.Longitude",
 #'    lat = "Station.Latitude",
@@ -136,7 +134,7 @@
 #'
 #' # reformat the data to have appropriate column classes and data class
 #' weather2 <- format_weather(weather2,
-#'                            time_zone = "Australia/Adelaide")
+#'                            time_zone = "UTC")
 #' unlink(file_path_name) # remove temporary weather file
 #' @export
 format_weather <- function(x,
@@ -174,7 +172,8 @@ format_weather <- function(x,
       "ws",
       "wd",
       "wd_sd",
-      "wet_hours",
+      "lon",
+      "lat",
       "station",
       "YYYY",
       "MM",
@@ -192,7 +191,16 @@ format_weather <- function(x,
               was pre-formatted, use 'UTC'"
       )
     } else{
-      x[, times := lubridate::ymd_hms(times, tz = time_zone)]
+      x[, times := lubridate::ymd_hms(times, tz = "UTC")]
+    }
+    if (any(is.na(x[, times])) ||
+        any(x[, duplicated(times), by = factor(station)][,V1])) {
+       stop(
+          call. = FALSE,
+          times,
+          "Time records contain NA values or duplicated times. If this was ",
+          "previously formatted with `format_weather()` enter `time_zone = 'UTC'`"
+       )
     }
 
     .check_weather(x)
