@@ -29,40 +29,14 @@
 #'   and time data has continuity, use "UTC".
 #' @param temp Column name `character` or index in `w` that refers to temperature in degrees
 #'   Celsius.
-#' @param rain Column name `character` or index in `w` that refers to rainfall in millimetres.
-#' @param ws Column name `character` or index in `w` that refers to wind speed in km / h.
-#' @param wd Column name `character` or index in `w` that refers to wind direction in
-#'   degrees.
-#' @param wd_sd Column name `character` or index in `w` that refers to wind speed columns
-#'   standard deviation.  This is only applicable if weather data
-#'   is already summarised to hourly increments. See details.
-#' @param station Column name `character` or index in `w` that refers to the weather station
-#'   name or identifier. See details.
+#' @param time_zone Time zone (Olsen time zone format) `character` where the
+#'   weather station is located. May be in a column or supplied as a character string.
+#'   Optional, see also `r`. See details.
+#' @param temp Column name `character` or index in `x` that refers to temperature in degrees
+#'   Celsius.
 #' @param lon Column name `character` or index in `w` that refers to weather station's
-#'   longitude. See details.
-#' @param lat Column name `character` or index in `w` that refers to weather station's
-#'   latitude. See details.
-#' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
-#'   name/id and longitude and latitude coordinates if they are not supplied in
-#'   the data. Optional, see also `lon` and `lat`.
-#' @param print_warnings default is `TRUE`. If `FALSE`, warnings will not be
-#'  printed to the console while aggregating weather data into hourly time
-#'  intervals but instead will be captured and exported to object
-#'  warn$captured_warnings and can be retrieved with function
 #'  `check_weather_warnings()`.
-#' @param muffle_warnings default is `FALSE`. IF `TRUE` any warnings or messages
-#'  will be muffled and not printed to console. Only use if there is a lot of NA
-#'  wind data which you are aware about and happy to ignore.
-#' @param data_check If `TRUE`, it checks for NA values in rain and wind data or
-#'  any values which are unlikely. If FALSE it ignores data values which could
-#'  cause models to fail.
-#'
-#' @details `time_zone` The time-zone in which the `time` was recorded. All weather
-#'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
-#'   on each object, then data can be combined after formatting.
-#'
-#' @details `wd_sd` If weather data is
 #'   provided in hourly increments, a column
 #'   with the standard deviation of the wind direction over the hour is required
 #'   to be provided. If the weather data are sub-hourly, the standard deviation
