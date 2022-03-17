@@ -687,7 +687,8 @@ format_weather <- function(w,
      }
   }
   # for outside range
-  if (nrow(final_w[temp < -30 |
+  if ("temp" %in% colnames(final_w) &
+     nrow(final_w[temp < -30 |
                    temp > 60, ]) != 0)
     stop(
       call. = FALSE,
