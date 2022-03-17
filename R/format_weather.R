@@ -172,7 +172,7 @@ format_weather <- function(w,
                            muffle_warnings = FALSE,
                            data_check = TRUE) {
   # CRAN Note avoidance
-  times <- NULL #nocov
+  times <- V1 <- NULL #nocov
 
   # Check w class
   if (!is.data.frame(w)) {
@@ -286,7 +286,7 @@ format_weather <- function(w,
      }
   }
   if (missing(ss)) {
-     w[, Ss := rep(0, .N)]
+     w[, ss := rep(0, .N)]
      ss <- "ss"
   }else{
      if(ss %in% colnames(w) == FALSE){
@@ -644,6 +644,8 @@ format_weather <- function(w,
 
 # Function to fill times
 .fill_times <- function(w_dt){
+   # nocov on Cran
+   times <- station <- lon <- lat <- NULL
 
    # Create a sequence of times by each hour
    tseq_dt <- data.table(times = seq(from = w_dt[1,times],
