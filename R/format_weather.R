@@ -53,6 +53,17 @@
 #' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
+#' @param print_warnings default is `TRUE`. If `FALSE`, warnings will not be
+#'  printed to the console while aggregating weather data into hourly time
+#'  intervals but instead will be captured and exported to object
+#'  warn$captured_warnings and can be retrieved with function
+#'  `check_weather_warnings()`.
+#' @param muffle_warnings default is `FALSE`. IF `TRUE` any warnings or messages
+#'  will be muffled and not printed to console. Only use if there is a lot of NA
+#'  wind data which you are aware about and happy to ignore.
+#' @param data_check If `TRUE`, it checks for NA values in rain and wind data or
+#'  any values which are unlikely. If FALSE it ignores data values which could
+#'  cause models to fail.
 #'
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
@@ -687,8 +698,7 @@ format_weather <- function(w,
      }
   }
   # for outside range
-  if ("temp" %in% colnames(final_w) &
-     nrow(final_w[temp < -30 |
+  if (nrow(final_w[temp < -30 |
                    temp > 60, ]) != 0)
     stop(
       call. = FALSE,
