@@ -218,7 +218,6 @@ test_that("`format_weather()` works when lat lon are in data", {
    )
 
    expect_s3_class(weather_dt, "epiphy.weather")
-
    expect_named(
       weather_dt,
       c(
