@@ -36,6 +36,26 @@
 #'   Celsius.
 #' @param lon Column name `character` or index in `w` that refers to weather station's
 #'  `check_weather_warnings()`.
+#'   Celsius.
+#' @param rain Column name `character` or index in `w` that refers to rainfall in millimetres.
+#' @param ws Column name `character` or index in `w` that refers to wind speed in km / h.
+#' @param wd Column name `character` or index in `w` that refers to wind direction in
+#'   degrees.
+#' @param wd_sd Column name `character` or index in `w` that refers to wind speed columns
+#'   standard deviation.  This is only applicable if weather data
+#'   is already summarised to hourly increments. See details.
+#' @param station Column name `character` or index in `w` that refers to the weather station
+#'   name or identifier. See details.
+#' @param lon Column name `character` or index in `w` that refers to weather station's
+#'   longitude. See details.
+#' @param lat Column name `character` or index in `w` that refers to weather station's
+#'   latitude. See details.
+#' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
+#'   name/id and longitude and latitude coordinates if they are not supplied in
+#'   the data. Optional, see also `lon` and `lat`.
+#'
+#' @details `time_zone` The time-zone in which the `time` was recorded. All weather
+#'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
 #'   on each object, then data can be combined after formatting.
 #'
@@ -89,7 +109,7 @@
 #'
 #' weather_file_list <- list(scaddan, naddacs)
 #' weather_station_data <-
-#'    lapply(X = weather_file_list, FUN = read.csv)
+#'    lapply(w = weather_file_list, FUN = read.csv)
 #'
 #' weather_station_data <- do.call("rbind", weather_station_data)
 #'
@@ -98,7 +118,7 @@
 #'               tz = "Australia/Adelaide")
 #'
 #' weather <- format_weather(
-#'    x = weather_station_data,
+#'    w = weather_station_data,
 #'    POSIXct_time = "Local.Time",
 #'    ws = "meanWindSpeeds",
 #'    wd_sd = "stdDevWindDirections",
@@ -190,20 +210,7 @@ format_weather <- function(w,
               was pre-formatted, use 'UTC'"
       )
     } else{
-<<<<<<< HEAD
       w[, times := lubridate::ymd_hms(times, tz = "UTC")]
-=======
-      x[, times := lubridate::ymd_hms(times, tz = "UTC")]
-    }
-    if (any(is.na(x[, times])) ||
-        any(x[, duplicated(times), by = factor(station)][,V1])) {
-       stop(
-          call. = FALSE,
-          times,
-          "Time records contain NA values or duplicated times. If this was ",
-          "previously formatted with `format_weather()` enter `time_zone = 'UTC'`"
-       )
->>>>>>> c46ea39 (update examples and preformat check)
     }
     if (any(is.na(w[, times])) ||
         any(w[, duplicated(times), by = factor(station)][,V1])) {
@@ -213,7 +220,6 @@ format_weather <- function(w,
           "Time records contain NA values or duplicated times. If this was ",
           "previously formatted with `format_weather()` enter `time_zone = 'UTC'`"
        )
-    }
 
     setattr(w, "class", union("epiphy.weather", class(w)))
 
