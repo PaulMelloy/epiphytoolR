@@ -15,7 +15,7 @@
 #' @export
 #' @examples
 #' calc_vp(RH = 99,Tm = 30)
-#' calc_vp(RH = 99,Tm = 30, eq = "Sapak)
+#' calc_vp(RH = 99,Tm = 30, eq = "Sapak")
 calc_vp <- function(RH, Tm, eq = "Murray"){
    return(calc_svp(Tm, eq = eq) * (RH/100))
 }

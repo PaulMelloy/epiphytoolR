@@ -14,7 +14,7 @@
 #' @export
 #' @examples
 #' calc_svp(Tm = 30)
-#' calc_svp(Tm = 30, eq = "Sapak)
+#' calc_svp(Tm = 30, eq = "Sapak")
 calc_svp <- function(Tm, eq = "Murray"){
    if(eq == "Sapak"){
       return(610.7*(10^((7.5*Tm)/237.3 + Tm)))
