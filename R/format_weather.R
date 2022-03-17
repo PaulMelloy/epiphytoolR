@@ -565,7 +565,8 @@ format_weather <- function(w,
 
   # Check temperatures
   # For NAs
-  if (nrow(final_w[is.na(temp), ]) != 0)
+  if ("temp" %in% colnames(final_w) &
+      nrow(final_w[is.na(temp), ]) != 0)
     stop(
       call. = FALSE,
       "NA values in temperature; \n",
@@ -573,7 +574,8 @@ format_weather <- function(w,
       "\nplease use a complete dataset"
     )
   # for outside range
-  if (nrow(final_w[temp < -30 |
+  if ("temp" %in% colnames(final_w) &
+     nrow(final_w[temp < -30 |
                    temp > 60, ]) != 0)
     stop(
       call. = FALSE,
