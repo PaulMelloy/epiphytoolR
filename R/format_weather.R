@@ -19,6 +19,8 @@
 #'   the weather was logged.
 #' @param mm Column name `character` or index in `w` that refers to the minute when the
 #'   weather was logged.
+#' @param ss Column name `character` or index in `w` that refers to the second when the
+#'   weather was logged.
 #' @param POSIXct_time Column name `character` or index in `w` which contains a `POSIXct`
 #'   formatted time. This can be used instead of arguments `YYYY`, `MM`, `DD`,
 #'   `hh`, `mm.`.
@@ -154,6 +156,7 @@ format_weather <- function(w,
                            DD = NULL,
                            hh = NULL,
                            mm = NULL,
+                           ss = NULL,
                            POSIXct_time = NULL,
                            time_zone = NULL,
                            temp,
@@ -277,24 +280,46 @@ format_weather <- function(w,
   if (missing(mm)) {
     w[, mm := rep(0, .N)]
     mm <- "mm"
+  }else{
+     if(mm %in% colnames(w) == FALSE){
+        stop("colname `mm`:", mm, " not found in 'w'")
+     }
+  }
+  if (missing(ss)) {
+     w[, Ss := rep(0, .N)]
+     ss <- "ss"
+  }else{
+     if(ss %in% colnames(w) == FALSE){
+        stop("colname `ss`:", ss, " not found in 'w'")
+     }
   }
   if (missing(wd_sd)) {
     w$wd_sd <- NA
     wd_sd <- "wd_sd"
+  }else{
+     if(wd_sd %in% colnames(w) == FALSE){
+        stop("colname `wd_sd`:", wd_sd, " not found in 'w'")
+     }
   }
   if (missing(temp)) {
     w[, temp := rep(NA, .N)]
     temp <- "temp"
+  }else{
+     if(temp %in% colnames(w) == FALSE){
+        stop("colname `temp`:", temp, " not found in 'w'")
+     }
   }
 
-  if (all(c(temp, rain, ws, wd, wd_sd, station) %in% colnames(w)) == FALSE) {
-    stop(call. = FALSE,
-         "Supplied column names are not found in column names of `w`.")
+  # make sure other column names supplied in arguments are in the supplied '
+  #  w' data
+  if (all(c(rain, ws, wd, station) %in% colnames(w)) == FALSE) {
+     stop(call. = FALSE,
+          "Supplied column names are not found in column names of `w`.")
   }
 
   # import and assign longitude and latitude from a file if provided
   if (!is.null(lonlat_file)) {
-    ll_file <- data.table(fread(lonlat_file))
+    ll_file <- data.table(fread(lonlat_file,keepLeadingZeros = TRUE))
 
     if (any(c("station", "lon", "lat") %notin% colnames(ll_file))) {
       stop(
@@ -308,8 +333,8 @@ format_weather <- function(w,
             as.character(ll_file[, station]))) {
       stop(
         call. = FALSE,
-        "The CSV file of weather station coordinates should contain ",
-        "station coordinates for each weather station identifier."
+        "'station' name '",as.character(unique(w[, get(station)])),"' cannot be ",
+        "found in latlon_file."
       )
     }
 
@@ -335,8 +360,8 @@ format_weather <- function(w,
   if (!is.null(YYYY)) {
     setnames(
       w,
-      old = c(YYYY, MM, DD, hh, mm),
-      new = c("YYYY", "MM", "DD", "hh", "mm"),
+      old = c(YYYY, MM, DD, hh, mm,ss),
+      new = c("YYYY", "MM", "DD", "hh", "mm", "ss"),
       skip_absent = TRUE
     )
   }
@@ -406,7 +431,8 @@ format_weather <- function(w,
                        MM, "-",
                        DD, " ",
                        hh, ":",
-                       mm, sep = "")][, times :=
+                       mm, ":",
+                       ss,sep = "")][, times :=
                                         lubridate::ymd_hm(times,
                                                           tz = time_zone)]
   }
@@ -421,7 +447,7 @@ format_weather <- function(w,
       call. = FALSE,
       times,
       "Time records contain NA values or duplicated times. Check you are entering",
-      "the correct `time_zone` and the continuity of weather station logging time"
+      " the correct `time_zone` and the continuity of weather station logging time"
     )
   }
 
