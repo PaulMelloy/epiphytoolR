@@ -37,6 +37,12 @@
 #' @param lon Column name `character` or index in `w` that refers to weather station's
 #'  `check_weather_warnings()`.
 #'   are located in differing time zones, `format_weather()` should be run separately
+<<<<<<< HEAD
+=======
+#'   on each object, then data can be combined after formatting.
+#'
+#' @details `wd_sd` If weather data is
+>>>>>>> 2bc7f5d (remove `r`)
 #'   provided in hourly increments, a column
 #'   with the standard deviation of the wind direction over the hour is required
 #'   to be provided. If the weather data are sub-hourly, the standard deviation
