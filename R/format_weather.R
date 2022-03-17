@@ -454,6 +454,7 @@ format_weather <- function(w,
     if (log_freq < 50) {
        w_dt_agg <- x_dt[, list(
           rain = sum(rain, na.rm = TRUE),
+          temp = mean(temp, na.rm = TRUE),
           ws = mean(ws, na.rm = TRUE),
           wd = if (print_warnings == FALSE) {
              if(muffle_warnings) {
@@ -509,7 +510,12 @@ format_weather <- function(w,
           # this is equal to (180 / pi), this is because
           # sd.circular returns in radians, but mean.circular returns degrees
           lon = unique(lon),
-          lat = unique(lat)
+          lat = unique(lat),
+          YYYY = unique(YYYY),
+          MM = unique(MM),
+          DD = unique(DD),
+          hh = unique(hh)
+
        ),
        by = list(times = lubridate::floor_date(times,unit = "hours"), station)]
 
@@ -579,23 +585,22 @@ format_weather <- function(w,
   }
 
   setcolorder(
-    x_out,
-    c(
-      "times",
-      "temp",
-      "rain",
-      "ws",
-      "wd",
-      "wd_sd",
-      "lon",
-      "lat",
-      "station",
-      "YYYY",
-      "MM",
-      "DD",
-      "hh",
-      "mm"
-    )
+     x_out,
+     c("times",
+       "temp",
+        "rain",
+        "ws",
+        "wd",
+        "wd_sd",
+        "lon",
+        "lat",
+        "station",
+        "YYYY",
+        "MM",
+        "DD",
+        "hh",
+        "mm"
+     )
   )
 
   # remove lat lon columns if they are NA. Presume that if lat is `NA` then the
