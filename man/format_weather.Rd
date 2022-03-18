@@ -54,11 +54,11 @@ weather was logged.}
 formatted time. This can be used instead of arguments \code{YYYY}, \code{MM}, \code{DD},
 \code{hh}, \code{mm.}.}
 
-\item{time_zone}{Local time zone (Olsen time zone format) \code{character} which was used
-for \code{times} when recording observations times at the weather station. If unsure
-and time data has continuity, use "UTC".}
+\item{time_zone}{Time zone (Olsen time zone format) \code{character} where the
+weather station is located. May be in a column or supplied as a character string.
+Optional, see also \code{r}. See details.}
 
-\item{temp}{Column name \code{character} or index in \code{w} that refers to temperature in degrees
+\item{temp}{Column name \code{character} or index in \code{x} that refers to temperature in degrees
 Celsius.}
 
 \item{rain}{Column name \code{character} or index in \code{w} that refers to rainfall in millimetres.}
