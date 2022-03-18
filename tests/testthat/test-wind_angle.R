@@ -24,7 +24,7 @@ test_that("wind_angle returns the correct number of elements", {
 
 test_that("wind_angle returns the correct class", {
   # test the class of output
-  expect_is(w_a, "numeric")
+  expect_true(is.numeric(w_a))
   expect_true(is.vector(w_a))
 
 })
