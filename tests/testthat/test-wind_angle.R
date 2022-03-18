@@ -41,7 +41,7 @@ test_that("wind_angle has a minimum standard deviation", {
       PSPH =  10000,
       min_stdev = 1
    )
-   expect_equal(sd(sd1),1,tolerance = 0.005)
+   expect_equal(sd(sd1),1,tolerance = 0.01)
    sd40 <- wind_angle(
       mean_wind_direction = 180,
       stdev_wind_direction = 30,
