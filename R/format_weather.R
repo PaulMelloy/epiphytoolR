@@ -230,7 +230,7 @@ format_weather <- function(w,
           times,
           "Time records contain NA values or duplicated times. If this was ",
           "previously formatted with `format_weather()` enter `time_zone = 'UTC'`"
-       )
+       )}
 
     setattr(w, "class", union("epiphy.weather", class(w)))
 
@@ -695,76 +695,76 @@ format_weather <- function(w,
            paste(as.character(final_w[is.na(temp), times])),
            "\nplease use a complete dataset"
         )
-     }
-  }
+     }}
+
   # for outside range
   if (nrow(final_w[temp < -30 |
-                   temp > 60, ]) != 0)
+                   temp > 60, ]) != 0){
     stop(
       call. = FALSE,
       "Temperature inputs are outside expected ranges (-30 and +60 degrees Celcius); \n",
       paste(as.character(final_w[temp < -30 |
                                    temp > 60, times])),
       "\nplease correct these inputs and run again"
-    )
+    )}
 
   # Check rainfall
   # For NAs
-  if (nrow(final_w[is.na(rain), ]) != 0)
+  if (nrow(final_w[is.na(rain), ]) != 0){
     stop(
       call. = FALSE,
       "NA values in rainfall; \n",
       paste(as.character(final_w[is.na(rain), times])),
       "\nplease use a complete dataset"
-    )
+    )}
   # for outside range
   if (nrow(final_w[rain < 0 |
-                   rain > 100, ]) != 0)
+                   rain > 100, ]) != 0){
     stop(
       call. = FALSE,
       "rain inputs are outside expected ranges (0 and 100 mm); \n",
       paste(as.character(final_w[rain < 0 |
                                    rain > 100, times])),
       "\nplease correct these inputs and run again"
-    )
+    )}
 
   # Check windspeed
   # For NAs
-  if (nrow(final_w[is.na(ws), ]) != 0)
+  if (nrow(final_w[is.na(ws), ]) != 0){
     stop(
       call. = FALSE,
       "NA values in wind speed; \n",
       paste(as.character(final_w[is.na(ws), times])),
       "\nplease use a complete dataset"
-    )
+    )}
   # for outside range
   if (nrow(final_w[ws < 0 |
-                   ws > 150, ]) != 0)
+                   ws > 150, ]) != 0){
     stop(
       call. = FALSE,
       "wind speed inputs are outside expected ranges (0 and 150 kph); \n",
       paste(as.character(final_w[ws < 0 |
                                    ws > 150, times])),
       "\nplease correct these inputs and run again"
-    )
+    )}
 
   # Check Wind direction
   # For NAs
-  if (nrow(final_w[is.na(wd), ]) != 0)
+  if (nrow(final_w[is.na(wd), ]) != 0){
     stop(
       call. = FALSE,
       "NA values in wind direction; \n",
       paste(as.character(final_w[is.na(wd), times])),
       "\nplease use a complete dataset"
-    )
+    )}
   # for outside range
   if (nrow(final_w[wd < 0 |
-                   wd > 360, ]) != 0)
+                   wd > 360, ]) != 0){
     stop(
       call. = FALSE,
       "wind direction are outside expected ranges (0 and 360); \n",
       paste(as.character(final_w[wd < 0 |
                                    rain > 360, times])),
       "\nplease correct these inputs and run again"
-    )
+    )}
 }
