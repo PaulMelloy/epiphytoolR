@@ -16,8 +16,7 @@
 #' wind_distance(10) # returns a single estimate
 #' wind_distance(10, PSPH = 10) # returns 10 estimates
 #' wind_distance(15, PSPH = c(5, 5)) # returns 10 estimates
-#' @keywords internal
-#' @noRd
+#' @export
 wind_distance <-
   function(average_wind_speed_in_fifteen_minutes,
            wind_cauchy_multiplier = 0.015,

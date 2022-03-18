@@ -20,9 +20,7 @@
 #' wind_angle(10, 2, PSPH = 10) # returns 10 estimates
 #' wind_angle(15, 2, PSPH = c(5, 5)) # returns 10 estimates
 #'
-#' @keywords internal
-#' @noRd
-#'
+#' @export
 wind_angle <-
   function(mean_wind_direction,
            stdev_wind_direction,
