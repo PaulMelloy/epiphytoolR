@@ -11,7 +11,7 @@
 #'    warning("This is a warning")
 #'    message("This is a message")
 #'    x + x}
-#' blackspot.sp::.capture_warnings(f(1))
+#' epiphytoolR::.capture_warnings(f(1))
 #' check_weather_warnings()
 check_weather_warnings <- function() {
    invisible(lapply(warn$captured_warnings, function(x) {
