@@ -16,9 +16,14 @@
 #' @return Numerical vector, which returns distance a spore is dispersed by wind
 #'   from the source of infection
 #' @examples
-#' wind_distance(10) # returns a single estimate
-#' wind_distance(10, PSPH = 10) # returns 10 estimates
-#' wind_distance(15, PSPH = c(5, 5)) # returns 10 estimates
+#' wind_distance(mean_wind_speed = 10,
+#'               wind_cauchy_multiplier = 50) # returns a single estimate
+#' wind_distance(mean_wind_speed = 10,
+#'               wind_cauchy_multiplier = 50,
+#'               PSPH = 10) # returns 10 estimates
+#' wind_distance(mean_wind_speed = 10,
+#'               wind_cauchy_multiplier = 50,
+#'               PSPH = c(5, 5)) # returns 10 estimates
 #' @export
 wind_distance <-
   function(mean_wind_speed,
