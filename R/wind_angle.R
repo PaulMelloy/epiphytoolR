@@ -1,13 +1,16 @@
 #' Estimates Bearing Conidia Dispersed by Wind Driven Rain
 #'
-#' '(wind_angle)' samples from normal distribution to estimate the bearing of of
-#' Ascochyta rabiei conidia dispersed by wind driven rain
+#' `wind_angle()` samples from normal distribution to estimate the bearing of
+#' spore or conidia dispersal wind.
 #'
 #' @param mean_wind_direction A numeric vector representing mean wind direction
 #'   at a particular time interval
 #' @param stdev_wind_direction Refer to standard deviation of wind_direction at
 #'   a particular time interval
 #' @param PSPH A numeric vector, estimated from `.estimate_spore_discharge()`
+#' @param min_stdev the minimum possible standard deviation of wind direction
+#'   permitted. This should reflect the turbulent effect of wind movements to
+#'   prevent std deviations of near zero when wind direction is averaged.
 #'
 #' @return A numeric vector giving information on the angle component of conidia
 #'   dispersed by wind driven rain.
@@ -17,19 +20,21 @@
 #' wind_angle(10, 2, PSPH = 10) # returns 10 estimates
 #' wind_angle(15, 2, PSPH = c(5, 5)) # returns 10 estimates
 #'
-#' @keywords internal
-#' @noRd
-#'
+#' @export
 wind_angle <-
-  function(average_wind_direction_in_fifteen_minutes,
-           stdev_wind_direction_fifteen_minutes,
-           PSPH = 1) {
+  function(mean_wind_direction,
+           stdev_wind_direction,
+           PSPH = 1,
+           min_stdev = 1) {
 
     w_angle <-
       lapply(X = PSPH,
              FUN = stats::rnorm,
-             mean = average_wind_direction_in_fifteen_minutes,
-             sd = stdev_wind_direction_fifteen_minutes)
+             mean = mean_wind_direction,
+             sd = fifelse(stdev_wind_direction < min_stdev,
+                          min_stdev,
+                          stdev_wind_direction)
+             )
 
     w_angle <- unlist(w_angle)
 
