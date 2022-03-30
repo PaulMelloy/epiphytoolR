@@ -4,15 +4,16 @@
 \alias{calc_vpd}
 \title{Calculate Vapour-pressure deficit from relative humidity and temperature}
 \usage{
-calc_vpd(RH, Tm, eq = "Murray", verbose = FALSE)
+calc_vpd(RH, Tm, eq = "BOM", verbose = FALSE)
 }
 \arguments{
 \item{RH}{Relative humidity}
 
 \item{Tm}{Temperature in degrees celcius}
 
-\item{eq}{Type of equation to use while calculation VPD. defaults \code{"Murray"}.
-Other option \code{"Sapak"}}
+\item{eq}{Type of equation to use while calculation VPD. defaults to the \code{BOM}
+(Bureau of Meterology equation, Australia). Other options, \code{"Murray"} and
+\code{"Sapak"}}
 
 \item{verbose}{prints saturated vapour pressure (SVP) and vapour pressure
 in kPa before returning the VPD result}

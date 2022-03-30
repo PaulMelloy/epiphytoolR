@@ -5,8 +5,9 @@
 #'  Celsius.
 #'
 #' @param Tm Temperature in degrees Celsius
-#' @param eq Type of equation to use while calculation VPD. defaults `"Murray"`.
-#'  Other option `"Sapak"`
+#' @param eq Type of equation to use while calculation VPD. defaults to the `BOM`
+#'  (Bureau of Meterology equation, Australia). Other options, `"Murray"` and
+#'  `"Sapak"`
 #'
 #' @return Saturated vapour-pressure in kPa
 #' @references
@@ -14,11 +15,16 @@
 #' @export
 #' @examples
 #' calc_svp(Tm = 30)
-#' calc_svp(Tm = 30, eq = "Sapak")
-calc_svp <- function(Tm, eq = "Murray"){
+#' calc_svp(Tm = 30, eq = "Murray")
+calc_svp <- function(Tm, eq = "BOM"){
    if(eq == "Sapak"){
       return(610.7*(10^((7.5*Tm)/237.3 + Tm)))
-   }else{
+   }
+   if(eq == "Murray"){
       # Murray 1967
-      return((10^(((Tm * 7.5)/(Tm + 237.3))+0.7858))*0.1)}
+      return((10^(((Tm * 7.5)/(Tm + 237.3))+0.7858))*0.1)
+   }else{
+         #BOM
+      return(exp (1.8096 + (17.269425 * Tm)/(237.3 + Tm))/10)
+      }
 }

@@ -6,8 +6,10 @@
 #'
 #' @param RH Relative humidity
 #' @param Tm Temperature in degrees Celsius
-#' @param eq Type of equation to use while calculation VPD. defaults `"Murray"`.
-#'  Other option `"Sapak"`
+#' @param eq Type of equation to use while calculation VPD. defaults to the `BOM`
+#'  (Bureau of Meterology equation, Australia). Other options, `"Murray"` and
+#'  `"Sapak"`
+#' @param dp Dew point, in degrees Celsius
 #'
 #' @return Vapour-pressure in kPa
 #' @references
@@ -15,7 +17,16 @@
 #' @export
 #' @examples
 #' calc_vp(RH = 99,Tm = 30)
-#' calc_vp(RH = 99,Tm = 30, eq = "Sapak")
-calc_vp <- function(RH, Tm, eq = "Murray"){
-   return(calc_svp(Tm, eq = eq) * (RH/100))
+#' calc_vp(RH = 99,Tm = 30, eq = "Murray")
+#' calc_vp(dp = 10)
+calc_vp <- function(RH, Tm, dp = NULL, eq = "BOM"){
+   if(is.null(dp)) {return(calc_svp(Tm, eq = eq) * (RH/100))} else{
+      # equation from the Australian Beureu of meteorology
+      # divided by 10 to convert from hectopascals to kPa
+      if(missing(RH) == FALSE |
+         missing(Tm) == FALSE) {
+         message("Ignoring RH or Tm inputs and calculating vp from dew point `dp`")
+      }
+      return(exp(1.8096 + (17.269425 * dp)/(237.3 + dp))/10)
+   }
 }

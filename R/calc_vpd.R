@@ -5,8 +5,9 @@
 #'
 #' @param RH Relative humidity
 #' @param Tm Temperature in degrees celcius
-#' @param eq Type of equation to use while calculation VPD. defaults `"Murray"`.
-#'  Other option `"Sapak"`
+#' @param eq Type of equation to use while calculation VPD. defaults to the `BOM`
+#'  (Bureau of Meterology equation, Australia). Other options, `"Murray"` and
+#'  `"Sapak"`
 #' @param verbose prints saturated vapour pressure (SVP) and vapour pressure
 #'  in kPa before returning the VPD result
 #'
@@ -18,7 +19,7 @@
 #'
 #' @examples
 #' calc_vpd(RH = 99, Tm = 30)
-calc_vpd <- function(RH, Tm, eq = "Murray", verbose = FALSE){
+calc_vpd <- function(RH, Tm, eq = "BOM", verbose = FALSE){
    return((1-(RH/100))*calc_svp(Tm = Tm, eq = eq))
 
    #
