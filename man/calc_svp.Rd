@@ -14,7 +14,7 @@ calc_svp(Tm, eq = "BOM")
 \code{"Sapak"}}
 }
 \value{
-Saturated vapour-pressure in kPa
+Saturated vapour-pressure in kPa, class \CRANpkg{units}
 }
 \description{
 This formula uses Tetens (1930) equation as described by Murray

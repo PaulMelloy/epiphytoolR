@@ -18,7 +18,7 @@ calc_vp(RH, Tm, dp = NULL, eq = "BOM")
 \code{"Sapak"}}
 }
 \value{
-Vapour-pressure in kPa
+Vapour-pressure in kPa class \CRANpkg{units}
 }
 \description{
 This formula uses Tetens (1930) equation as described by Murray

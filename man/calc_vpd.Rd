@@ -19,7 +19,7 @@ calc_vpd(RH, Tm, eq = "BOM", verbose = FALSE)
 in kPa before returning the VPD result}
 }
 \value{
-Vapour-pressure deficit in kPa
+Vapour-pressure deficit kPa, class \CRANpkg{units}
 }
 \description{
 This formula uses Tetens (1930) equation as described by Murray
