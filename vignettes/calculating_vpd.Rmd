@@ -1,0 +1,61 @@
+---
+title: "Calculating Vapour Pressure Deficit"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{calculating_vpd}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(epiphytoolR)
+library(units)
+```
+
+This package contains tools to calculate vapour pressures with temperature and 
+humidity inputs. We can use the `units` package functions to specify the type of
+units used in the calculations
+
+To visualise saturated vapour pressure, vapour pressure deficit and vapour 
+pressure, we will plot these for temperatuers between 1 and 40.
+
+```{r}
+Temp <- 1:35
+svp <- calc_svp(1:40)
+
+```
+
+```{r}
+plot(x = Temp, y = calc_svp(Temp), type = "l", ylim = c(0,6),
+     xlab = "Temperature (Degrees C)",
+     ylab = "Vapour pressure (kPa)", lwd = 2)
+lines(x = Temp, calc_vp(RH = 30, Tm = Temp), col = "blue", lty = 2, lwd = 2)
+lines(x = Temp, calc_vpd(RH = 30, Tm = Temp), col = "red", lty = 2, lwd = 2)
+lines(x = Temp, calc_vp(RH = 60, Tm = Temp), col = "blue", lty = 3, lwd = 2)
+lines(x = Temp, calc_vpd(RH = 60, Tm = Temp), col = "red", lty = 3, lwd = 2)
+lines(x = Temp, calc_vp(RH = 90, Tm = Temp), col = "blue", lty = 4, lwd = 2)
+lines(x = Temp, calc_vpd(RH = 90, Tm = Temp), col = "red", lty = 4, lwd = 2)
+legend(1, 6, 
+       legend=c("Saturated vapour pressure", 
+                "Vapour pressure deficit",
+                "Vapour pressure",
+                "30 % RH",
+                "60 % RH",
+                "90 % RH"),
+       col=c("black",
+             "red",
+             "blue",
+             "black",
+             "black",
+             "black"), 
+       lty=c(1,2,2,2,3,4), 
+       cex=1, lwd = 2)
+```
+
