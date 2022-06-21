@@ -2,14 +2,14 @@
 #'
 #' @details This function determines the circular vector influence on a 1 to -1
 #'  scale. For example if the wind is blowing on a northerly vector (0 degrees)
-#'  There is no influence reduction. If wind blows at a 90 degree angle there is
+#'  there is no influence reduction. If wind blows at a 90 degree angle there is
 #'  no influence on the north south plane.
 #'
 #' @param x degrees (numeric)
 #' @param offset degrees (numeric), what angle should the function offset to and
 #'  the returned value be 1.
 #'
-#' @return numeric double of same length as input
+#' @return numeric double of same length as input between -1 and 1
 #' @export
 #'
 #' @examples
