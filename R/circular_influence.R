@@ -6,7 +6,8 @@
 #'  no influence on the north south plane.
 #'
 #' @param x degrees (numeric)
-#'
+#' @param offset degrees (numeric), what angle should the function offset to and
+#'  the returned value be 1.
 #'
 #' @return numeric double of same length as input
 #' @export
@@ -26,7 +27,7 @@
 #' ws <- 5 # kph
 #' wd <-225 # degrees
 #' ws * circular_influence(wd)
-circular_influence <- function(x) {
+circular_influence <- function(x, offset = 0) {
    out <- sapply(
       x,
       FUN = function(x1) {
@@ -34,11 +35,13 @@ circular_influence <- function(x) {
          mmm_pi <- (3.14159)
          # convert to radians
          rad <- (x1 / 360) * (2 * mmm_pi)
+         offset_rad <- (offset / 360) * (2 * mmm_pi)
+         rad <- rad - offset_rad
          # invert for 180-360 degrees
-         if (rad > mmm_pi) {
-            rad <- rad - (2 * (rad - mmm_pi))
+         if (abs(rad) > mmm_pi) {
+            rad <- abs(rad) - (2 * (abs(rad) - mmm_pi))
          }
-         return(1 - (2 * rad / mmm_pi))
+         return(1 - (2 * abs(rad) / mmm_pi))
       }
    )
    return(unlist(out))
