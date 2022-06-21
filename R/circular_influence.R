@@ -8,7 +8,7 @@
 #' @param x degrees (numeric)
 #'
 #'
-#' @return numberic double of same length as input
+#' @return numeric double of same length as input
 #' @export
 #'
 #' @examples
