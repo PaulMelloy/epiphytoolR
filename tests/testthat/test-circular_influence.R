@@ -1,4 +1,4 @@
-test_that("tests work", {
+test_that("circ_influence tests work", {
    # Wind speed strength from a northerly wind
    ws <- 5 # kph
    wd <- 0 # degrees
@@ -14,7 +14,7 @@ test_that("tests work", {
 
 })
 
-test_that("vector inputs work", {
+test_that("circ_influence vector inputs work", {
    # Wind speed strength from a northerly wind
    ws <- 5 # kph
    wd <- 1:360 # degrees
@@ -25,4 +25,27 @@ test_that("vector inputs work", {
 test_that("circ_influence stops expectantly", {
    expect_error(circular_influence(361),regexp = "'x' must be a number between 0 and 360")
    expect_error(circular_influence(-1),regexp = "'x' must be a number between 0 and 360")
+})
+
+test_that("circ_influence offset works", {
+   expect_equal(sum(circular_influence(x= 1:360, offset = 10)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 25)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 65)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 90)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 120)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 180)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 200)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 225)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = 290)),0)
+
+   expect_equal(sum(circular_influence(x= 1:360, offset = -10)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = -25)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = -65)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = -90)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = -120)),0)
+   expect_equal(sum(circular_influence(x= 1:360, offset = -180)),0)
+   #expect_equal(sum(circular_influence(x= 1:360, offset = -200)),0)
+   #expect_equal(sum(circular_influence(x= 1:360, offset = -225)),0)
+   #expect_equal(sum(circular_influence(x= 1:360, offset = -290)),0)
+
 })
