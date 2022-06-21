@@ -27,10 +27,10 @@
 #' wd <-225 # degrees
 #' ws * circular_influence(wd)
 circular_influence <- function(x) {
-   if(x < 0 | x > 360) stop("'x' must be a number between 0 and 360")
    out <- sapply(
       x,
       FUN = function(x1) {
+         if(x1 < 0 | x1 > 360) stop("'x' must be a number between 0 and 360",call. = FALSE)
          mmm_pi <- (3.14159)
          # convert to radians
          rad <- (x1 / 360) * (2 * mmm_pi)
