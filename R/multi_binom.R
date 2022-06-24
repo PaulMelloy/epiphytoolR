@@ -1,4 +1,4 @@
-#' Splash dispersal multi-binomial
+#' Splash dispersal multi-binomial in a pixel
 #'
 #' @description Generate a two dimensional probability distribution representing
 #'  the probability of spore dispersal from an inoculum source. Generates the
@@ -91,7 +91,7 @@ multi_var_binom <- function(row_spacing = 0.3,
                off_set <- abs(i2 - cl)
                # Find real distance between inoculumn source and plant
                #  then adjust for the width of the
-              (lon[i2] * (1-((row_spacing * off_set))))*lateral
+              (lon[i2] * (1-(row_spacing * off_set)))*lateral
               })
             ),
           nrow = n_r)
