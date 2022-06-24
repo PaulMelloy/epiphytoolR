@@ -5,6 +5,7 @@
 #'  probability distribution with each entry representing a single plant
 #'
 #' @param row_spacing Crop row spacing in meters
+#' @param stdev Standard deviation of splash distribution. defaults to pixel size
 #' @param width paddock width in meters
 #' @param px pixel size, length and width of square pixel
 #' @param seeding_r number of plants sown in a pixel (`px`)
@@ -44,11 +45,16 @@
 #' }
 #' image(t(m1))
 multi_var_binom <- function(row_spacing = 0.3,
+                            stdev = NULL,
                             width = 1,
                             px = 1,
                             seeding_r = 40,
                             IO = 1,
                             m){
+
+   if(is.null(stdev)){
+      stdev <- px
+   }
 
    if(missing(m)){
       # Create a matrix representing the plants in the pixel dimensions
@@ -75,15 +81,17 @@ multi_var_binom <- function(row_spacing = 0.3,
 
       r <- i %% n_r
       cl <- ceiling(i / n_r)
-      lateral <- dnorm(1:n_r,mean = r)
-      lon <- dnorm(1:n_c, mean = cl)
-      rs_diff <-
+      lateral <- dnorm(1:n_r,mean = r,sd = stdev)
+      lon <- dnorm(1:n_c, mean = cl,sd = stdev)
 
       new_m <-
         matrix(
           unlist(
             lapply(seq_along(lon), function(i2) {
-              off_set <- abs(i2 - cl)
+              # what is the distance from the inoculum source to the plant in columns/rows
+               off_set <- abs(i2 - cl)
+               # Find real distance between inoculumn source and plant
+               #  then adjust for the width of the
               (lon[i2] * (1-((row_spacing * off_set) /width)))*lateral
               })
             ),
@@ -97,11 +105,17 @@ multi_var_binom <- function(row_spacing = 0.3,
 
 mat_it <- function(rs = 0.3, px = 1, seeding_r = 40){
 
-   rows <- floor(px/rs) + rbinom(1,1,rs %% 1)
+   rows_per_pixel_frac <- px/rs
+   # adjust to row number with the random chance of adding a row from leftover space
+   rows_per_pixel <-
+      floor(rows_per_pixel_frac) +
+      rbinom(1,1,rows_per_pixel_frac %% 1)
 
-   plants_per_row <- seeding_r / (px/rs)
+   plants_per_row <- seeding_r / rows_per_pixel_frac
 
-   plant_m <- matrix(rep(0,plants_per_row*rows), nrow = plants_per_row, ncol = rows)
+   plant_m <- matrix(rep(0,plants_per_row*rows_per_pixel),
+                     nrow = plants_per_row,
+                     ncol = rows_per_pixel)
 
    return(as.matrix(plant_m))
 }
