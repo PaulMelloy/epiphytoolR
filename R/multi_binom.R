@@ -2,18 +2,18 @@
 #'
 #' @description Generate a two dimensional probability distribution representing
 #'  the probability of spore dispersal from an inoculum source. Generates the
-#'  probability distribution with each entry representing a single plant
+#'  probability distribution with each entry representing a single plant. Pixel
+#'  size represents the whole spatial size
 #'
 #' @param row_spacing Crop row spacing in meters
 #' @param stdev Standard deviation of splash distribution. defaults to pixel size
-#' @param width paddock width in meters
 #' @param px pixel size, length and width of square pixel
 #' @param seeding_r number of plants sown in a pixel (`px`)
 #' @param IO number of infective sites within the pixel
 #' @param m (optional) a matrix representing each plant and the number of
 #'  infective sites for each plant
 #'
-#' @return probabilty matrix where each entry gives the probabiltiy of splash
+#' @return probability matrix where each entry gives the probability of splash
 #'  dispersal from infective sites to the respective entry
 #' @import stats
 #' @export
@@ -46,7 +46,6 @@
 #' image(t(m1))
 multi_var_binom <- function(row_spacing = 0.3,
                             stdev = NULL,
-                            width = 1,
                             px = 1,
                             seeding_r = 40,
                             IO = 1,
@@ -92,7 +91,7 @@ multi_var_binom <- function(row_spacing = 0.3,
                off_set <- abs(i2 - cl)
                # Find real distance between inoculumn source and plant
                #  then adjust for the width of the
-              (lon[i2] * (1-((row_spacing * off_set) /width)))*lateral
+              (lon[i2] * (1-((row_spacing * off_set))))*lateral
               })
             ),
           nrow = n_r)
