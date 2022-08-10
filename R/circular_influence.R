@@ -38,10 +38,13 @@ circular_influence <- function(x, offset = 0) {
          offset_rad <- (offset / 360) * (2 * mmm_pi)
          rad <- rad - offset_rad
          # invert for 180-360 degrees
-         if (abs(rad) > mmm_pi) {
-            rad <- abs(rad) - (2 * (abs(rad) - mmm_pi))
-         }
-         return(1 - (2 * abs(rad) / mmm_pi))
+         # if (abs(rad) > mmm_pi) {
+         #    rad <- abs(rad) - (2 * (abs(rad) - mmm_pi))
+         # }
+         #return(1 - (2 * abs(rad) / mmm_pi))
+         cart_out <- c(x = sin(rad),
+                       y = cos(rad))
+         return(cart_out)
       }
    )
    return(unlist(out))
