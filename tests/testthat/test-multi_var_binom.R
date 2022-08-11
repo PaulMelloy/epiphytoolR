@@ -13,7 +13,7 @@ test_that("mulit_biom examples work", {
    expect_equal(sample(seq_along(mvb),
           size = 10,
           prob = mvb,
-          replace = TRUE),c(20, 20, 32, 7, 19, 6, 32, 21, 32, 32))
+          replace = TRUE),c(20, 20, 19, 7, 21, 44, 20, 21, 20, 19))
 
    # sample the cardinal coordinates (matrix cell) where the spore may drop
 
@@ -30,3 +30,4 @@ test_that("mulit_biom with custom rows and columns", {
    expect_equal(dim(mvb1),dim(m1))
 
 })
+
