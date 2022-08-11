@@ -4,13 +4,17 @@
 \alias{circular_influence}
 \title{Calculate the influence of 2 dimensional vectors}
 \usage{
-circular_influence(x)
+circular_influence(x, offset = 0)
 }
 \arguments{
-\item{x}{degrees (numeric)}
+\item{x}{degrees (numeric), numeric of length one}
+
+\item{offset}{degrees (numeric), what angle should the function offset to and
+the returned value be 1.}
 }
 \value{
-numeric double of same length as input
+numeric double vector giving the proportion of influence from two dimensions,
+the 'x' dimension and 'y' dimension between -1 and 1
 }
 \description{
 Calculate the influence of 2 dimensional vectors
@@ -18,7 +22,7 @@ Calculate the influence of 2 dimensional vectors
 \details{
 This function determines the circular vector influence on a 1 to -1
 scale. For example if the wind is blowing on a northerly vector (0 degrees)
-There is no influence reduction. If wind blows at a 90 degree angle there is
+there is no influence reduction. If wind blows at a 90 degree angle there is
 no influence on the north south plane.
 }
 \examples{

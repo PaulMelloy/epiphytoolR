@@ -2,11 +2,11 @@
 % Please edit documentation in R/multi_binom.R
 \name{multi_var_binom}
 \alias{multi_var_binom}
-\title{Splash dispersal multi-binomial}
+\title{Splash dispersal multi-binomial in a pixel}
 \usage{
 multi_var_binom(
   row_spacing = 0.3,
-  width = 1,
+  stdev = NULL,
   px = 1,
   seeding_r = 40,
   IO = 1,
@@ -16,7 +16,7 @@ multi_var_binom(
 \arguments{
 \item{row_spacing}{Crop row spacing in meters}
 
-\item{width}{paddock width in meters}
+\item{stdev}{Standard deviation of splash distribution. defaults to pixel size}
 
 \item{px}{pixel size, length and width of square pixel}
 
@@ -28,13 +28,14 @@ multi_var_binom(
 infective sites for each plant}
 }
 \value{
-probabilty matrix where each entry gives the probabiltiy of splash
+probability matrix where each entry gives the probability of splash
 dispersal from infective sites to the respective entry
 }
 \description{
 Generate a two dimensional probability distribution representing
 the probability of spore dispersal from an inoculum source. Generates the
-probability distribution with each entry representing a single plant
+probability distribution with each entry representing a single plant. Pixel
+size represents the whole spatial size
 }
 \examples{
 set.seed(7)
