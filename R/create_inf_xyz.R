@@ -20,9 +20,11 @@
 #' @export
 #'
 #' @examples
-#' p1 <- paddock_plot_xy()
-#' ggplot(data = p1, aes(x = x, y=y, colour = load))+
-#'    geom_point()
+#' p1 <- create_inf_xyz()
+#' plot(p1$x,p1$y)
+#' points(p1[p1$load > 0,"x"],
+#'        p1[p1$load > 0,"y"],
+#'        col = "red")
 create_inf_xyz <- function(plot_length = 20,
                                        plot_width = 10,
                                        paddock_length = 100,
