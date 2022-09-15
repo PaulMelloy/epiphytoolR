@@ -45,9 +45,15 @@ create_inf_xyz <- function(plot_length = 20,
    if (n_plots > total_plots)
       stop("'n_plots' can't be larger than total plots")
 
-   if (infected_plots == "random") {
-      infected_plots <- sample(1:total_plots, n_plots)
+   if (length(infected_plots) == 1) {
+      if (infected_plots == "random") {
+         infected_plots <- sample(1:total_plots, n_plots)
+      }
    }
+
+   if(any(infected_plots > total_plots))
+      stop("'infected_plots' includes a plot number higher than the number of calculated plots")
+
 
    paddock <-
       expand.grid(x = 1:paddock_width,
@@ -57,6 +63,7 @@ create_inf_xyz <- function(plot_length = 20,
 
    for (i in infected_plots) {
       ra_ge <- i %% w_n
+      if(ra_ge == 0) ra_ge <- w_n
       r_w <- ceiling(i / w_n)
 
       x_inf <- (1 + (plot_width * (ra_ge - 1))):(plot_width * ra_ge)
