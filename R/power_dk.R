@@ -1,4 +1,4 @@
-#' Power lax dispersal kernal
+#' Power law dispersal kernal
 #'
 #' Dispersal kernal using the power law, as described by Sackett and Mundt (2005)
 #'
