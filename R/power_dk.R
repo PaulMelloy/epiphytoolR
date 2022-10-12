@@ -3,10 +3,12 @@
 #' Dispersal kernal using the power law, as described by Sackett and Mundt (2005)
 #'
 #' @param x numeric, Distance in meters.
-#' @param a numeric, scale parameter. Defaults to parameter used for stripe rust
+#' @param a numeric, scale parameter which is proportional to the strength of the
+#'  source inoculum. Defaults to parameter used for stripe rust
 #'  (*Pucinnia striiformis*) dispersal by Sackett and Mundt (2005).
-#' @param b numeric, dimensionless parameter. Defaults to parameter used for
-#'  stripe rust (*Pucinnia striiformis*) dispersal by Sackett and Mundt (2005).
+#' @param b numeric, dimensionless parameter controlling the steepness of the
+#'  gradient. Defaults to parameter used for stripe rust (*Pucinnia striiformis*)
+#'  dispersal by Sackett and Mundt (2005).
 #'
 #' @return estimated lesions per leaf
 #' @export
