@@ -31,19 +31,44 @@ create_inf_xyz <- function(plot_length = 20,
                                        paddock_width = 100,
                                        infected_plots = "random",
                                        n_plots = 15,
-                                       infection_weight = 1) {
-   if (paddock_length %% plot_length != 0)
-      stop("'paddock_length' must be equally divisable by 'plot_length'")
-   if (paddock_width %% plot_width != 0)
-      stop("'paddock_width' must be equally divisable by 'plot_width'")
+                                       infection_weight = 1,
+                           external_buffer_end = 2,
+                           external_buffer_adj = 2,
+                           internal_buffer_adj = 1,
+                           internal_buffer_end = 1) {
 
-   w_n <- paddock_width / plot_width
-   l_n <- paddock_length / plot_length
+   # trim paddock to exclude buffer dimensions
+   # estimate total n plots
+   adj_plot_width <-
+      internal_buffer_adj + plot_width
+      # remove buffer from plot number  calculation
+   adj_paddock_width <-
+      paddock_width - (external_buffer_adj * 2) +
+      internal_buffer_adj # correct for added interal puffer in adj_plot_width
+
+   adj_plot_length <-
+      internal_buffer_end + plot_length
+   # remove buffer from plot number  calculation
+   adj_paddock_length <-
+      paddock_length - (external_buffer_end * 2) +
+      internal_buffer_end # correct for added interal puffer in adj_plot_width
+
+
+   # if (paddock_length %% plot_length != 0)
+   #    stop("'paddock_length' must be equally divisable by 'plot_length'")
+   # if (paddock_width %% plot_width != 0)
+   #    stop("'paddock_width' must be equally divisable by 'plot_width'")
+
+   w_n <- floor(adj_paddock_width / adj_plot_width)
+   w_extra <- adj_paddock_width %% adj_plot_width
+
+   l_n <- adj_paddock_length / adj_plot_length
+   l_extra <- adj_paddock_length %% adj_plot_length
 
    total_plots <- w_n * l_n
 
    if (n_plots > total_plots)
-      stop("'n_plots' can't be larger than total plots")
+      stop("'n_plots' can't be larger than total plots ", (total_plots))
 
    if (length(infected_plots) == 1) {
       if (infected_plots == "random") {
@@ -59,18 +84,32 @@ create_inf_xyz <- function(plot_length = 20,
       expand.grid(x = 1:paddock_width,
                   y = 1:paddock_length)
 
-   paddock$load <- 0
+   paddock$load <- NA
 
    for (i in infected_plots) {
       ra_ge <- i %% w_n
       if(ra_ge == 0) ra_ge <- w_n
       r_w <- ceiling(i / w_n)
 
-      x_inf <- (1 + (plot_width * (ra_ge - 1))):(plot_width * ra_ge)
-      y_inf <- (1 + (plot_length * (r_w - 1))):(plot_length * r_w)
+      x_inf <- (1 + external_buffer_adj + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge)-internal_buffer_adj)
+      y_inf <- (1 + external_buffer_end + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end)
 
       paddock$load[paddock$x %in% x_inf &
                       paddock$y %in% y_inf] <- infection_weight
+   }
+
+   non_infected_plots <- seq_len(total_plots)[-infected_plots]
+
+   for (i in non_infected_plots) {
+      ra_ge <- i %% w_n
+      if(ra_ge == 0) ra_ge <- w_n
+      r_w <- ceiling(i / w_n)
+
+      x_inf <- (1 + external_buffer_adj + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge)-internal_buffer_adj)
+      y_inf <- (1 + external_buffer_end + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end)
+
+      paddock$load[paddock$x %in% x_inf &
+                      paddock$y %in% y_inf] <- 0
    }
 
    return(paddock)
