@@ -85,7 +85,7 @@ create_inf_xyz <- function(plot_length = 20,
    }
 
    if(any(infected_plots > total_plots))
-      stop("'infected_plots' includes a plot number higher than the number of calculated plots")
+      stop("'infected_plots' includes a plot number higher than the number of calculated plots ", total_plots)
 
 
    paddock <-
