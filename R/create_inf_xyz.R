@@ -15,6 +15,14 @@
 #'  specified as `"random"`
 #' @param infection_weight the value applied to the *z* `load` column of infected
 #'  plots
+#' @param external_buffer_end numeric, length of buffers on the end of the paddock
+#'  (meters)
+#' @param external_buffer_adj numeric, length of buffers on the sides of the paddock
+#'  (meters)
+#' @param internal_buffer_adj numeric, length of buffers between plots adjacent to the
+#'  row direction (meters)
+#' @param internal_buffer_end numeric, length of buffers between plots ends in the
+#'  row direction (meters)
 #'
 #' @return and xyz `data.frame` with colnames `x`,`y` amd `load`
 #' @export
@@ -25,17 +33,21 @@
 #' points(p1[p1$load > 0,"x"],
 #'        p1[p1$load > 0,"y"],
 #'        col = "red")
+#' points(p1[p1$load == 0,"x"],
+#'        p1[p1$load == 0,"y"],
+#'        col = "darkgreen")
 create_inf_xyz <- function(plot_length = 20,
-                                       plot_width = 10,
-                                       paddock_length = 100,
-                                       paddock_width = 100,
-                                       infected_plots = "random",
-                                       n_plots = 15,
-                                       infection_weight = 1,
+                           plot_width = 10,
+                           paddock_length = 100,
+                           paddock_width = 100,
+                           infected_plots = "random",
+                           n_plots = 15,
+                           infection_weight = 1,
                            external_buffer_end = 2,
                            external_buffer_adj = 2,
                            internal_buffer_adj = 1,
                            internal_buffer_end = 1) {
+
 
    # trim paddock to exclude buffer dimensions
    # estimate total n plots
@@ -53,17 +65,13 @@ create_inf_xyz <- function(plot_length = 20,
       paddock_length - (external_buffer_end * 2) +
       internal_buffer_end # correct for added interal puffer in adj_plot_width
 
-
-   # if (paddock_length %% plot_length != 0)
-   #    stop("'paddock_length' must be equally divisable by 'plot_length'")
-   # if (paddock_width %% plot_width != 0)
-   #    stop("'paddock_width' must be equally divisable by 'plot_width'")
-
    w_n <- floor(adj_paddock_width / adj_plot_width)
    w_extra <- adj_paddock_width %% adj_plot_width
+   if(w_extra != 0) message("Field plan has ", w_extra, " meters in excess width")
 
-   l_n <- adj_paddock_length / adj_plot_length
+   l_n <- floor(adj_paddock_length / adj_plot_length)
    l_extra <- adj_paddock_length %% adj_plot_length
+   if(l_extra != 0) message("Field plan has ", l_extra, " meters in excess length")
 
    total_plots <- w_n * l_n
 
@@ -91,8 +99,10 @@ create_inf_xyz <- function(plot_length = 20,
       if(ra_ge == 0) ra_ge <- w_n
       r_w <- ceiling(i / w_n)
 
-      x_inf <- (1 + external_buffer_adj + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge)-internal_buffer_adj)
-      y_inf <- (1 + external_buffer_end + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end)
+      x_inf <-
+         (1 + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge) - internal_buffer_adj) + external_buffer_adj
+      y_inf <-
+         (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end) + external_buffer_end
 
       paddock$load[paddock$x %in% x_inf &
                       paddock$y %in% y_inf] <- infection_weight
@@ -105,8 +115,11 @@ create_inf_xyz <- function(plot_length = 20,
       if(ra_ge == 0) ra_ge <- w_n
       r_w <- ceiling(i / w_n)
 
-      x_inf <- (1 + external_buffer_adj + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge)-internal_buffer_adj)
-      y_inf <- (1 + external_buffer_end + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end)
+      x_inf <-
+         (1 + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge) -
+                                                             internal_buffer_adj) + external_buffer_adj
+      y_inf <-
+         (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end) + external_buffer_end
 
       paddock$load[paddock$x %in% x_inf &
                       paddock$y %in% y_inf] <- 0
