@@ -46,7 +46,8 @@ create_inf_xyz <- function(plot_length = 20,
                            external_buffer_end = 2,
                            external_buffer_adj = 2,
                            internal_buffer_adj = 1,
-                           internal_buffer_end = 1) {
+                           internal_buffer_end = 1,
+                           verbose = FALSE) {
 
 
    # trim paddock to exclude buffer dimensions
@@ -67,13 +68,14 @@ create_inf_xyz <- function(plot_length = 20,
 
    w_n <- floor(adj_paddock_width / adj_plot_width)
    w_extra <- adj_paddock_width %% adj_plot_width
-   if(w_extra != 0) message("Field plan has ", w_extra, " meters in excess width")
+   if(w_extra != 0 & verbose) message("Field plan has ", w_extra, " meters in excess width")
 
    l_n <- floor(adj_paddock_length / adj_plot_length)
    l_extra <- adj_paddock_length %% adj_plot_length
-   if(l_extra != 0) message("Field plan has ", l_extra, " meters in excess length")
+   if(l_extra != 0 & verbose) message("Field plan has ", l_extra, " meters in excess length")
 
    total_plots <- w_n * l_n
+   if(verbose) message("Total plots: ", total_plots)
 
    if (n_plots > total_plots)
       stop("'n_plots' can't be larger than total plots ", (total_plots))
