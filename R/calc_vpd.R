@@ -4,9 +4,9 @@
 #'  (1967)
 #'
 #' @param RH Relative humidity
-#' @param Tm Temperature in degrees celcius
+#' @param Tm Temperature in degrees Celsius
 #' @param eq Type of equation to use while calculation VPD. defaults to the `BOM`
-#'  (Bureau of Meterology equation, Australia). Other options, `"Murray"` and
+#'  (Bureau of Meteorology equation, Australia). Other options, `"Murray"` and
 #'  `"Sapak"`
 #' @param verbose prints saturated vapour pressure (SVP) and vapour pressure
 #'  in kPa before returning the VPD result
