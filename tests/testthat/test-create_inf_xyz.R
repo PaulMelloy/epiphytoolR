@@ -106,6 +106,62 @@ test_that("create_inf_xyz adds expected plots", {
 
 })
 
+test_that("create_inf_xyz can produce layout for 2023 asco trial", {
+   treat_n <-
+      1 * # varieties
+      2 * # infected/non-infected
+      3 * # destructive sampling
+      3 * # fungicide treatments
+      5 # Reps
+
+   plot_n <- treat_n  # reps
+
+   plot_sample <- sample(1:plot_n,treat_n)
+
+   t3 <- create_inf_xyz(
+      plot_length = 10,
+      plot_width = 4,
+      paddock_length = 150,
+      paddock_width = 50,
+      infected_plots = plot_sample,
+      internal_buffer_adj = 2,
+      internal_buffer_end = 2,
+      n_plots = plot_n,
+      infection_weight = 1,
+
+      verbose = TRUE
+   )
+
+   # 30 cm row spacing
+   # singulated planter
+
+   plot(t3$x,t3$y,
+        pch = 15)
+
+   points(t3[t3$load > 0,"x"],
+          t3[t3$load > 0,"y"],
+          col = "red",
+          pch = 15)
+
+   expect_s3_class(t3,class = "data.frame")
+   expect_equal(nrow(t3), 100*100)
+   expect_equal(colnames(t3), c("x","y","load"))
+
+   # get infected paddock
+   ind1 <- min(which(t3$load == 1))
+   x1 <- t3[ind1,"x"]
+   y1 <- t3[ind1,"y"]
+   x2 <- t3[ind1,"x"] + 9
+   y2 <- t3[ind1,"y"] + 19
+
+   plot1 <- t3[t3$x %in% x1:x2 &
+                  t3$y %in% y1:y2,]
+
+   expect_equal(nrow(plot1), 10*20)
+   expect_equal(nrow(plot1[plot1$load == 1,]), 10*20)
+   expect_equal(colnames(plot1), c("x","y","load"))
+
+})
 
 test_that("create_inf_xyz fails when expected", {
    # expect_error(create_inf_xyz(plot_width = 7),
