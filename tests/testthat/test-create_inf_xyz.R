@@ -111,40 +111,45 @@ test_that("create_inf_xyz can produce layout for 2023 asco trial", {
       1 * # varieties
       2 * # infected/non-infected
       3 * # destructive sampling
-      3 * # fungicide treatments
-      5 # Reps
+      3  # fungicide treatments
+       # Reps
+   Reps <- 5
 
-   plot_n <- treat_n  # reps
+   plot_n <- treat_n * Reps # reps
 
    plot_sample <- sample(1:plot_n,treat_n)
+
+   completly_randomised <-
+      data.table(treat = rep(1:treat_n, each = Reps),
+              plot = sample(1:plot_n,plot_n,replace = FALSE))
 
    t3 <- create_inf_xyz(
       plot_length = 10,
       plot_width = 4,
       paddock_length = 150,
       paddock_width = 50,
-      infected_plots = plot_sample,
+      infected_plots = completly_randomised$plot,
+      infection_weight = completly_randomised$treat,
       internal_buffer_adj = 2,
       internal_buffer_end = 2,
       n_plots = plot_n,
-      infection_weight = 1,
-
       verbose = TRUE
    )
 
    # 30 cm row spacing
    # singulated planter
 
-   plot(t3$x,t3$y,
-        pch = 15)
-
-   points(t3[t3$load > 0,"x"],
-          t3[t3$load > 0,"y"],
-          col = "red",
-          pch = 15)
+   # t3 |>
+   #    ggplot(aes(x = x, y = y, fill = as.factor(load)))+
+   #    geom_tile()+
+   #    xlab("paddock width, (meters)")+
+   #    ylab("paddock length, (meters)")+
+   #    scale_fill_viridis_d()+
+   #    guides(fill=guide_legend(title="Treatment\nnumber"))+
+   #    theme_minimal()
 
    expect_s3_class(t3,class = "data.frame")
-   expect_equal(nrow(t3), 100*100)
+   expect_equal(nrow(t3), 150*50)
    expect_equal(colnames(t3), c("x","y","load"))
 
    # get infected paddock
@@ -158,8 +163,10 @@ test_that("create_inf_xyz can produce layout for 2023 asco trial", {
                   t3$y %in% y1:y2,]
 
    expect_equal(nrow(plot1), 10*20)
-   expect_equal(nrow(plot1[plot1$load == 1,]), 10*20)
+   expect_equal(nrow(plot1[plot1$load == 1,]), 96)
    expect_equal(colnames(plot1), c("x","y","load"))
+
+   # NEED MORE TESTS HERE TO TEST WHEN MULTIPLE INFECTION LOADS ARE USED
 
 })
 
