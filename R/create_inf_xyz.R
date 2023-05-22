@@ -96,19 +96,32 @@ create_inf_xyz <- function(plot_length = 20,
 
    paddock$load <- NA
 
-   for (i in infected_plots) {
+   for (ind in seq_along(infected_plots)) {
+      i <- infected_plots[ind]
+      # get plot x length
       ra_ge <- i %% w_n
       if(ra_ge == 0) ra_ge <- w_n
+      # get plot y length
       r_w <- ceiling(i / w_n)
 
+      # offset for buffers
       x_inf <-
          (1 + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge) - internal_buffer_adj) + external_buffer_adj
       y_inf <-
          (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end) + external_buffer_end
 
+      # apply the infecion weight value to the infected plot
+      if(length(infection_weight) ==
+         length(infected_plots)) {
+         paddock$load[paddock$x %in% x_inf &
+                         paddock$y %in% y_inf] <-
+            unique(infection_weight[ind])
+      }else{
       paddock$load[paddock$x %in% x_inf &
-                      paddock$y %in% y_inf] <- infection_weight
-   }
+                      paddock$y %in% y_inf] <-
+         infection_weight
+      }
+      }
 
    non_infected_plots <- seq_len(total_plots)[-infected_plots]
 
