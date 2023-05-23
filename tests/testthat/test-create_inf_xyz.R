@@ -117,6 +117,8 @@ test_that("create_inf_xyz can produce layout for 2023 asco trial", {
 
    plot_n <- treat_n * Reps # reps
 
+   set.seed(321)
+
    plot_sample <- sample(1:plot_n,treat_n)
 
    completly_randomised <-
@@ -162,7 +164,7 @@ test_that("create_inf_xyz can produce layout for 2023 asco trial", {
    plot1 <- t3[t3$x %in% x1:x2 &
                   t3$y %in% y1:y2,]
 
-   expect_equal(nrow(plot1), 10*20)
+   expect_equal(nrow(plot1), 200)
    expect_equal(nrow(plot1[plot1$load == 1,]), 96)
    expect_equal(colnames(plot1), c("x","y","load"))
 
@@ -181,3 +183,4 @@ test_that("create_inf_xyz fails when expected", {
                 regexp = "'n_plots' can't be larger than total plots")
 
 })
+
