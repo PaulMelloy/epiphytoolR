@@ -9,10 +9,10 @@ calc_vpd(RH, Tm, eq = "BOM", verbose = FALSE)
 \arguments{
 \item{RH}{Relative humidity}
 
-\item{Tm}{Temperature in degrees celcius}
+\item{Tm}{Temperature in degrees Celsius}
 
 \item{eq}{Type of equation to use while calculation VPD. defaults to the \code{BOM}
-(Bureau of Meterology equation, Australia). Other options, \code{"Murray"} and
+(Bureau of Meteorology equation, Australia). Other options, \code{"Murray"} and
 \code{"Sapak"}}
 
 \item{verbose}{prints saturated vapour pressure (SVP) and vapour pressure
