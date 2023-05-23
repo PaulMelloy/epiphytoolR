@@ -23,6 +23,8 @@
 #'  row direction (meters)
 #' @param internal_buffer_end numeric, length of buffers between plots ends in the
 #'  row direction (meters)
+#' @param verbose logical, if 'TRUE' function will return a message with total plots
+#'  and extra length or width in meters
 #'
 #' @return and xyz `data.frame` with colnames `x`,`y` amd `load`
 #' @export
