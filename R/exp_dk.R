@@ -32,7 +32,6 @@ exp_dk <- function(r, a = 1) {
 #' @return numeric, the number of spores estimated to have dispersed to the defined
 #'  location
 #'
-#' @examples
 #' @noRd
 f2 <- function(initial_intensity,
                transmission_rate = 2,
