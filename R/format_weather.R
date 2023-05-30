@@ -126,7 +126,7 @@
 #'
 #' weather_station_data$Local.Time <-
 #'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%d %H:%M:%S",
-#'               tz = "Australia/Adelaide")
+#'               tz = "UTC")
 #'
 #' weather <- format_weather(
 #'    w = weather_station_data,
@@ -139,7 +139,7 @@
 #'    lon = "Station.Longitude",
 #'    lat = "Station.Latitude",
 #'    station = "StationID",
-#'    time_zone = "Australia/Adelaide"
+#'    time_zone = "UTC"
 #' )
 #'
 #' # Reformat saved weather
