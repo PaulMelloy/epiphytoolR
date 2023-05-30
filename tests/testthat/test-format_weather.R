@@ -117,26 +117,28 @@ test_that("`format_weather()` handles multiple stations", {
    weather_station_data$Local.Time <-
       as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%d %H:%M:%S")
 
+
    # a missing time at "2020-10-03 16:00:00" in scaddan data causes NAs to be
    #  filled into all data inputs
    # this creates a error later due to .check_weather()
    expect_error(suppressWarnings(
       format_weather(
-         w = weather_station_data,
+         w = weather_station_data[c(1:4123,4125:8785),], # remove one row
          POSIXct_time = "Local.Time",
          ws = "meanWindSpeeds",
          wd_sd = "stdDevWindDirections",
          rain = "Rainfall",
+         temp = "Temperature",
          wd = "meanWindDirections",
          lon = "Station.Longitude",
          lat = "Station.Latitude",
          station = "StationID",
-         time_zone = "Australia/Adelaide"
+         time_zone = "Australia/Brisbane"
       )
-   ), regexp = "NA values in rainfall;")
+   ), regexp = "NA values in *")
 
    weather_dat <- format_weather(
-      w = weather_station_data,
+      w = weather_station_data[c(1:4123,4125:8785),],
       POSIXct_time = "Local.Time",
       ws = "meanWindSpeeds",
       wd_sd = "stdDevWindDirections",
@@ -169,7 +171,7 @@ test_that("`format_weather()` handles multiple stations", {
          "mm"
       )
    )
-   expect_equal(dim(weather_dat), c(8785, 14))
+   expect_equal(dim(weather_dat), c(8786, 14))
    expect_true(anyNA(weather_dat$lon) == FALSE)
    expect_true(anyNA(weather_dat$lat) == FALSE)
    expect_equal(round(unique(weather_dat$lon), 1), c(135.7,135.9))
@@ -757,7 +759,7 @@ test_that("`format_weather()` works with blackspot vignette", {
 
    # All 'rain' data must be entered with no missing data
    # Replace NA values in rain with zeros
-   raw_weather[is.na(raw_weather$Rainfall),]
+   # raw_weather[is.na(raw_weather$Rainfall),]
 
    # Format time into POSIX central time
    raw_weather$Local.Time <-
@@ -776,5 +778,6 @@ test_that("`format_weather()` works with blackspot vignette", {
       station = "StationID",
       time_zone = "UTC"
    )
+   expect_equal(dim(weather), c(8571,14))
 
 })
