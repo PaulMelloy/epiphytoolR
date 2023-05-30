@@ -745,3 +745,36 @@ test_that("`format_weather()` fills missing time", {
 
 
 })
+
+test_that("`format_weather()` works with blackspot vignette", {
+   naddacs_weather <-
+      read.csv(system.file("extdata", "naddacs_weather.csv", package = "epiphytoolR"))
+   scaddan_weather <-
+      read.csv(system.file("extdata", "scaddan_weather.csv", package = "epiphytoolR"))
+
+   raw_weather <- rbind(naddacs_weather,
+                        scaddan_weather)
+
+   # All 'rain' data must be entered with no missing data
+   # Replace NA values in rain with zeros
+   raw_weather[is.na(raw_weather$Rainfall),]
+
+   # Format time into POSIX central time
+   raw_weather$Local.Time <-
+      lubridate::as_datetime(raw_weather$Local.Time)
+
+   weather <- format_weather(
+      w = raw_weather,
+      POSIXct_time = "Local.Time",
+      ws = "meanWindSpeeds",
+      wd_sd = "stdDevWindDirections",
+      rain = "Rainfall",
+      temp = "Temperature",
+      wd = "meanWindDirections",
+      lon = "Station.Longitude",
+      lat = "Station.Latitude",
+      station = "StationID",
+      time_zone = "UTC"
+   )
+
+})
