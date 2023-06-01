@@ -1,0 +1,124 @@
+get_bom_observations <- function(ftp_url,
+                                 download_location,
+                                 access_warning = TRUE,
+                                 state = "QLD") {
+   if (missing(ftp_url)) {
+      stop(
+         "'get_bom_observations' requires the Bureau of Meterology FTP address. ",
+         "This can be obtained from the BOM website. Please read their policies on ",
+         "scraping data and accessing thier public FTP site before using this function.
+           The author of this function provides the code as is, and is free to use but takes no ",
+         "responsibility for how this code is used and assumes the user has done their ",
+         "due diligence in understanding the copyright assigned to BOM weather data. ",
+         "Read more at the BOM website:
+              http://www.bom.gov.au/other/copyright.shtml
+              http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state
+              http://reg.bom.gov.au/other/disclaimer.shtml
+          "
+      )
+   }
+   if (access_warning) {
+      warning(
+         "The author of this function provides the code as is, and is free to use but takes no ",
+         "responsibility for how this code is used and assumes the user has done their ",
+         "due diligence in understanding the copyright assigned to BOM weather data. ",
+         "Data is not to be used for third parties unless the user (you) is a registered user with",
+         "The Bureau of Meterology",
+         "Read more at the BOM website:
+              http://www.bom.gov.au/other/copyright.shtml
+              http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state
+              http://reg.bom.gov.au/other/disclaimer.shtml
+          "
+      )
+   }
+
+   # specify the time of download
+   dl_time <- format(Sys.time(), format = "%y%m%d_%H%M")
+
+   if (dir.exists(download_location) == FALSE) {
+      dir.create(download_location)
+   }
+
+   # detect if last character is a / and add if needed
+   if (substr(download_location,
+              nchar(download_location),
+              nchar(download_location)) !=
+       "/") {
+      download_location <- paste0(download_location, "/")
+   }
+
+   state <- switch(
+      state,
+      "NSW" = "IDN60910.tgz",
+      "NT" = "IDD60910.tgz",
+      "QLD" = "IDQ60910.tgz",
+      "SA" = "IDS60910.tgz",
+      "VIC" = "IDV60910.tgz",
+      "TAS" = "IDT60910.tgz",
+      "WA" = "IDW60910.tgz"
+   )
+   # save the download file locaiton
+   dl_floc <-
+      paste0(download_location,
+             dl_time,
+             "_", state)
+
+
+   # download the tar zipped file to download location
+   download.file(url = paste0(ftp_url, state),
+                 destfile = dl_floc)
+   message("Compressed file saved to ", dl_floc)
+}
+
+
+
+
+
+# This function takes new BOM axf files which hold 72 hours of weather observations
+#  in 10 minute intervals and an old formated weather data file, row binds them,
+#  then saves them back as the File_formatted csv
+# `File_axf` uncompressed axf BOM file containing 10 minute weather observations. default is North Tamborine
+# `File_formatted` previously read axf files with removed headers and saved as a csv file
+# `base_dir` weather directory which folders of weather data are saved and where formatted data is put
+# `data_dir` Directory with compressed and uncompressed data
+merge_axf_weather <- function(File_compressed, # uncompressed
+                              File_axf = "IDQ60910.99123.axf",
+                              File_formatted = "NTamborine.csv",
+                              base_dir = getwd()){
+
+   # uncompress data to temporary folder
+   Temp_folder <- paste0(tempdir(),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
+   dir.create(Temp_folder,
+              recursive = TRUE)
+
+   untar(tarfile = File_compressed,
+         exdir = Temp_folder)
+
+   # Read data
+   dat_new <-
+      fread(paste0(Temp_folder, File_axf),
+            skip = 24,
+            nrows = 144)
+
+   colnames(dat_new) <-
+      gsub(pattern = "\\[80]", replacement = "", colnames(dat_new))
+
+   if(file.exists(paste0(base_dir,File_formatted)) == FALSE){
+      warning(File_formatted, " not found, creating new file\n")
+      fwrite(dat_new,file = paste0(base_dir,File_formatted))
+      unlink(Temp_folder)
+   }else{
+
+      dat_old <- fread(file = paste0(base_dir,File_formatted))
+
+      Merged <- rbind(dat_old,dat_new)
+
+      Merged <- Merged[!duplicated(aifstime_utc)]
+
+      fwrite(Merged,file = paste0(base_dir,File_formatted))
+      unlink(Temp_folder)
+   }
+
+
+
+}
