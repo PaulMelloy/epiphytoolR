@@ -16,7 +16,8 @@
 #'  will be downloaded. Options include `"QLD"`,`"NSW"`,`"NT"`,`"VIC"`,`"SA"`,
 #'   `"TAS"`,`"WA"`
 #'
-#' @return downloaded compressed file `.tgz`
+#' @return character string of the download file loaction of the downloaded compressed
+#'    file `.tgz`
 #' @export
 #' @source http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state ;
 #'  http://www.bom.gov.au/other/copyright.shtml; http://reg.bom.gov.au/other/disclaimer.shtml
@@ -97,6 +98,7 @@ get_bom_observations <- function(ftp_url,
    download.file(url = paste0(ftp_url, state),
                  destfile = dl_floc)
    message("Compressed file saved to ", dl_floc)
+   return(dl_floc)
 }
 
 
