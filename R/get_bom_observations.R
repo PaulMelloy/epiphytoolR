@@ -1,3 +1,31 @@
+#' Download state weather observations
+#'
+#' Function downloads a compressed file to a desegnated location. The downloaded
+#'  file contains three file formats for all automated weather station, xml, axf,
+#'  and json.
+#' An FTP url is needed for this function, find this on the Bureau of Meterology
+#'  website. Please read the copyright and disclaimer for use of the data while
+#'  you are there.
+#'
+#' @param ftp_url character, ftp url obtained from the BOMs website
+#' @param download_location character, Folder location of where to download the
+#'  compreseed data
+#' @param access_warning logical, default = `TRUE`. Elects whether to print the warning
+#'  when the function is run
+#' @param state character, Australian state for which weather observations files
+#'  will be downloaded. Options include `"QLD"`,`"NSW"`,`"NT"`,`"VIC"`,`"SA"`,
+#'   `"TAS"`,`"WA"`
+#'
+#' @return downloaded compressed file `.tgz`
+#' @export
+#' @source http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state ;
+#'  http://www.bom.gov.au/other/copyright.shtml; http://reg.bom.gov.au/other/disclaimer.shtml
+#'
+#' @examples
+#' \dontrun{
+#' get_bom_observations(ftp_url = ftp://ftp.bom.gov.au/???????,
+#'                      download_location = tempdir())
+#'}
 get_bom_observations <- function(ftp_url,
                                  download_location,
                                  access_warning = TRUE,
@@ -47,6 +75,7 @@ get_bom_observations <- function(ftp_url,
       download_location <- paste0(download_location, "/")
    }
 
+   state <- casefold(state, upper = TRUE)
    state <- switch(
       state,
       "NSW" = "IDN60910.tgz",
