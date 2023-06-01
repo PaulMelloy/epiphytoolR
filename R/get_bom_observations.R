@@ -31,6 +31,7 @@ get_bom_observations <- function(ftp_url,
                                  download_location,
                                  access_warning = TRUE,
                                  state = "QLD") {
+
    if (missing(ftp_url)) {
       stop(
          "'get_bom_observations' requires the Bureau of Meterology FTP address. ",
@@ -95,8 +96,8 @@ get_bom_observations <- function(ftp_url,
 
 
    # download the tar zipped file to download location
-   download.file(url = paste0(ftp_url, state),
-                 destfile = dl_floc)
+   utils::download.file(url = paste0(ftp_url, state),
+                        destfile = dl_floc)
    message("Compressed file saved to ", dl_floc)
    return(dl_floc)
 }
@@ -116,14 +117,16 @@ merge_axf_weather <- function(File_compressed, # uncompressed
                               File_axf = "IDQ60910.99123.axf",
                               File_formatted = "NTamborine.csv",
                               base_dir = getwd()){
+   # define data.table reference
+   aifstime_utc <- NULL
 
    # uncompress data to temporary folder
    Temp_folder <- paste0(tempdir(),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
    dir.create(Temp_folder,
               recursive = TRUE)
 
-   untar(tarfile = File_compressed,
-         exdir = Temp_folder)
+   utils::untar(tarfile = File_compressed,
+                exdir = Temp_folder)
 
    # Read data
    dat_new <-
