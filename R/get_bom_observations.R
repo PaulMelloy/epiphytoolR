@@ -134,10 +134,19 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    colnames(dat_new) <-
       gsub(pattern = "\\[80]", replacement = "", colnames(dat_new))
 
+   # detect if last character is a / and add if needed
+   if (substr(base_dir,
+              nchar(base_dir),
+              nchar(base_dir)) !=
+       "/") {
+      base_dir <- paste0(base_dir, "/")
+   }
+
    if(file.exists(paste0(base_dir,File_formatted)) == FALSE){
       warning(File_formatted, " not found, creating new file\n")
       fwrite(dat_new,file = paste0(base_dir,File_formatted))
       unlink(Temp_folder)
+      return(dat_new)
    }else{
 
       dat_old <- fread(file = paste0(base_dir,File_formatted))
@@ -148,6 +157,7 @@ merge_axf_weather <- function(File_compressed, # uncompressed
 
       fwrite(Merged,file = paste0(base_dir,File_formatted))
       unlink(Temp_folder)
+      return(Merged)
    }
 
 
