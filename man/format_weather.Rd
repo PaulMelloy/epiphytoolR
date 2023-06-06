@@ -190,12 +190,11 @@ weather <- format_weather(
 
 # Create file path and save data
 file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\\\")
-write.csv(weather,
-          file = file_path_name,
-          row.names = FALSE)
+data.table::fwrite(weather,
+          file = file_path_name)
 
 # Read data back in to
-weather2 <- read.csv(file_path_name, stringsAsFactors = FALSE)
+weather2 <- data.table::fread(file_path_name, stringsAsFactors = FALSE)
 
 # reformat the data to have appropriate column classes and data class
 weather2 <- format_weather(weather2,
