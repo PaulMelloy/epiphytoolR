@@ -697,9 +697,10 @@ test_that("lat and lon are correctly parsed from file to dataset", {
 })
 
 test_that("preformated weather read back in can be reformatted",{
-   write.csv(test10, file = paste(tempdir(), "weather_saved.csv", sep = "\\"),
-             row.names = FALSE)
-   weather2 <- read.csv(paste(tempdir(), "weather_saved.csv", sep = "\\"),
+   # since R 4.3 write.csv saves midnight date-times as date without 00:00:00
+   # therefore we need data.tables fwrite function
+   fwrite(test10, file = paste(tempdir(), "weather_saved.csv", sep = "\\"))
+   weather2 <- fread(paste(tempdir(), "weather_saved.csv", sep = "\\"),
                         stringsAsFactors = FALSE)
    expect_warning(test11 <- format_weather(weather2, time_zone = "UTC"),
                   regexp = "All temperature values are 'NA' or missing*")
