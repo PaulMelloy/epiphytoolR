@@ -124,7 +124,7 @@ get_bom_observations <- function(ftp_url,
 #'  has previously merged data
 #' @param base_dir character file path giving the base directory for file_formatted
 #'
-#' @return
+#' @return data.table, of merged dataset
 #' @export
 #'
 #' @examples
