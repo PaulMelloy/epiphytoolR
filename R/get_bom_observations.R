@@ -30,7 +30,8 @@
 get_bom_observations <- function(ftp_url,
                                  download_location,
                                  access_warning = TRUE,
-                                 state = "QLD") {
+                                 state = "QLD",
+                                 file_prefix = format(Sys.time(), format = "%y%m%d_%H%M")) {
 
    if (missing(ftp_url)) {
       stop(
@@ -62,9 +63,6 @@ get_bom_observations <- function(ftp_url,
       )
    }
 
-   # specify the time of download
-   dl_time <- format(Sys.time(), format = "%y%m%d_%H%M")
-
    if (dir.exists(download_location) == FALSE) {
       dir.create(download_location)
    }
@@ -91,7 +89,7 @@ get_bom_observations <- function(ftp_url,
    # save the download file locaiton
    dl_floc <-
       paste0(download_location,
-             dl_time,
+             file_prefix,
              "_", state)
 
 
