@@ -109,9 +109,10 @@ get_bom_observations <- function(ftp_url,
 
 #' Merge BOM axf weather data
 #'
-#'  This function takes new BOM axf files which hold 72 hours of weather observations
-#`   in 10 minute intervals and an old formated weather data file, row binds them,
-#`   then saves them back as the File_formatted csv
+#'  @details
+#'   This function takes new BOM axf files which hold 72 hours of weather observations
+#`   in 10 minute intervals and an old formatted weather data file, row binds them,
+#`   then saves them back as the File_formatted csv.
 #`  `File_axf` uncompressed axf BOM file containing 10 minute weather observations. default is North Tamborine
 #`  `File_formatted` previously read axf files with removed headers and saved as a csv file
 #`   `base_dir` weather directory which folders of weather data are saved and where formatted data is put
@@ -139,15 +140,14 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    Temp_folder <- paste0(tempdir(),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
    dir.create(Temp_folder,
               recursive = TRUE)
-
    utils::untar(tarfile = File_compressed,
                 exdir = Temp_folder)
 
    # Read data
    dat_new <-
-      fread(paste0(Temp_folder, File_axf),
-            skip = 24,
-            nrows = 144)
+      data.table::fread(paste0(Temp_folder, File_axf),
+                        skip = 24,
+                        nrows = 144)
 
    colnames(dat_new) <-
       gsub(pattern = "\\[80]", replacement = "", colnames(dat_new))
