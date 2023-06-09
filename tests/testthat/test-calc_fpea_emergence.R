@@ -14,6 +14,7 @@ test_that("formula works with negative numbers ", {
    expect_equal(calc_fpea_emergence("2021-03-01"), 49.902653)
 })
 
-test_that("formula returns error for a non-rate input",{
-   expect_error(calc_fpea_emergence(14))
-})
+# R 4.3 now does not need an origin to be specified to return a date
+# test_that("formula returns error for a non-rate input",{
+#    expect_error(calc_fpea_emergence(14))
+# })

@@ -126,7 +126,7 @@
 #'
 #' weather_station_data$Local.Time <-
 #'    as.POSIXct(weather_station_data$Local.Time, format = "%Y-%m-%d %H:%M:%S",
-#'               tz = "Australia/Adelaide")
+#'               tz = "UTC")
 #'
 #' weather <- format_weather(
 #'    w = weather_station_data,
@@ -139,15 +139,14 @@
 #'    lon = "Station.Longitude",
 #'    lat = "Station.Latitude",
 #'    station = "StationID",
-#'    time_zone = "Australia/Adelaide"
+#'    time_zone = "UTC"
 #' )
 #'
 #' # Reformat saved weather
 #'
 #' # Create file path and save data
 #' file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\")
-#' write.csv(weather,
-#'           file = file_path_name,
+#' write.csv(weather, file = file_path_name,
 #'           row.names = FALSE)
 #'
 #' # Read data back in to
@@ -221,7 +220,10 @@ format_weather <- function(w,
               was pre-formatted, use 'UTC'"
       )
     } else{
-      w[, times := lubridate::ymd_hms(times, tz = "UTC")]
+       # check for any midnight times convertee to dates and append HMS
+       w[grepl(":", times) == FALSE, times := paste0(times," 00:00:00")]
+
+      w[, times := as.POSIXct(times, tz = "UTC")]
     }
     if (any(is.na(w[, times])) ||
         any(w[, duplicated(times), by = factor(station)][,V1])) {
@@ -654,27 +656,40 @@ format_weather <- function(w,
    # nocov on Cran
    times <- station <- lon <- lat <- NULL
 
+   for(stat1 in unique(w_dt$station)){
+
+      # create station specific data
+      w_bystat <- w_dt[station == stat1]
+
    # Create a sequence of times by each hour
-   tseq_dt <- data.table(times = seq(from = w_dt[1,times],
-                                     to = w_dt[.N,times],
+   tseq_dt <- data.table(times = seq(from = w_bystat[1,times],
+                                     to = w_bystat[.N,times],
                                      by = "hours"))
 
-   if(length(tseq_dt$times) != length(w_dt$times)) {
+   if(length(tseq_dt$times) != length(w_bystat$times)) {
       # merge in missing times
-      w_dt <- merge(
+      w_bystat <- merge(
          x = tseq_dt,
-         y = w_dt,
+         y = w_bystat,
          by.x = "times",
          by.y = "times",
          all.x = TRUE
       )
 
       # fill station and time data
-      w_dt[is.na(station) &
+      w_bystat[is.na(station) &
               is.na(lon) &
               is.na(lat), c("lon", "lat", "station") :=
-              list(w_dt[1, lon], w_dt[1, lat], w_dt[1, station])]
-   }
+              list(w_bystat[1, lon], w_bystat[1, lat], w_bystat[1, station])]
+
+      # remove old station data
+      w_dt <- w_dt[station != stat1]
+
+      # add new station data with all times added
+      w_dt <- rbind(w_dt,w_bystat)
+
+   }}
+
    return(w_dt)
 }
 
@@ -692,7 +707,7 @@ format_weather <- function(w,
         stop(
            call. = FALSE,
            "NA values in temperature; \n",
-           paste(as.character(final_w[is.na(temp), times])),
+           paste0(as.character(final_w[is.na(temp), times]),sep = ",  "),
            "\nplease use a complete dataset"
         )
      }}

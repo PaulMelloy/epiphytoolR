@@ -4,18 +4,21 @@
 \alias{calc_vp}
 \title{Calculate Vapour-pressure}
 \usage{
-calc_vp(RH, Tm, eq = "Murray")
+calc_vp(RH, Tm, dp = NULL, eq = "BOM")
 }
 \arguments{
 \item{RH}{Relative humidity}
 
 \item{Tm}{Temperature in degrees Celsius}
 
-\item{eq}{Type of equation to use while calculation VPD. defaults \code{"Murray"}.
-Other option \code{"Sapak"}}
+\item{dp}{Dew point, in degrees Celsius}
+
+\item{eq}{Type of equation to use while calculation VPD. defaults to the \code{BOM}
+(Bureau of Meterology equation, Australia). Other options, \code{"Murray"} and
+\code{"Sapak"}}
 }
 \value{
-Vapour-pressure in kPa
+Vapour-pressure in kPa class \CRANpkg{units}
 }
 \description{
 This formula uses Tetens (1930) equation as described by Murray
@@ -24,7 +27,8 @@ Celsius and relative humidity.
 }
 \examples{
 calc_vp(RH = 99,Tm = 30)
-calc_vp(RH = 99,Tm = 30, eq = "Sapak")
+calc_vp(RH = 99,Tm = 30, eq = "Murray")
+calc_vp(dp = 10)
 }
 \references{
 https://doi.org/10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2

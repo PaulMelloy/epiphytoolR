@@ -170,7 +170,7 @@ weather_station_data <- do.call("rbind", weather_station_data)
 
 weather_station_data$Local.Time <-
    as.POSIXct(weather_station_data$Local.Time, format = "\%Y-\%m-\%d \%H:\%M:\%S",
-              tz = "Australia/Adelaide")
+              tz = "UTC")
 
 weather <- format_weather(
    w = weather_station_data,
@@ -183,15 +183,14 @@ weather <- format_weather(
    lon = "Station.Longitude",
    lat = "Station.Latitude",
    station = "StationID",
-   time_zone = "Australia/Adelaide"
+   time_zone = "UTC"
 )
 
 # Reformat saved weather
 
 # Create file path and save data
 file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\\\")
-write.csv(weather,
-          file = file_path_name,
+write.csv(weather, file = file_path_name,
           row.names = FALSE)
 
 # Read data back in to
