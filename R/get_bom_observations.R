@@ -15,6 +15,8 @@
 #' @param state character, Australian state for which weather observations files
 #'  will be downloaded. Options include `"QLD"`,`"NSW"`,`"NT"`,`"VIC"`,`"SA"`,
 #'   `"TAS"`,`"WA"`
+#' @param file_prefix character, prefix applied to file name. Default is the date
+#'  and time in hours and minutes.
 #'
 #' @return character string of the download file loaction of the downloaded compressed
 #'    file `.tgz`

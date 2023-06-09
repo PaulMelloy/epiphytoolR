@@ -12,7 +12,8 @@ get_bom_observations(
   ftp_url,
   download_location,
   access_warning = TRUE,
-  state = "QLD"
+  state = "QLD",
+  file_prefix = format(Sys.time(), format = "\%y\%m\%d_\%H\%M")
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ when the function is run}
 \item{state}{character, Australian state for which weather observations files
 will be downloaded. Options include \code{"QLD"},\code{"NSW"},\code{"NT"},\code{"VIC"},\code{"SA"},
 \code{"TAS"},\code{"WA"}}
+
+\item{file_prefix}{character, prefix applied to file name. Default is the date
+and time in hours and minutes.}
 }
 \value{
 character string of the download file loaction of the downloaded compressed
