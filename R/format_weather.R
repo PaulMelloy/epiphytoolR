@@ -457,7 +457,8 @@ format_weather <- function(w,
       call. = FALSE,
       times,
       "Time records contain NA values or duplicated times. Check you are entering",
-      " the correct `time_zone` and the continuity of weather station logging time"
+      " the correct `time_zone` and the continuity of weather station logging time.",
+      " Perhaps your times are `time_zone = 'UTC'`"
     )
   }
 
