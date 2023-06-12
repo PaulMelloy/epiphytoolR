@@ -15,17 +15,50 @@
 #'  to return from the closest (1), or 3rd closest (3) or closest five stations
 #'  (1:5). ect
 #'
-#' @return
+#' @return A `data.table` output of calculated on `get_weather_coefs.R` with the
+#' following columns:
+#'  *station* - Weather station name;
+#'  *lat* - latitude;
+#'  *lon* - longitude;
+#'  *yearday* - integer, day of the year, see `data.table::yday()`;
+#'  *wd_rd* - numeric, mean wind direction from raw data;
+#'  *wd_sd_rd* - numeric, standard deviation of wind direction from raw data;
+#'  *ws_rd* - numeric, mean wind speed from raw data;
+#'  *ws_sd_rd* - numeric, standard deviation of wind speed from raw data;
+#'  *rain_freq* - numeric, proportional chance of rainfall on this dat 0 - 1
+#'
+#'  can be formated with `format_weather()`
 #' @export
 #'
 #' @examples
+#' dat <- data.frame(
+#'   station_name = "w_STATION",
+#'   lat = -runif(1, 15.5, 28),
+#'   lon = runif(1, 115, 150),
+#'   state = "SA",
+#'   yearday = 1:365,
+#'   wd_rw = abs(rnorm(365, 180, 90)),
+#'   wd_sd_rw = rnorm(365, 80, 20),
+#'   ws_rw = runif(365, 1, 60),
+#'   ws_sd_rw = abs(rnorm(365, 10, sd = 5)),
+#'   rain_freq = runif(365, 0.05, 0.45)
+#'   )
+#'
+#'   calc_estimated_weather(w = dat,
+#'     lat = -25,
+#'     lon = 130,
+#'     n_stations = 1)
 calc_estimated_weather <- function(w,
                                    start_date = "2023-04-01",
                                    end_date = "2023-11-30",
                                    lat,
                                    lon,
                                    n_stations = 1:4){
+   # specify non-global data.table variables
+   ws <- wd <- station_name <- times <- date_times <- distance <- rain_freq <-
+      wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- NULL
 
+   data.table::setDT(w)
    # set some time parameters
    start_date <- as.POSIXct(start_date, tz = "UTC")
    end_date <- as.POSIXct(end_date, tz = "UTC")
@@ -71,7 +104,7 @@ calc_estimated_weather <- function(w,
 
    # Do imputation
    w_prox[, c("rain","temp" ,"ws","wd","wd_sd") :=
-             .(rbinom(1,1,rain_freq),
+             list(rbinom(1,1,rain_freq),
                NA_real_,
                rnorm(1,mean = ws_rw,
                      sd = ws_sd_rw),
@@ -94,7 +127,7 @@ calc_estimated_weather <- function(w,
       }else{
          newer_w <-
             rbind(newer_w,
-                  new_w[, .(times = times,
+                  new_w[, list(times = times,
                             station_name = st)])
       }
    }
@@ -113,7 +146,7 @@ calc_estimated_weather <- function(w,
              "DD",
              "hh",
              "mm") :=
-            .(NULL,
+            list(NULL,
               year(times),
               month(times),
               mday(times),
@@ -152,20 +185,23 @@ calc_estimated_weather <- function(w,
 #' @return  The same input `data.table` but only containing the closest weather
 #'  station/s to the query coordinates.
 #' @noRd
-#' @examples
-.closest_station <- function(lat,lon,bom_dat, station_indexs = 1){
+.closest_station <- function(lat, lon, bom_dat, station_indexs = 1) {
+
+   # specify non-global data.table variables
+   station_name <- date_times <- distance <- yearday <- NULL
+
    # put queried longitude and latitude in an object for ease on interpretation
    ll <- c(lon,lat)
 
    # calculate the distance from queried lat and lon to each station
-   simp_dat <- unique(bom_dat[,.(station_name,lon,lat)])
+   simp_dat <- unique(bom_dat[,list(station_name,lon,lat)])
 
    simp_dat$distance <-
       apply(simp_dat, 1, function(Row, ll = c(lon,lat)){
          geosphere::distHaversine(ll,
                                   as.numeric(c(Row["lon"],Row["lat"])))/1000})
 
-   bom_dat <- bom_dat[simp_dat, on = .(station_name, lon,lat)]
+   bom_dat <- bom_dat[simp_dat, on = list(station_name, lon,lat)]
 
    # Simplify the response by returning a vector of unique distances in order from
    #  lowest to highest. This will be used to return the closest stations using the
