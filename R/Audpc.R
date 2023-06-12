@@ -1,3 +1,32 @@
+#' Calculate area under the disease progress curve
+#'
+#' @details
+#' This is a wrapper for \CRANpkg{agricolae} which checks for NA values and will
+#'  return NA values if specified in the argument
+#'  see help[agricolae::audpc] for more details.
+#'
+#' @param evaluation Table of data of the evaluations: Data frame
+#' @param dates Vector of dates corresponding to each evaluation
+#' @param type relative, absolute
+#' @param na.rm weather to remove NA values or return NA when there are only NA
+#'  vales
+#'
+#' @return Vector with relative or absolute audpc.
+#' @export
+#'
+#' @examples
+#' # see examples in help(agricolae::audpc)
+#' dates<-c(14,21,28) # days
+#' # example 1: evaluation - vector
+#' evaluation<-c(40,80,90)
+#' Audpc(evaluation,dates)
+#' dates<-c(14,21,NA) # days
+#' Audpc(evaluation,dates)
+#' # agricolae::audpc(evaluation,dates)
+#' dates<-c(14,21,28) # days
+#' evaluation<-c(40,80,NA)
+#' Audpc(evaluation,dates)
+#' # agricolae::audpc(evaluation,dates)
 Audpc <-
   function (evaluation,
             dates,
@@ -25,7 +54,6 @@ Audpc <-
 
       audpc <- audpc + (evaluation[, i] + evaluation[, i +1]) * (dates[i + 1] - dates[i]) / 2
     }
-    cat(audpc)
     if(is.na(audpc))
       return(NA_real_)
     if(audpc == 0)
@@ -36,5 +64,5 @@ Audpc <-
       return(audpc)
     }
     else
-      cat("Error: type is 'absolute' or 'relative'\n\n")
+      stop("Error: type is 'absolute' or 'relative'\n\n")
   }
