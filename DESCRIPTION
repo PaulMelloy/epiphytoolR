@@ -21,7 +21,8 @@ Imports:
     data.table,
     circular,
     sf,
-    units
+    units,
+    geosphere
 Suggests: 
     testthat (>= 3.0.0),
     lubridate (>= 1.7.10)
