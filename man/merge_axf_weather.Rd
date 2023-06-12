@@ -26,5 +26,6 @@ has previously merged data}
 data.table, of merged dataset
 }
 \description{
+@details
 This function takes new BOM axf files which hold 72 hours of weather observations
 }
