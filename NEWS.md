@@ -1,3 +1,8 @@
+ * Add functions `calc_estimated_weather()` for estimating future weather for 
+  environments.
+ 
+ * Better time format detection and more informative `format_weather()` errors.  
+
 # epiphytoolR 0.0.1
 
  * Initialise version 0.0.1 and merge `dev` branch to `main`. Package is now a import
