@@ -221,7 +221,8 @@ format_weather <- function(w,
       )
     } else{
        # check for any midnight times convertee to dates and append HMS
-       w[grepl(":", times) == FALSE, times := paste0(times," 00:00:00")]
+       w[inherits(times,"character") &
+            grepl(":", times) == FALSE, times := paste0(times," 00:00:00")]
 
       w[, times := as.POSIXct(times, tz = "UTC")]
     }
