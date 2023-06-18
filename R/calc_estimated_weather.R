@@ -65,6 +65,10 @@ calc_estimated_weather <- function(w,
    day_in_secs <- (60*60*24)
    year_day1 <- as.POSIXct(paste0(year(start_date),"-01-01"), tz = "UTC") - day_in_secs
 
+   if(length(n_stations) == 1){
+      n_stations <- seq_len(n_stations)
+   }
+
    # return weather estimate from the most proximal station
    w_prox <- .closest_station(lat = lat,
                               lon = lon,
