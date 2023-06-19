@@ -1,5 +1,11 @@
- * Add functions `calc_estimated_weather()` for estimating future weather for 
-  environments.
+ * `calc_estimated_weather.R()`  
+   - Permit `n_stations` argument to input a integer of single length to provide 
+   the number of stations.  
+   - More detailed error and warning messages, and checks on min and max temperatures  
+   
+ 
+ * Add functions `calc_estimated_weather()` and `impute_tm()` for estimating future 
+  weather for environments.  
  
  * Better time format detection and more informative `format_weather()` errors.  
 
