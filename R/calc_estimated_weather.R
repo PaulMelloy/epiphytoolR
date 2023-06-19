@@ -90,23 +90,24 @@ calc_estimated_weather <- function(w,
                                                sep = "', '"))
 
    if(any(is.na(w_prox$wd_rw))){
-      warning(w_prox$station_name[1],": ",sum(is.na(w_prox$wd_rw), " lines have NA data. This is replaced with
-                  the overall mean wind direction\n"))
+      warning(w_prox[is.na(wd_rw),unique(station_name)],": ",sum(is.na(w_prox$wd_rw)), " lines have NA data. This is replaced with
+                  the overall mean wind direction\n")
       w_prox[is.na(wd_rw), ]$wd_rw <- mean(w_prox$wd_rw, na.rm = TRUE)
    }
    if(any(is.na(w_prox$wd_sd_rw))){
-      warning(w_prox$station_name[1],": ",sum(is.na(w_prox$wd_sd_rw), " wd_sd_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n"))
+      warning(w_prox[is.na(wd_sd_rw),unique(station_name)],
+      ": ",sum(is.na(w_prox$wd_sd_rw)), " wd_sd_rw lines have NA data. This is replaced with
+                  the overall mean stdev wind direction\n")
       w_prox[is.na(wd_sd_rw), ]$wd_sd_rw <- mean(w_prox$wd_sd_rw, na.rm = TRUE)
    }
    if(any(is.na(w_prox$ws_rw))){
-      warning(w_prox$station_name[1],": ",sum(is.na(w_prox$ws_rw), " ws_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n"))
+      warning(w_prox[is.na(ws_rw),unique(station_name)],": ",sum(is.na(w_prox$ws_rw)), " ws_rw lines have NA data. This is replaced with
+                  the overall mean stdev wind direction\n")
       w_prox[is.na(ws_rw), ]$ws_rw <- mean(w_prox$ws_rw, na.rm = TRUE)
    }
    if(any(is.na(w_prox$ws_sd_rw))){
-      warning(w_prox$station_name[1],": ",sum(is.na(w_prox$ws_sd_rw), " ws_sd_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n"))
+      warning(w_prox[is.na(ws_sd_rw),unique(station_name)],": ",sum(is.na(w_prox$ws_sd_rw)), " ws_sd_rw lines have NA data. This is replaced with
+                  the overall mean stdev wind direction\n")
       w_prox[is.na(ws_sd_rw), ]$ws_sd_rw <- mean(w_prox$ws_sd_rw, na.rm = TRUE)
    }
 
