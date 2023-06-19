@@ -112,5 +112,5 @@ test_that("Warnings for no temperature",{
 })
 
 
-
+#### ADD TESTS FOR WARNINGS
 
