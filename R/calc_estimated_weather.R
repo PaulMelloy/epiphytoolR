@@ -83,7 +83,10 @@ calc_estimated_weather <- function(w,
                        date_times <= end_date]
 
    # NA handling
-   if(any(is.na(w_prox$rain_freq)))stop("NA values in rain_freqency")
+   if(any(is.na(w_prox$rain_freq)))stop("NA values in rain_freqency.\n",
+                                        "The following stations may need to be omitted:\n  '",
+                                        paste0(w_prox[is.na(rain_freq),unique(station_name)],
+                                               sep = "', '"))
 
    if(any(is.na(w_prox$wd_rw))){
       warning(w_prox$station_name[1],": ",sum(is.na(w_prox$wd_rw), " lines have NA data. This is replaced with
