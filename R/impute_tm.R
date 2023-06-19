@@ -21,12 +21,15 @@
 
 impute_tm <- function(max_tm = 28, min_tm = 10, max_hour = 14, min_hour = 5){
 
+   if(max_tm < min_tm)stop("'min_tm': ",min_tm,
+                           " is larger than 'max_tm': ", max_tm)
+
    min2max_time <- max_hour - min_hour
    max2min_time <- (24 - max_hour) + min_hour
    tm_diff <- max_tm - min_tm
 
-   occilating_factor <- c(seq(6,18,length.out = max2min_time+1)[-1],
-                          seq(18,30,length.out = min2max_time+1)[-1])
+   occilating_factor <- c(seq(6,18,length.out = max2min_time+1),
+                          seq(18,30,length.out = min2max_time+1)[-c(1,min2max_time+1)])
 
    tm_hourly <- ((sin((occilating_factor)/3.81972) +1) * 0.5 * tm_diff) + min_tm
 
@@ -35,9 +38,8 @@ impute_tm <- function(max_tm = 28, min_tm = 10, max_hour = 14, min_hour = 5){
 
 
    day_hourly <- vector(mode = "numeric", length = 24)
-   day_hourly[min_hour:max_hour] <- tm_hourly[min_ind:max_ind]
-   day_hourly[(max_hour+1):24] <- tm_hourly[1:(24 - max_hour)]
-   day_hourly[1:min_hour] <- tm_hourly[(24 - max_hour+1):min_ind]
+   day_hourly[1:(max_hour-1)] <- tm_hourly[(min_ind - (min_hour)+1):24]
+   day_hourly[(max_hour):24] <- tm_hourly[1:(min_ind - min_hour)]
 
    return(day_hourly)
 
