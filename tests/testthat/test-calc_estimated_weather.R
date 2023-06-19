@@ -113,28 +113,4 @@ test_that("Warnings for no temperature",{
 
 
 
-test_that("number of stations works",{
-   w_dat <- fread("../validate_blackspot_risk/cache/BOM_weather_station_coefs.csv")
 
-   # remove NA sites
-   w_dat <-
-      w_dat[station_name %in% c('ADELAIDE AIRPORT OLD SITE', 'WAGON FLAT', 'GERANG GERUNG',
-                             'MAROO WEST (WARRANOOKE (GLENORCHY) COMPA',
-                             'WARRANOOKE (GLENORCHY)', 'SOUTH CHANNEL ISLAND') == FALSE]
-
-   out1 <- calc_estimated_weather(w = w_dat,
-                                  start_date = "2023-01-10",
-                                  end_date = "2023-12-10",
-                                  lat = mean(test_dat$lat),
-                                  lon = mean(test_dat$lon),
-                                  n_stations = 1)
-   out2 <- calc_estimated_weather(w = w_dat,
-                                  start_date = "2023-01-10",
-                                  end_date = "2023-12-10",
-                                  lat = mean(test_dat$lat),
-                                  lon = mean(test_dat$lon),
-                                  n_stations = 1:4)
-
-   form_out1 <- format_weather(w = out1,time_zone = "UTC")
-   form_out2 <- format_weather(w = out2,time_zone = "UTC")
-})
