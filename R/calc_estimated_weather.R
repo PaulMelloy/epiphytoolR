@@ -64,6 +64,7 @@ calc_estimated_weather <- function(w,
    end_date <- as.POSIXct(end_date, tz = "UTC")
    day_in_secs <- (60*60*24)
    year_day1 <- as.POSIXct(paste0(year(start_date),"-01-01"), tz = "UTC") - day_in_secs
+   col_var <- colnames(w)
 
    if(length(n_stations) == 1){
       n_stations <- seq_len(n_stations)
@@ -109,15 +110,36 @@ calc_estimated_weather <- function(w,
       w_prox[is.na(ws_sd_rw), ]$ws_sd_rw <- mean(w_prox$ws_sd_rw, na.rm = TRUE)
    }
 
+
+
    # Do imputation
-   w_prox[, c("rain","temp" ,"ws","wd","wd_sd") :=
-             list(rbinom(1,1,rain_freq),
-               NA_real_,
-               rnorm(1,mean = ws_rw,
-                     sd = ws_sd_rw),
-               wd_rw,
-               wd_sd_rw),
-          by = yearday]
+   if("max_temp" %in% col_var &
+      "min_temp" %in% col_var) {
+      w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
+                list(
+                   rbinom(1, 1, rain_freq),
+                   mean(impute_tm(max_tm = max_temp,
+                                     min_tm = min_temp)),
+                   rnorm(1, mean = ws_rw,
+                         sd = ws_sd_rw),
+                   wd_rw,
+                   wd_sd_rw
+                ),
+             by = .(station_name, yearday)]
+   } else{
+      warning("'max_temp' and 'min_temp' not detected, returning NAs for mean daily 'temp'")
+      w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
+                list(
+                   rbinom(1, 1, rain_freq),
+                   NA_real_,
+                   rnorm(1, mean = ws_rw,
+                         sd = ws_sd_rw),
+                   wd_rw,
+                   wd_sd_rw
+                ),
+             by = list(station_name, yearday)]
+
+   }
 
    # correct outside normal values
    w_prox[ws < 0, ws := abs(ws)/3]
