@@ -1,3 +1,4 @@
+ * Add read me
  * `calc_estimated_weather.R()`  
    - Permit `n_stations` argument to input a integer of single length to provide 
    the number of stations.  
