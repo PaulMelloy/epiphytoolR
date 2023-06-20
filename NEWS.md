@@ -1,8 +1,9 @@
- * Add read me
+ * Add README.md
  * `calc_estimated_weather.R()`  
    - Permit `n_stations` argument to input a integer of single length to provide 
    the number of stations.  
    - More detailed error and warning messages, and checks on min and max temperatures  
+   - add na.rm argument for cases where NA data can't be removed manually
    
  
  * Add functions `calc_estimated_weather()` and `impute_tm()` for estimating future 
