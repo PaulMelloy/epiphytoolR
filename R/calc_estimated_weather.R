@@ -14,6 +14,10 @@
 #' @param n_stations integer or vector of integers indicating the number of station/s
 #'  to return from the closest (1), or 3rd closest (3) or closest five stations
 #'  (1:5). ect
+#' @na.rm logical, remove all weather data from stations with NA rain_fall frequency
+#'  **Not Recomended**. We advise the best way is to manually remove weather stations
+#'  with NAs or correct the weather data. This agument is available if these two
+#'  options are not available to the user. Default is `FALSE`
 #'
 #' @return A `data.table` output of calculated on `get_weather_coefs.R` with the
 #' following columns:
@@ -53,7 +57,8 @@ calc_estimated_weather <- function(w,
                                    end_date = "2023-11-30",
                                    lat,
                                    lon,
-                                   n_stations = 1:4){
+                                   n_stations = 1:4,
+                                   na.rm = FALSE){
    # specify non-global data.table variables
    ws <- wd <- station_name <- times <- date_times <- distance <- rain_freq <-
       wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- NULL
@@ -84,10 +89,20 @@ calc_estimated_weather <- function(w,
                        date_times <= end_date]
 
    # NA handling
-   if(any(is.na(w_prox$rain_freq)))stop("NA values in rain_freqency.\n",
-                                        "The following stations may need to be omitted:\n  '",
-                                        paste0(w_prox[is.na(rain_freq),unique(station_name)],
-                                               sep = "', '"))
+   if(any(is.na(w_prox$rain_freq)) &
+      isFALSE(na.rm)) {
+      stop(
+         "NA values in rain_freqency.\n",
+         "The following stations may need to be omitted:\n  '",
+         paste0(w_prox[is.na(rain_freq), unique(station_name)],
+                sep = "', '")
+      )
+   } else{
+      if (na.rm) {
+         rm_stat <- w_prox[is.na(rain_freq), unique(station_name)]
+         w_prox <- w_prox[station_name %in% rm_stat == FALSE,]
+      }
+   }
 
    if(any(is.na(w_prox$wd_rw))){
       warning(paste0(w_prox[is.na(wd_rw),unique(station_name)], sep = ",   "),": ",sum(is.na(w_prox$wd_rw)), " lines have NA data. This is replaced with
