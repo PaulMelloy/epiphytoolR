@@ -37,7 +37,7 @@ to return from the closest (1), or 3rd closest (3) or closest five stations
 
 \item{na.rm}{logical, remove all weather data from stations with NA rain_fall
 frequency \strong{Not Recomended}. We advise the best way is to manually remove
-weather stations with NAs or correct the weather data. This agument is
+weather stations with NAs or correct the weather data. This argument is
 available if these two options are not available to the user. Default is \code{FALSE}}
 }
 \value{

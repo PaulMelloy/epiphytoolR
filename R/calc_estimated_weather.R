@@ -15,8 +15,8 @@
 #'  to return from the closest (1), or 3rd closest (3) or closest five stations
 #'  (1:5). ect
 #' @param na.rm logical, remove all weather data from stations with NA rain_fall
-#'  frequency **Not Recomended**. We advise the best way is to manually remove
-#'  weather stations with NAs or correct the weather data. This agument is
+#'  frequency **Not Recommended**. We advise the best way is to manually remove
+#'  weather stations with NAs or correct the weather data. This argument is
 #'  available if these two options are not available to the user. Default is `FALSE`
 #'
 #' @return A `data.table` output of calculated on `get_weather_coefs.R` with the
@@ -61,7 +61,8 @@ calc_estimated_weather <- function(w,
                                    na.rm = FALSE){
    # specify non-global data.table variables
    ws <- wd <- station_name <- times <- date_times <- distance <- rain_freq <-
-      wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- NULL
+      wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- max_temp <-
+      min_temp <- NULL
 
    data.table::setDT(w)
    # set some time parameters
@@ -141,7 +142,7 @@ calc_estimated_weather <- function(w,
                    wd_rw,
                    wd_sd_rw
                 ),
-             by = .(station_name, yearday)]
+             by = list(station_name, yearday)]
    } else{
       warning("'max_temp' and 'min_temp' not detected, returning NAs for mean daily 'temp'")
       w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
