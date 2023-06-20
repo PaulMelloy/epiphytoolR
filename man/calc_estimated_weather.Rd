@@ -10,7 +10,8 @@ calc_estimated_weather(
   end_date = "2023-11-30",
   lat,
   lon,
-  n_stations = 1:4
+  n_stations = 1:4,
+  na.rm = FALSE
 )
 }
 \arguments{
@@ -33,6 +34,11 @@ estimated}
 \item{n_stations}{integer or vector of integers indicating the number of station/s
 to return from the closest (1), or 3rd closest (3) or closest five stations
 (1:5). ect}
+
+\item{na.rm}{logical, remove all weather data from stations with NA rain_fall
+frequency \strong{Not Recomended}. We advise the best way is to manually remove
+weather stations with NAs or correct the weather data. This agument is
+available if these two options are not available to the user. Default is \code{FALSE}}
 }
 \value{
 A \code{data.table} output of calculated on \code{get_weather_coefs.R} with the
