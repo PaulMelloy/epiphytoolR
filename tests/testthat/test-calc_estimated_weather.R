@@ -114,3 +114,23 @@ test_that("Warnings for no temperature",{
 
 #### ADD TESTS FOR WARNINGS
 
+test_that("Warnings for no temperature",{
+   d2 <- fread("../validate_blackspot_risk/cache/BOM_weather_station_coefs.csv")
+   out1 <- calc_estimated_weather(w = d2,
+                                   lat = -33.8763,
+                                   lon = 136,
+                                   n_stations = 1:150,
+                                   na.rm = TRUE)
+
+   out2 <- format_weather(out1, time_zone = "UTC")
+
+   out1 <- calc_estimated_weather(w = d2,
+                                     start_date = "2023-01-10",
+                                     end_date = "2023-12-10",
+                                     lat = mean(test_dat$lat),
+                                     lon = mean(test_dat$lon),
+                                     n_stations = 1),
+      regexp = "'max_temp' and 'min_temp' not detected, returning NAs for mean daily 'temp'")
+})
+
+
