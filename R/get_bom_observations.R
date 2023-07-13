@@ -127,7 +127,6 @@ get_bom_observations <- function(ftp_url,
 #'
 #' @return data.table, of merged dataset
 #' @export
-#' @noRd
 merge_axf_weather <- function(File_compressed, # uncompressed
                               File_axf = "IDQ60910.99123.axf",
                               File_formatted = "NTamborine.csv",
