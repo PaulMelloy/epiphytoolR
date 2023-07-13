@@ -66,6 +66,8 @@
 #'  vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
 #'  to check data from specific variables. If FALSE it ignores all variables and
 #'  could cause subsequent models using this data to fail.
+#' @param rh Column name `character` or index in `w` that refers to relative
+#'   humidity as a percentage.
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
@@ -238,7 +240,7 @@ format_weather <- function(w,
 
     setattr(w, "class", union("epiphy.weather", class(w)))
 
-    if(data_check != FALSE) .check_weather(w, data_check)
+    if(isFALSE(FALSE %in% data_check)) .check_weather(w, data_check)
 
     return(w)
   }
@@ -666,7 +668,7 @@ format_weather <- function(w,
     x_out[, lon := NULL]
   }
 
-  if(data_check != FALSE) .check_weather(w,x_out)
+  if(isFALSE(FALSE %in% data_check)) .check_weather(x_out, data_check)
 
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
   return(x_out[])
@@ -717,6 +719,9 @@ format_weather <- function(w,
 .check_weather <- function(final_w, var_check) {
   # note on cran avoidance (nocov) from data.table
   temp <- times <- rain <- ws <- wd <- NULL
+  if(TRUE %in% var_check){
+     var_check <- c("temp","rh","rain","ws","wd")
+  }
 
   # Check temperatures
   # For NAs
@@ -756,7 +761,7 @@ format_weather <- function(w,
      if (nrow(final_w[is.na(rh), ]) != 0) {
         if (all(is.na(final_w[, rh]))) {
            warning(
-              "All relative humidity values are 'NA' or missing, check data if",
+              "All relative humidity values are 'NA' or missing, check data if ",
               "this is not intentional"
            )
         } else{
@@ -785,7 +790,7 @@ format_weather <- function(w,
 
   # Check rainfall
   # For NAs
-  if ("rain" %in% var_check | var_check) {
+  if ("rain" %in% var_check) {
      if (nrow(final_w[is.na(rain),]) != 0) {
         stop(
            call. = FALSE,
@@ -809,8 +814,7 @@ format_weather <- function(w,
 
   # Check windspeed
   # For NAs
-  if ("ws" %in% var_check |
-      var_check) {
+  if ("ws" %in% var_check) {
      if (nrow(final_w[is.na(ws),]) != 0) {
         stop(
            call. = FALSE,
@@ -834,8 +838,7 @@ format_weather <- function(w,
 
   # Check Wind direction
   # For NAs
-  if ("ws" %in% var_check |
-      var_check) {
+  if ("wd" %in% var_check) {
      if (nrow(final_w[is.na(wd),]) != 0) {
         stop(
            call. = FALSE,
