@@ -41,16 +41,20 @@ impute_diurnal <-
       # adjust to 24 hour
       l_out <- (l_out/24)
 
-   min2max_time <- abs(max_hour - min_hour)
-      #max_hour - min_hour
-   max2min_time <- 24 - min2max_time
+      if(max_hour > min_hour) {
+         max2min_time <- (24 - max_hour) + min_hour
+      } else{
+         if(max_hour == min_hour)stop("max_hour can not be equal to min_hour")
+         max2min_time <- min_hour - max_hour
+      }
+      min2max_time <- 24 - max2min_time
 
    rh_diff <- max_obs - min_obs
 
    # occilating_factor <- c(seq(6,18,length.out = max2min_time+1),
    #                        seq(18,30,length.out = min2max_time+1)[-c(1,min2max_time+1)])
-   occilating_factor <- c(seq(6,18,length.out = (min2max_time+1)*l_out),
-                          seq(18,30,length.out = (max2min_time+1)*l_out)[-c(1,(max2min_time+1)*l_out)])
+   occilating_factor <- c(seq(6,18,length.out = (max2min_time+1)*l_out),
+                          seq(18,30,length.out = (min2max_time+1)*l_out)[-c(1,(min2max_time+1)*l_out)])
 
    rh_hourly <- ((sin((occilating_factor)/3.81972) +1) * 0.5 * rh_diff) + min_obs
 
