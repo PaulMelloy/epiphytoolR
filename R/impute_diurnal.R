@@ -20,13 +20,16 @@
 #' @export
 #'
 #' @examples
-#' impute_rh()
-#' impute_rh(Sys.time())
-#' impute_rh(max_obs = 22,
-#'           min_obs = 18)
-#' impute_rh(max_hour = 3,
-#'           min_hour = 9)
-
+#' impute_diurnal()
+#' impute_diurnal(Sys.time())
+#' impute_diurnal(max_obs = 22,
+#'                min_obs = 18)
+#' impute_diurnal(max_hour = 3,
+#'                min_hour = 9)
+#' impute_diurnal(max_obs = 99,
+#'                min_obs = 45)
+#' impute_diurnal(max_hour = 6,
+#'                min_hour = 14)
 impute_diurnal <-
    function(x = 1:24,
             max_obs = 95,

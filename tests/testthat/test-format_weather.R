@@ -28,8 +28,8 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                                                        min = 0, max = 359),
                 Temperature.in.Degrees.c = rnorm(10080,15,3),
                 Relative.Humidity = impute_diurnal(1:10080,
-                                               max_tm = 100,
-                                               min_tm = 35,
+                                               max_obs = 100,
+                                               min_obs = 35,
                                                max_hour = 24,
                                                min_hour = 16) * runif(10080,0.8,1.2),
                 Station.Number = "16096"

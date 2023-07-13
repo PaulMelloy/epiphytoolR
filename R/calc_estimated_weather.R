@@ -135,8 +135,8 @@ calc_estimated_weather <- function(w,
       w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
                 list(
                    rbinom(1, 1, rain_freq),
-                   mean(impute_diurnal(max_tm = max_temp,
-                                     min_tm = min_temp)),
+                   mean(impute_diurnal(max_obs = max_temp,
+                                     min_obs = min_temp)),
                    rnorm(1, mean = ws_rw,
                          sd = ws_sd_rw),
                    wd_rw,
