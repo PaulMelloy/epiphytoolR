@@ -94,7 +94,7 @@ test_that("format_weather can format it",{
                                   lon = mean(test_dat$lon),
                                   n_stations = 1:4)
 
-   expect_no_warning(format_weather(w = out1,time_zone = "UTC"))
+   expect_no_warning(format_weather(w = out1, time_zone = "UTC"))
    expect_no_warning(format_weather(w = out2,time_zone = "UTC"))
 
 
@@ -124,7 +124,7 @@ test_that("Warnings for no temperature",{
 
    out2 <- format_weather(out1, time_zone = "UTC")
 
-   out1 <- calc_estimated_weather(w = d2,
+   expect_warning(calc_estimated_weather(w = d2,
                                      start_date = "2023-01-10",
                                      end_date = "2023-12-10",
                                      lat = mean(test_dat$lat),
