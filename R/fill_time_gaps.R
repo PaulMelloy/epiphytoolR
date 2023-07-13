@@ -8,7 +8,7 @@
 #' @param max_interval numeric, maximum acceptable interval between data
 #'  observaions in minutes.
 #'
-#' @return
+#' @return data.table, with extra rows containing times where there were gaps
 #' @export
 #'
 #' @examples
