@@ -168,6 +168,7 @@ format_weather <- function(w,
                            time_zone = NULL,
                            temp,
                            rain,
+                           rh,
                            ws,
                            wd,
                            wd_sd,
@@ -198,6 +199,7 @@ format_weather <- function(w,
       "times",
       "temp",
       "rain",
+      "rh",
       "ws",
       "wd",
       "wd_sd",
@@ -319,12 +321,21 @@ format_weather <- function(w,
         stop("colname `temp`:", temp, " not found in 'w'")
      }
   }
+  if (missing(rh)) {
+     w[, rh := rep(NA, .N)]
+     rh <- "rh"
+  }else{
+     if(rh %in% colnames(w) == FALSE){
+        stop("colname `rh`:", rh, " not found in 'w'")
+     }
+  }
 
   # make sure other column names supplied in arguments are in the supplied '
   #  w' data
   if (all(c(rain, ws, wd, station) %in% colnames(w)) == FALSE) {
      stop(call. = FALSE,
-          "Supplied column names are not found in column names of `w`.")
+          "Supplied column names for rain, ws, wd and station are not",
+          "found in column names of `w`.")
   }
 
   # import and assign longitude and latitude from a file if provided
@@ -385,6 +396,10 @@ format_weather <- function(w,
   setnames(w,
            old = rain,
            new = "rain",
+           skip_absent = TRUE)
+  setnames(w,
+           old = rh,
+           new = "rh",
            skip_absent = TRUE)
 
   setnames(w,
@@ -471,6 +486,7 @@ format_weather <- function(w,
                          mm = mm,
                          temp = temp,
                          rain = rain,
+                         rh = rh,
                          ws = ws,
                          wd = wd,
                          wd_sd = wd_sd,
@@ -492,6 +508,7 @@ format_weather <- function(w,
        w_dt_agg <- x_dt[, list(
           rain = sum(rain, na.rm = TRUE),
           temp = mean(temp, na.rm = TRUE),
+          rh = mean(rh, na.rm = TRUE),
           ws = mean(ws, na.rm = TRUE),
           wd = if (print_warnings == FALSE) {
              if(muffle_warnings) {
@@ -588,6 +605,7 @@ format_weather <- function(w,
       mm = mm,
       temp = temp,
       rain = rain,
+      rh = rh,
       ws = ws,
       wd = wd,
       wd_sd = wd_sd,
@@ -609,6 +627,7 @@ format_weather <- function(w,
       mm = mm,
       temp = temp,
       rain = rain,
+      rh = rh,
       ws = ws,
       wd = wd,
       wd_sd = wd_sd,
@@ -625,6 +644,7 @@ format_weather <- function(w,
      x_out,
      c("times",
        "temp",
+       "rh",
         "rain",
         "ws",
         "wd",
@@ -724,6 +744,33 @@ format_weather <- function(w,
                                    temp > 60, times])),
       "\nplease correct these inputs and run again"
     )}
+
+  # Check relative humidity
+  # For NAs
+  if (nrow(final_w[is.na(rh),]) != 0) {
+     if (all(is.na(final_w[, rh]))) {
+        warning("All relative humidity values are 'NA' or missing, check data if",
+                "this is not intentional")
+     } else{
+        stop(
+           call. = FALSE,
+           "data includes NA 'rh' values; \n",
+           paste0(as.character(final_w[is.na(rh), times]),sep = ",  "),
+           "\n if a complete dataset does not require 'rh' use data_check = FALSE"
+        )
+     }}
+
+  # for outside range
+  if (nrow(final_w[rh < 0 |
+                   rh > 100, ]) != 0){
+     stop(
+        call. = FALSE,
+        "Relative humidity inputs are outside expected ranges (0 and 100%); \n",
+        paste(as.character(final_w[rh < 0 |
+                                      rh > 100, times])),
+        "\nplease correct these inputs and run again"
+     )}
+
 
   # Check rainfall
   # For NAs
