@@ -6,10 +6,26 @@
    - add na.rm argument for cases where NA data can't be removed manually
    
  
- * Add functions `calc_estimated_weather()` and `impute_tm()` for estimating future 
+ * Add functions `calc_estimated_weather()` and `impute_diurnal()` for estimating future 
   weather for environments.  
  
  * Better time format detection and more informative `format_weather()` errors.  
+ 
+ * Add a function `fill_time_gaps()` that fills time gaps in data.frame with 
+ time vector. 
+ This is common in many weather data sets to have missing data. 
+ This function helps fill the lines which are missing and inserts NAs for any column
+ with variable inputs.
+ 
+ * New fictional internal dataset `bris_weather_obs.csv` of weather for testing 
+ and practising the use of functions in this package.
+ The format reflect some BOM weather data.
+ 
+ * `format_weather()` 
+   - *New feature* allows data.checks of specific variable. Previously this was 
+   all or nothing.
+   - This now accepts relative humidity `rh` and returns the hourly mean.
+ 
 
 # epiphytoolR 0.0.1
 
