@@ -13,7 +13,7 @@
 #' @param max_hour integer, hour in the day when maximum observation was made.
 #' @param min_hour integer, hour in the day when minimum observation was made.
 #' @param l_out integer, length out of function. `24` for hourly observations (default.
-#'  `1440` for minute. `48` for half hourly
+#'  `1440` for minute. `48` for half hourly **Still Experimental!**
 #'
 #' @return numeric vector equal to the of length x. An the respective hour from
 #'  the day
