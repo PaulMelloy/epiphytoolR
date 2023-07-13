@@ -1,50 +1,55 @@
-#' Impute hourly relative humidity
+#' Impute hourly diurnal weather fluctuations.
 #'
 #' @details
-#' Impute hourly relative humidity from daily maximums and minimums and rainfall
+#' Impute hourly fluctuations in temperature or relative humidity from daily
+#'   maximums and minimums. This function uses a sin function to estimate the
+#'   diurnal fluctuations of temperature or humidity.
 #'
 #' @param x numeric or POSIX, vector. numeric vectors indicate which hour to
 #'  return. A POSIX formatted vector can also be used and the imputed relative
 #'  humidity for the hour returned.
-#' @param max_rh numeric, maximum daily relative humidity
-#' @param min_rh numeric, minimum daily relative humidity
-#' @param max_hour integer, hour in the day when maximum relative humidity occurred
-#' @param min_hour integer, hour in the day when minimum relative humidity occurred
+#' @param max_obs numeric, maximum daily observation of relative humidity or temperature
+#' @param min_obs numeric, minimum daily observation of relative humidity or temperature
+#' @param max_hour integer, hour in the day when maximum observation was made.
+#' @param min_hour integer, hour in the day when minimum observation was made.
+#' @param l_out integer, length out of function. `24` for hourly observations (default.
+#'  `1440` for minute. `48` for half hourly
 #'
-#' @return numeric vector of length 24. An estimation for each hour of the day
+#' @return numeric vector equal to the of length x. An the respective hour from
+#'  the day
 #' @export
 #'
 #' @examples
 #' impute_rh()
 #' impute_rh(Sys.time())
-#' impute_rh(max_rh = 22,
-#'           min_rh = 18)
+#' impute_rh(max_obs = 22,
+#'           min_obs = 18)
 #' impute_rh(max_hour = 3,
 #'           min_hour = 9)
 
-impute_rh <-
+impute_diurnal <-
    function(x = 1:24,
-            max_rh = 95,
-            min_rh = 45,
+            max_obs = 95,
+            min_obs = 45,
             max_hour = 4,
             min_hour = 15,
-            l_out = 1) {
+            l_out = 24) {
 
-   if(max_rh < min_rh)stop("'min_rh': ",min_rh,
-                           " is larger than 'max_rh': ", max_rh)
+   if(max_obs < min_obs)stop("'min_obs': ",min_obs,
+                           " is larger than 'max_obs': ", max_obs)
 
    min2max_time <- abs(max_hour - min_hour)
       #max_hour - min_hour
    max2min_time <- 24 - min2max_time
 
-   rh_diff <- max_rh - min_rh
+   rh_diff <- max_obs - min_obs
 
    # occilating_factor <- c(seq(6,18,length.out = max2min_time+1),
    #                        seq(18,30,length.out = min2max_time+1)[-c(1,min2max_time+1)])
    occilating_factor <- c(seq(6,18,length.out = (min2max_time+1)*l_out),
                           seq(18,30,length.out = max2min_time+1*l_out)[-c(1,(max2min_time+1)*l_out)])
 
-   rh_hourly <- ((sin((occilating_factor)/3.81972) +1) * 0.5 * rh_diff) + min_rh
+   rh_hourly <- ((sin((occilating_factor)/3.81972) +1) * 0.5 * rh_diff) + min_obs
 
    min_ind <- which(rh_hourly == min(rh_hourly))
    max_ind <- which(rh_hourly == max(rh_hourly))
