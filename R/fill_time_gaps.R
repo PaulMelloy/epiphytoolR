@@ -45,7 +45,7 @@ fill_time_gaps <- function(dat,t_col, interval = "auto", max_interval = 60, impu
 
       if(impute){
          # Future updates
-         # impute_tm
+         # impute_diurnal()
       }
 
       dat2 <- rbind(dat,data.table(t1mes = seq_time),

@@ -27,7 +27,7 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                 Wind.direction.in.degrees.true = runif(n = dat_minutes,
                                                        min = 0, max = 359),
                 Temperature.in.Degrees.c = rnorm(10080,15,3),
-                Relative.Humidity = impute_tm(1:10080,
+                Relative.Humidity = impute_diurnal(1:10080,
                                                max_tm = 100,
                                                min_tm = 35,
                                                max_hour = 24,
@@ -860,7 +860,9 @@ bris[, rain := rain_trace - shift(rain_trace, type = "lead")][rain < 0, rain := 
 bris <- bris[order(aifstime_utc)]
 
 #impute temperature
-bris[is.na(air_temp), air_temp := impute_tm(aifstime_utc)]
+bris[is.na(air_temp), air_temp := impute_diurnal(aifstime_utc,
+                                                 min_obs = 10,max_obs = 28,
+                                                 max_hour = 14, min_hour = 5)]
 bris[is.na(rain), rain := 0]
 
 # test_that("Relative humidity formats",{
