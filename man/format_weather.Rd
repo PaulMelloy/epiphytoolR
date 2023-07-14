@@ -16,6 +16,7 @@ format_weather(
   time_zone = NULL,
   temp,
   rain,
+  rh,
   ws,
   wd,
   wd_sd,
@@ -63,6 +64,9 @@ Celsius.}
 
 \item{rain}{Column name \code{character} or index in \code{w} that refers to rainfall in millimetres.}
 
+\item{rh}{Column name \code{character} or index in \code{w} that refers to relative
+humidity as a percentage.}
+
 \item{ws}{Column name \code{character} or index in \code{w} that refers to wind speed in km / h.}
 
 \item{wd}{Column name \code{character} or index in \code{w} that refers to wind direction in
@@ -95,9 +99,11 @@ warn$captured_warnings and can be retrieved with function
 will be muffled and not printed to console. Only use if there is a lot of NA
 wind data which you are aware about and happy to ignore.}
 
-\item{data_check}{If \code{TRUE}, it checks for NA values in rain and wind data or
-any values which are unlikely. If FALSE it ignores data values which could
-cause models to fail.}
+\item{data_check}{If \code{TRUE}, it checks for NA values in all 'rain', 'temp',
+'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
+vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
+to check data from specific variables. If FALSE it ignores all variables and
+could cause subsequent models using this data to fail.}
 }
 \value{
 A \code{epiphy.weather} object (an extension of \CRANpkg{data.table})
