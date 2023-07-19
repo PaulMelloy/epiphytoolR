@@ -718,7 +718,7 @@ format_weather <- function(w,
 
 .check_weather <- function(final_w, var_check) {
   # note on cran avoidance (nocov) from data.table
-  temp <- times <- rain <- ws <- wd <- NULL
+  temp <- times <- rain <- ws <- wd <- rh <- NULL
   if(TRUE %in% var_check){
      var_check <- c("temp","rh","rain","ws","wd")
   }
