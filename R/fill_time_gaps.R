@@ -12,12 +12,22 @@
 #' @export
 #'
 #' @examples
+#' # import BOM data file
+#' brisvegas <-
+#'   system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+#' bris <- data.table::fread(brisvegas)
+#' dim(bris)
+#'
+#' bris$aifstime_utc <- as.POSIXct(bris$aifstime_utc,tz = "UTC")
+#' bris <- fill_time_gaps(bris,"aifstime_utc")
+#' dim(bris)
 fill_time_gaps <- function(dat,t_col, interval = "auto", max_interval = 60, impute = FALSE){
    data.table::setDT(dat)
 
+   t1mes <- t_diff <- NULL
 
    # give a colname to dat
-   dat$t1mes <- dat[,..t_col]
+   dat$t1mes <- dat[,get(t_col)]
 
    if(attr(x = dat$t1mes,"tzone") != "UTC"){
    stop("please convert time to UTC\n
@@ -53,8 +63,8 @@ fill_time_gaps <- function(dat,t_col, interval = "auto", max_interval = 60, impu
 
       # if only one variable in column, fill all with this same value
       for(i in colnames(dat)){
-         if(nrow(unique(dat[,..i])) == 1){
-            x1 <- unlist(unique(dat[,..i]))
+         if(nrow(unique(dat[,mget(i)])) == 1){
+            x1 <- unique(dat[,get(i)])
             dat2[,c(i) := x1]
          }
       }
