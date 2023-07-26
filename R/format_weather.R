@@ -253,6 +253,15 @@ format_weather <- function(w,
       "You must provide time values either as a `POSIXct_time` column or ",
       "values for `YYYY``, `MM`, `DD` and `hh`."
     )
+  }else{
+     if(is.null(POSIXct_time) == FALSE){
+     if(POSIXct_time %in% colnames(w) == FALSE){
+        stop(
+           call. = FALSE,
+           "`POSIXct_time` column name '",POSIXct_time,
+           "' not found in dataset 'w'`."
+        )}
+     }
   }
 
   if (is.null(lon) && is.null(lat) && is.null(lonlat_file)) {
