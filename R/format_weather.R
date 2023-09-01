@@ -587,6 +587,8 @@ format_weather <- function(w,
        w_dt_agg[, mm := rep(0, .N)]
        mm <- "mm"
 
+       w_dt_agg <- w_dt_agg[order(station,times)]
+
        return(.fill_times(w_dt_agg))
 
     } else{
@@ -597,6 +599,7 @@ format_weather <- function(w,
           "Please supply a standard deviation of wind direction."
         )
       }
+      x_dt <- x_dt[order(station,times)]
       return(.fill_times(x_dt))
     }
   }
@@ -699,6 +702,11 @@ format_weather <- function(w,
                                      by = "hours"))
 
    if(length(tseq_dt$times) != length(w_bystat$times)) {
+      warning("Non-continuous data detected. Extra lines will be merged into data
+              to ensure no time gaps. All weather data will be filled as NA.",
+              "\n This format request will likely cause the function to fail if
+              dat_check = TRUE. If set to false ensure data is imputed to prevent
+               model run errors.")
       # merge in missing times
       w_bystat <- merge(
          x = tseq_dt,
