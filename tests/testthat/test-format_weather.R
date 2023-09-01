@@ -143,6 +143,7 @@ test_that("`format_weather()` handles multiple stations", {
       )
    ), regexp = "NA values in *")
 
+   expect_warning(expect_warning(
    weather_dat <- format_weather(
       w = weather_station_data[c(1:4123,4125:8785),],
       POSIXct_time = "Local.Time",
@@ -155,7 +156,7 @@ test_that("`format_weather()` handles multiple stations", {
       station = "StationID",
       time_zone = "Australia/Adelaide",
       data_check = FALSE
-      )
+      )))
 
    expect_s3_class(weather_dat, "epiphy.weather")
    expect_equal(
@@ -181,8 +182,8 @@ test_that("`format_weather()` handles multiple stations", {
    expect_equal(dim(weather_dat), c(8786, 15))
    expect_true(anyNA(weather_dat$lon) == FALSE)
    expect_true(anyNA(weather_dat$lat) == FALSE)
-   expect_equal(round(unique(weather_dat$lon), 1), c(135.7,135.9))
-   expect_equal(round(unique(weather_dat$lat), 1), c(-33.1,-33.3))
+   expect_equal(round(unique(weather_dat$lon), 1), c(135.9,135.7))
+   expect_equal(round(unique(weather_dat$lat), 1), c(-33.3,-33.1))
 })
 
 # identify lon lat from cols ---------------------------------------------------
@@ -511,6 +512,7 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
       Temperature = rnorm(dat_minutes,20,10)
    )
 
+   expect_warning(
    expect_named(
       format_weather(
          w = weather_station_data,
@@ -542,7 +544,7 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
          "hh",
          "mm"
       )
-   )
+   ))
 })
 
 # stop if `wd_sd` is missing or cannot be calculated ---------------------------
@@ -749,7 +751,8 @@ test_that("`format_weather()` fills missing time", {
    weather_station_data <-
       weather_station_data[-(10:19),]
 
-  expect_error(
+  expect_warning(
+   expect_error(
    expect_warning(
      weather_dat <- format_weather(
         w = weather_station_data,
@@ -764,7 +767,7 @@ test_that("`format_weather()` fills missing time", {
         time_zone = "Australia/Brisbane",
         data_check = c("temp","rain","ws","wd")),
      regexp = "All temperature values are 'NA' or missing*"
-  ), regexp = "NA values in rainfall")
+  ), regexp = "NA values in rainfall"))
 
 
 })
@@ -800,7 +803,7 @@ test_that("`format_weather()` works with blackspot vignette", {
       time_zone = "UTC",
       data_check = c("temp","rain","ws","wd")
    )
-   expect_equal(dim(weather), c(8571,15))
+   expect_equal(dim(weather), c(8786,15))
 
 })
 

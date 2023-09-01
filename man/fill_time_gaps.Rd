@@ -31,3 +31,14 @@ data.table, with extra rows containing times where there were gaps
 \description{
 Fill time gaps in data.frame
 }
+\examples{
+# import BOM data file
+brisvegas <-
+  system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+bris <- data.table::fread(brisvegas)
+dim(bris)
+
+bris$aifstime_utc <- as.POSIXct(bris$aifstime_utc,tz = "UTC")
+bris <- fill_time_gaps(bris,"aifstime_utc")
+dim(bris)
+}
