@@ -5,16 +5,17 @@
 \title{Impute hourly diurnal weather fluctuations.}
 \usage{
 impute_diurnal(
-  x = 1:24,
+  h = 1:24,
   max_obs = 95,
   min_obs = 45,
   max_hour = 4,
   min_hour = 15,
-  l_out = 24
+  l_out = 24,
+  ind_out = "all"
 )
 }
 \arguments{
-\item{x}{numeric or POSIX, vector. numeric vectors indicate which hour to
+\item{h}{numeric or POSIX, vector. numeric vectors indicate which hour to
 return. A POSIX formatted vector can also be used and the imputed relative
 humidity for the hour returned.}
 
@@ -28,9 +29,12 @@ humidity for the hour returned.}
 
 \item{l_out}{integer, length out of function. \code{24} for hourly observations (default.
 \code{1440} for minute. \code{48} for half hourly \strong{Still Experimental!}}
+
+\item{ind_out}{integer, select the output useing an index number similar it
+1:10\link{ind_out}}
 }
 \value{
-numeric vector equal to the of length x. An the respective hour from
+numeric vector equal to the of length h. An the respective hour from
 the day
 }
 \description{
@@ -52,4 +56,23 @@ impute_diurnal(max_obs = 99,
                min_obs = 45)
 impute_diurnal(max_hour = 6,
                min_hour = 14)
+
+w_dt <- weather
+w_dt[3000 : 3050, temp := NA_real_]
+plot(w_dt[2900:3200, temp], type = "l")
+
+rolling_window <- 24
+w_dt[, tm_imp := round(data.table::frollapply(
+                      data.table::hour(times),
+                      n = rolling_window,
+                      fill = NA_real_,
+                      FUN = impute_diurnal,
+                      max_obs = max(temp, na.rm = TRUE),
+                      min_obs = min(temp, na.rm = TRUE),
+                      max_hour = data.table::hour(times[which(temp == max(temp, na.rm = TRUE))]),
+                      min_hour = data.table::hour(times[which(temp == min(temp, na.rm = TRUE))]),
+                      align = "center",
+                      ind_out = ceiling(rolling_window/2)),3)]
+plot(w_dt[2900:3200, temp], type = "l")
+lines(w_dt[2900:3200, tm_imp], type = "l", col = "red")
 }
