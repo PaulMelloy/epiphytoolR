@@ -784,3 +784,27 @@ test_that("`format_weather()` works with blackspot vignette", {
    expect_equal(dim(weather), c(8571,14))
 
 })
+
+# Relative humidity added
+
+gatton <- read.csv("../../Weather observations/Gatton_weather_obs.csv",
+                   colClasses = c("integer","character","character","character",
+                                  "character","character","character","character",
+                                  "numeric","numeric","numeric","character",
+                                  "integer","integer","integer","character",
+                                  "numeric","integer","integer","numeric","numeric",
+                                  "integer","integer","integer","character",
+                                  "numeric","numeric","numeric","character","character",
+                                  "character","character","integer","integer","character",
+                                  "character","integer","integer","character",
+                                  "character","character","integer","integer",
+                                  "integer","character"))
+setDT(gatton)
+as.POSIXct(gatton$aifstime_utc)
+
+gatton[, c("aifstime_utc","aifstime_local") :=
+          .(as.POSIXct(aifstime_utc,format = "%Y%m%d%H%M%S"),
+            as.POSIXct(aifstime_local,format = "%Y%m%d%H%M%S", tz = "Australia/Brisbane"))]
+
+tail(gatton)
+cat(unlist(lapply(gatton,class),use.names = FALSE),sep = "\",\"")
