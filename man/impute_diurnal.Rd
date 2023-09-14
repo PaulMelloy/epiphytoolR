@@ -31,7 +31,7 @@ humidity for the hour returned.}
 \code{1440} for minute. \code{48} for half hourly \strong{Still Experimental!}}
 
 \item{ind_out}{integer, select the output useing an index number similar it
-1:10\link{ind_out}}
+\code{1:10[ind_out]}}
 }
 \value{
 numeric vector equal to the of length h. An the respective hour from
