@@ -397,7 +397,6 @@ format_weather <- function(w,
     )
   }
 
-
   setnames(w,
            old = temp,
            new = "temp",
@@ -444,6 +443,10 @@ format_weather <- function(w,
              old = lon,
              new = "lon",
              skip_absent = TRUE)
+  }
+
+  if(nrow(unique(w[,list(station,lat,lon)])) != length(unique(w$station))){
+     stop("length of unique station names and unique 'lat' 'lon' entries don't match")
   }
 
   if (!is.null(POSIXct_time)) {
