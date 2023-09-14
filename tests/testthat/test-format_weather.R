@@ -868,6 +868,32 @@ bris[is.na(air_temp), air_temp := impute_diurnal(aifstime_utc,
                                                  max_hour = 14, min_hour = 5)]
 bris[is.na(rain), rain := 0]
 
+
+test_that("Non-unique stations and coordinates are detected",{
+
+   b_wther <-
+      system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+   b_wther<- fread(b_wther)
+
+   out <-
+      format_weather(w = b_wther,
+                  POSIXct_time = "aifstime_utc",
+                  temp = "air_temp",
+                  rain = "rain_ten",
+                  rh = "rel_hum",
+                  ws = "wind_spd_kmh",
+                  wd = "wind_dir_deg",
+                  lon = "lon",
+                  lat = "lat",
+                  station = "name",
+                  time_zone = "UTC",data_check = FALSE)
+
+   any(duplicated(out$times))
+})
+#-----------------------------------------------------------------
+# enter test with non-unique station lat lon combinations here
+
+
 # test_that("Relative humidity formats",{
 #    # expect_warning(expect_no_error(
 #    # bris_formated <- format_weather(
