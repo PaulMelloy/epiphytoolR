@@ -154,7 +154,8 @@ merge_axf_weather <- function(File_compressed, # uncompressed
       data.table::fread(paste0(Temp_folder, File_axf),
                         skip = 24,
                         nrows = 144,
-                        na.strings = c("-"))
+                        na.strings = c("-"),
+                        integer64 = "character")
 
    colnames(dat_new) <-
       gsub(pattern = "\\[80]", replacement = "", colnames(dat_new))
