@@ -176,7 +176,8 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    }else{
 
       if(verbose){cat("   Read in old data","\n")}
-      dat_old <- fread(file = paste0(base_dir,File_formatted))
+      dat_old <- fread(file = paste0(base_dir,File_formatted),
+                       integer64 = "character")
 
       if(verbose){cat("   Merge data","\n")}
       Merged <- rbind(dat_old,dat_new)
