@@ -136,7 +136,7 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    # define data.table reference
    aifstime_utc <- NULL
 
-   if(verbose){cat(" Uncompressing: ",i,"\n")}
+   if(verbose){cat(" Uncompressing: ",File_compressed,"\n")}
    # uncompress data to temporary folder
    Temp_folder <- paste0(tempdir(),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
    dir.create(Temp_folder,
