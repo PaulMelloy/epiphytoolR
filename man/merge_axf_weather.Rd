@@ -8,7 +8,8 @@ merge_axf_weather(
   File_compressed,
   File_axf = "IDQ60910.99123.axf",
   File_formatted = "NTamborine.csv",
-  base_dir = getwd()
+  base_dir = getwd(),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ bom}
 has previously merged data}
 
 \item{base_dir}{character file path giving the base directory for file_formatted}
+
+\item{verbose}{logical print extra messages to asssist debugging}
 }
 \value{
 data.table, of merged dataset
