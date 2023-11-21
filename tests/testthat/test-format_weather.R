@@ -875,7 +875,10 @@ test_that("Non-unique stations and coordinates are detected",{
       system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
    b_wther<- fread(b_wther)
 
-   out <-
+   # This function causes a warning due to non-continuous weather data
+   # data_check is set to false to
+   expect_warning(
+      out <-
       format_weather(w = b_wther,
                   POSIXct_time = "aifstime_utc",
                   temp = "air_temp",
@@ -886,9 +889,10 @@ test_that("Non-unique stations and coordinates are detected",{
                   lon = "lon",
                   lat = "lat",
                   station = "name",
-                  time_zone = "UTC",data_check = FALSE)
+                  time_zone = "UTC",
+                  data_check = FALSE))
 
-   any(duplicated(out$times))
+   expect_false(any(duplicated(out$times)))
 })
 #-----------------------------------------------------------------
 # enter test with non-unique station lat lon combinations here
