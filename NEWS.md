@@ -6,8 +6,10 @@
    - add na.rm argument for cases where NA data can't be removed manually
    
  
- * Add functions `calc_estimated_weather()` and `impute_diurnal()` for estimating future 
-  weather for environments.  
+ * Add functions for estimating future weather for environments.:  
+   - `calc_estimated_weather()` 
+   - `impute_diurnal()` 
+   - `get_weather_coefs()`   
  
  * Better time format detection and more informative `format_weather()` errors.  
  
