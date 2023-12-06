@@ -76,11 +76,15 @@ calc_estimated_weather <- function(w,
       n_stations <- seq_len(n_stations)
    }
 
+   if(missing(lat) | missing(lon)){
+      # if coordinates are missing return all stations
+      w_prox <- w
+   }else{
    # return weather estimate from the most proximal station
    w_prox <- .closest_station(lat = lat,
                               lon = lon,
                               bom_dat = w,
-                              station_indexs = n_stations)
+                              station_indexs = n_stations)}
 
    # add date_time column
    w_prox[,date_times := year_day1 + (day_in_secs * yearday)]
@@ -106,7 +110,9 @@ calc_estimated_weather <- function(w,
    }
 
    if(any(is.na(w_prox$wd_rw))){
-      warning(paste0(w_prox[is.na(wd_rw),unique(station_name)], sep = ",   "),": ",sum(is.na(w_prox$wd_rw)), " lines have NA data. This is replaced with
+      warning(paste0(w_prox[is.na(wd_rw),unique(station_name)], sep = ",   "),
+      ": ",sum(is.na(w_prox$wd_rw)),
+      " lines have NA data. This is replaced with
                   the overall mean wind direction\n")
       w_prox[is.na(wd_rw), ]$wd_rw <- mean(w_prox$wd_rw, na.rm = TRUE)
    }
