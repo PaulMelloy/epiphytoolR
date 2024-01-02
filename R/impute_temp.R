@@ -20,7 +20,7 @@
 #'         temp := NA_real_]
 #' w2 <- impute_temp(weather)
 impute_temp <- function(w, rolling_window = 40){
-   indx <- rh <- var_imp <- times <- NULL
+   indx <- temp <- var_imp <- times <- NULL
 
    wI <- data.table::copy(w)
    # set an index variable
