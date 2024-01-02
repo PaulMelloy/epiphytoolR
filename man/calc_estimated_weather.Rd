@@ -26,10 +26,10 @@ for in the returning data.table Must be in \acronym{ISO8601} format (YYYY-MM-DD)
 \emph{e.g.} \dQuote{2020-04-26}}
 
 \item{lat}{numeric, latitude of the query coordinates where weather should be
-estimated}
+estimated. If missing all stations will be returned}
 
 \item{lon}{numeric, longitude of the query coordinates where weather should be
-estimated}
+estimated.  If missing all stations will be returned}
 
 \item{n_stations}{integer or vector of integers indicating the number of station/s
 to return from the closest (1), or 3rd closest (3) or closest five stations
