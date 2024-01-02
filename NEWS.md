@@ -1,3 +1,6 @@
+ * new functions `impute_temp()` and `impute_rh()` for imputing temperatures and 
+  relative humidity using a `impute_fill()` on a rolling window function  
+  
  * Add README.md
  * `calc_estimated_weather.R()`  
    - Permit `n_stations` argument to input a integer of single length to provide 
