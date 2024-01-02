@@ -50,7 +50,7 @@ get_weather_coefs <- function(raw_bom_file,
 
    # binding the global variable locally to the function.
    MM <- `Station Number` <- DD <- `station_name` <- `station_number` <- lat <-
-      long <- state <- mm <- `MI format in Local standard time` <- rain <- YYYY <-
+      lon <- state <- mm <- `MI format in Local standard time` <- rain <- YYYY <-
       rain_day <- min_temp <- max_temp <- wd <- ws <- rain_freq <- NULL
 
    # Read in raw BOM weather data
