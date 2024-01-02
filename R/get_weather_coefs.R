@@ -48,6 +48,11 @@ get_weather_coefs <- function(raw_bom_file,
                              rolling_window = 60,
                              meta_data){
 
+   # binding the global variable locally to the function.
+   MM <- `Station Number` <- DD <- `station_name` <- `station_number` <- lat <-
+      long <- state <- mm <- `MI format in Local standard time` <- rain <- YYYY <-
+      rain_day <- min_temp <- max_temp <- wd <- ws <- rain_freq <- NULL
+
    # Read in raw BOM weather data
    d1 <- fread(raw_bom_file,
                keepLeadingZeros = TRUE,
@@ -74,7 +79,7 @@ get_weather_coefs <- function(raw_bom_file,
                                nchar(station_number) == 6, station_number,
                                default = NA_character_)]
 
-   mdat <- meta_data[station_number == st_num,.(station_name,lat,lon,state)]
+   mdat <- meta_data[station_number == st_num, list(station_name,lat,lon,state)]
 
    # create as.numeric columns from minute data
    d1[, mm := as.numeric(`MI format in Local standard time`)]
@@ -140,8 +145,8 @@ get_weather_coefs <- function(raw_bom_file,
 
 
       # get data.table of rainfall days
-      daily_rain_frequency <- rw_dat[,.(rain_day = any(rain > 0)),
-                                     by= .(YYYY,MM,DD)]
+      daily_rain_frequency <- rw_dat[,list(rain_day = any(rain > 0)),
+                                     by= list(YYYY,MM,DD)]
 
       # fill NAs based on rainfall probabilities
       daily_rain_frequency[is.na(rain_day),
@@ -163,7 +168,7 @@ get_weather_coefs <- function(raw_bom_file,
                            "wd_sd_rw",
                            "ws_rw",
                            "ws_sd_rw",
-                           "rain_freq") := .(NA_real_,
+                           "rain_freq") := list(NA_real_,
                                              NA_real_,
                                              NA_real_,
                                              NA_real_,
@@ -179,7 +184,7 @@ get_weather_coefs <- function(raw_bom_file,
                            "ws_rw",
                            "ws_sd_rw") :=
                      rw_dat[rain >0,
-                            .(mean(min_temp, na.rm = TRUE),
+                            list(mean(min_temp, na.rm = TRUE),
                               mean(max_temp, na.rm = TRUE),
                               wd_rw = as.numeric(circular::mean.circular(
                                  circular::circular(wd,
@@ -209,7 +214,7 @@ get_weather_coefs <- function(raw_bom_file,
       #    # define data.table indexs for window
       #
       #    wind_dat <- rw_dat[rain >0,
-      #                       .(wd_rw = as.numeric(circular::mean.circular(
+      #                       list(wd_rw = as.numeric(circular::mean.circular(
       #                            circular::circular(wd,
       #                                                        units = "degrees",
       #                                                        modulo = "2pi"),
@@ -225,7 +230,7 @@ get_weather_coefs <- function(raw_bom_file,
       #
       #    if(nrow(wind_dat) == 0){
       #       wind_dat <- rw_dat[,
-      #                          .(station_name = mdat$station_name,
+      #                          list(station_name = mdat$station_name,
       #                            station_number = mdat$station_number,
       #                            lat = mdat$lat,
       #                            lon = mdat$lon,
@@ -250,7 +255,7 @@ get_weather_coefs <- function(raw_bom_file,
       #    if(nrow(rw_dat[rain >0,] > 0)){
       #       line_dat <-
       #          rw_dat[rain > 0,
-      #                 .( station_name = mdat$station_name,
+      #                 list( station_name = mdat$station_name,
       #                    station_number = mdat$station_number,
       #                    lat = mdat$lat,
       #                    lon = mdat$lon,
@@ -272,7 +277,7 @@ get_weather_coefs <- function(raw_bom_file,
       #       wind_dat <- rbind(wind_dat,line_dat)
       #    }else{
       #       wind_dat <- rbind(wind_dat,
-      #                         rw_dat[, .(station_name = mdat$station_name,
+      #                         rw_dat[, list(station_name = mdat$station_name,
       #                                    station_number = mdat$station_number,
       #                                    lat = mdat$lat,
       #                                    lon = mdat$lon,
