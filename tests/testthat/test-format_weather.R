@@ -27,6 +27,11 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                 Wind.direction.in.degrees.true = runif(n = dat_minutes,
                                                        min = 0, max = 359),
                 Temperature.in.Degrees.c = rnorm(10080,15,3),
+                Relative.Humidity = impute_diurnal(1:10080,
+                                               max_obs = 100,
+                                               min_obs = 35,
+                                               max_hour = 24,
+                                               min_hour = 16) * runif(10080,0.8,1.2),
                 Station.Number = "16096"
              )
 
@@ -41,6 +46,7 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                 ws = "Wind.speed.in.km.h",
                 wd = "Wind.direction.in.degrees.true",
                 temp = "Temperature.in.Degrees.c",
+                rh = "Relative.Humidity",
                 station = "Station.Number",
                 lonlat_file = file.path(tempdir(), "stat_coord.csv"),
                 time_zone = "UTC"
@@ -51,7 +57,7 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                 names(weather_dt),
                 c(
                    "times",
-                   "temp",
+                   "temp","rh",
                    "rain",
                    "ws",
                    "wd",
@@ -66,7 +72,7 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                    "mm"
                 )
              )
-             expect_equal(dim(weather_dt), c(168, 14))
+             expect_equal(dim(weather_dt), c(168, 15))
              expect_true(anyNA(weather_dt$lon) == FALSE)
              expect_true(anyNA(weather_dt$lat) == FALSE)
              expect_equal(unique(weather_dt$lon), 135.7243)
@@ -137,6 +143,7 @@ test_that("`format_weather()` handles multiple stations", {
       )
    ), regexp = "NA values in *")
 
+   expect_warning(expect_warning(
    weather_dat <- format_weather(
       w = weather_station_data[c(1:4123,4125:8785),],
       POSIXct_time = "Local.Time",
@@ -149,7 +156,7 @@ test_that("`format_weather()` handles multiple stations", {
       station = "StationID",
       time_zone = "Australia/Adelaide",
       data_check = FALSE
-      )
+      )))
 
    expect_s3_class(weather_dat, "epiphy.weather")
    expect_equal(
@@ -157,6 +164,7 @@ test_that("`format_weather()` handles multiple stations", {
       c(
          "times",
          "temp",
+         "rh",
          "rain",
          "ws",
          "wd",
@@ -171,11 +179,11 @@ test_that("`format_weather()` handles multiple stations", {
          "mm"
       )
    )
-   expect_equal(dim(weather_dat), c(8786, 14))
+   expect_equal(dim(weather_dat), c(8786, 15))
    expect_true(anyNA(weather_dat$lon) == FALSE)
    expect_true(anyNA(weather_dat$lat) == FALSE)
-   expect_equal(round(unique(weather_dat$lon), 1), c(135.7,135.9))
-   expect_equal(round(unique(weather_dat$lat), 1), c(-33.1,-33.3))
+   expect_equal(round(unique(weather_dat$lon), 1), c(135.9,135.7))
+   expect_equal(round(unique(weather_dat$lat), 1), c(-33.3,-33.1))
 })
 
 # identify lon lat from cols ---------------------------------------------------
@@ -216,7 +224,8 @@ test_that("`format_weather()` works when lat lon are in data", {
       station = "Station.Number",
       lon = "lon",
       lat = "lat",
-      time_zone = "UTC"
+      time_zone = "UTC",
+      data_check = c("temp","rain","ws","wd")
    )
 
    expect_s3_class(weather_dt, "epiphy.weather")
@@ -225,6 +234,7 @@ test_that("`format_weather()` works when lat lon are in data", {
       c(
          "times",
          "temp",
+         "rh",
          "rain",
          "ws",
          "wd",
@@ -239,7 +249,7 @@ test_that("`format_weather()` works when lat lon are in data", {
          "mm"
       )
    )
-   expect_equal(dim(weather_dt), c(168, 14))
+   expect_equal(dim(weather_dt), c(168, 15))
    expect_s3_class(weather_dt$times, "POSIXct")
    expect_true(anyNA(weather_dt$times) == FALSE)
    expect_true(max(weather_dt$wd, na.rm = TRUE) < 360)
@@ -302,7 +312,8 @@ test_that("`format_weather()` stops if time cols are not provided", {
       station = "Station.Number",
       lon = "lon",
       lat = "lat",
-      time_zone = "UTC"
+      time_zone = "UTC",
+      data_check = c("temp","rain","ws","wd")
       )
 
    expect_error(
@@ -457,11 +468,13 @@ test_that("`format_weather() creates a `mm` column if not provided", {
          station = "Station.Number",
          lat = "lat",
          lon = "lon",
-         time_zone = "UTC"
+         time_zone = "UTC",
+         data_check = c("temp","rain","ws","wd")
       ),
       c(
          "times",
          "temp",
+         "rh",
          "rain",
          "ws",
          "wd",
@@ -499,6 +512,7 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
       Temperature = rnorm(dat_minutes,20,10)
    )
 
+   expect_warning(
    expect_named(
       format_weather(
          w = weather_station_data,
@@ -510,11 +524,13 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
          lat = "lat",
          lon = "lon",
          POSIXct_time = "Ptime",
-         time_zone = "Australia/Brisbane"
+         time_zone = "Australia/Brisbane",
+         data_check = c("temp","rain","ws","wd")
       ),
       c(
          "times",
          "temp",
+         "rh",
          "rain",
          "ws",
          "wd",
@@ -528,7 +544,7 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
          "hh",
          "mm"
       )
-   )
+   ))
 })
 
 # stop if `wd_sd` is missing or cannot be calculated ---------------------------
@@ -704,17 +720,20 @@ test_that("preformated weather read back in can be reformatted",{
    weather2 <- read.csv(paste(tempdir(), "weather_saved.csv", sep = "\\"),
                         stringsAsFactors = FALSE)
 
-   expect_warning(test11 <- format_weather(weather2, time_zone = "UTC"),
+   expect_warning(test11 <- format_weather(weather2, time_zone = "UTC",
+                                           data_check = c("temp","rain","ws","wd")),
                   regexp = "All temperature values are 'NA' or missing*")
-   expect_warning(format_weather(weather2, time_zone = "Australia/Perth"),
+   expect_warning(format_weather(weather2, time_zone = "Australia/Perth",
+                                 data_check = c("temp","rain","ws","wd")),
                      regexp = "All temperature values are 'NA' or missing*")
 
 
    expect_equal(class(test11), c("epiphy.weather", "data.table", "data.frame"))
    expect_equal(class(test11[,times]), c("POSIXct", "POSIXt"))
-   expect_equal(dim(test11), c(8760,14))
+   expect_equal(dim(test11), c(8760,15))
 
-   expect_warning(format_weather(weather2, time_zone = "Australia/Sydney"),
+   expect_warning(format_weather(weather2, time_zone = "Australia/Sydney",
+                                 data_check = c("temp","rain","ws","wd")),
                      regexp = "All temperature values are 'NA' or missing*")
 })
 
@@ -732,7 +751,8 @@ test_that("`format_weather()` fills missing time", {
    weather_station_data <-
       weather_station_data[-(10:19),]
 
-  expect_error(
+  expect_warning(
+   expect_error(
    expect_warning(
      weather_dat <- format_weather(
         w = weather_station_data,
@@ -744,9 +764,10 @@ test_that("`format_weather()` fills missing time", {
         lon = "Station.Longitude",
         lat = "Station.Latitude",
         station = "StationID",
-        time_zone = "Australia/Brisbane"),
+        time_zone = "Australia/Brisbane",
+        data_check = c("temp","rain","ws","wd")),
      regexp = "All temperature values are 'NA' or missing*"
-  ), regexp = "NA values in rainfall")
+  ), regexp = "NA values in rainfall"))
 
 
 })
@@ -779,11 +800,125 @@ test_that("`format_weather()` works with blackspot vignette", {
       lon = "Station.Longitude",
       lat = "Station.Latitude",
       station = "StationID",
-      time_zone = "UTC"
+      time_zone = "UTC",
+      data_check = c("temp","rain","ws","wd")
    )
-   expect_equal(dim(weather), c(8571,14))
+   expect_equal(dim(weather), c(8786,15))
 
 })
+
+test_that("I can make fake datasets and format them through preformat",{
+
+   set.seed(753)
+   for(i in 1:10) {
+      dat <- data.table(
+         station_name = paste0("w_STATION", i),
+         lat = -runif(1, 15.5, 28),
+         lon = runif(1, 115, 150),
+         state = "SA",
+         yearday = 1:365,
+         wd_rw = abs(rnorm(365, 180, 90)),
+         wd_sd_rw = rnorm(365, 80, 20),
+         ws_rw = runif(365, 1, 60),
+         ws_sd_rw = abs(rnorm(365, 10, sd = 5)),
+         rain_freq = runif(365, 0.05, 0.45)
+      )
+      if (i == 1) {
+         test_dat <- dat
+      } else{
+         test_dat <- rbind(test_dat, dat)
+      }
+   }
+
+   out1 <- suppressWarnings(calc_estimated_weather(w = test_dat,
+                                  start_date = "2023-01-10",
+                                  end_date = "2023-12-10",
+                                  lat = mean(test_dat$lat),
+                                  lon = mean(test_dat$lon),
+                                  n_stations = 1))
+   out1$rh <- 70
+   expect_warning(format_weather(out1, time_zone = "UTC"))
+   format_weather(out1, time_zone = "UTC",
+                  data_check = FALSE)
+
+})
+
+# import BOM data file
+brisvegas <-
+   system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+bris <- fread(brisvegas)
+# Format times
+bris[,aifstime_utc := as.POSIXct(aifstime_utc,tz = "UTC")]
+
+# fill time gaps
+bris <- fill_time_gaps(bris,"aifstime_utc")
+
+# replace dashes with zeros
+bris[rain_trace == "-", rain_trace := "0"]
+bris[, rain_trace := as.numeric(rain_trace)]
+# get rainfall for each time
+bris[, rain := rain_trace - shift(rain_trace, type = "lead")][rain < 0, rain := rain_trace ]
+
+# order the data by time
+bris <- bris[order(aifstime_utc)]
+
+#impute temperature
+bris[is.na(air_temp), air_temp := impute_diurnal(aifstime_utc,
+                                                 min_obs = 10,max_obs = 28,
+                                                 max_hour = 14, min_hour = 5)]
+bris[is.na(rain), rain := 0]
+
+
+test_that("Non-unique stations and coordinates are detected",{
+
+   b_wther <-
+      system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+   b_wther<- fread(b_wther)
+
+   # This function causes a warning due to non-continuous weather data
+   # data_check is set to false to
+   expect_warning(
+      out <-
+      format_weather(w = b_wther,
+                  POSIXct_time = "aifstime_utc",
+                  temp = "air_temp",
+                  rain = "rain_ten",
+                  rh = "rel_hum",
+                  ws = "wind_spd_kmh",
+                  wd = "wind_dir_deg",
+                  lon = "lon",
+                  lat = "lat",
+                  station = "name",
+                  time_zone = "UTC",
+                  data_check = FALSE))
+
+   expect_false(any(duplicated(out$times)))
+})
+#-----------------------------------------------------------------
+# enter test with non-unique station lat lon combinations here
+
+
+# test_that("Relative humidity formats",{
+#    # expect_warning(expect_no_error(
+#    # bris_formated <- format_weather(
+#    #    w = bris,
+#    #    POSIXct_time = "aifstime_utc",
+#    #    time_zone = "UTC",
+#    #    temp = "air_temp",
+#    #    rh = "rel_hum",
+#    #    rain = "rain_trace",
+#    #    ws = "wind_spd_kmh",
+#    #    wd = "wind_dir_deg",
+#    #    station = "name",
+#    #    lon = "lon",
+#    #    lat = "lat",
+#    #    data_check = c("temp","rain")
+#    # )),regexp = "No observations*")
+#
+#    bris_formated[,rh := fifelse(is.na(rh),shift(rh,n=24,type = "lag"),
+#                                rh)]
+#
+# })
 
 # Relative humidity added
 
@@ -808,3 +943,4 @@ gatton[, c("aifstime_utc","aifstime_local") :=
 
 tail(gatton)
 cat(unlist(lapply(gatton,class),use.names = FALSE),sep = "\",\"")
+

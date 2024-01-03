@@ -61,21 +61,22 @@
 #' @param muffle_warnings default is `FALSE`. IF `TRUE` any warnings or messages
 #'  will be muffled and not printed to console. Only use if there is a lot of NA
 #'  wind data which you are aware about and happy to ignore.
-#' @param data_check If `TRUE`, it checks for NA values in rain and wind data or
-#'  any values which are unlikely. If FALSE it ignores data values which could
-#'  cause models to fail.
-#'
+#' @param data_check If `TRUE`, it checks for NA values in all 'rain', 'temp',
+#'  'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
+#'  vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
+#'  to check data from specific variables. If FALSE it ignores all variables and
+#'  could cause subsequent models using this data to fail.
+#' @param rh Column name `character` or index in `w` that refers to relative
+#'   humidity as a percentage.
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
 #'   on each object, then data can be combined after formatting.
-#'
 #' @details `wd_sd` If weather data is
 #'   provided in hourly increments, a column
 #'   with the standard deviation of the wind direction over the hour is required
 #'   to be provided. If the weather data are sub-hourly, the standard deviation
 #'   will be calculated and returned automatically.
-#'
 #' @details `lon`, `lat` and `lonlat_file` If `w` provides longitude and
 #'   latitude values for station locations, these may be specified in the `lon`
 #'   and `lat` columns.  If the coordinates are not relevant to the study
@@ -168,6 +169,7 @@ format_weather <- function(w,
                            time_zone = NULL,
                            temp,
                            rain,
+                           rh,
                            ws,
                            wd,
                            wd_sd,
@@ -198,6 +200,7 @@ format_weather <- function(w,
       "times",
       "temp",
       "rain",
+      "rh",
       "ws",
       "wd",
       "wd_sd",
@@ -221,7 +224,8 @@ format_weather <- function(w,
       )
     } else{
        # check for any midnight times convertee to dates and append HMS
-       w[grepl(":", times) == FALSE, times := paste0(times," 00:00:00")]
+       w[inherits(times,"character") &
+            grepl(":", times) == FALSE, times := paste0(times," 00:00:00")]
 
       w[, times := as.POSIXct(times, tz = "UTC")]
     }
@@ -236,7 +240,7 @@ format_weather <- function(w,
 
     setattr(w, "class", union("epiphy.weather", class(w)))
 
-    if(data_check) .check_weather(w)
+    if(isFALSE(FALSE %in% data_check)) .check_weather(w, data_check)
 
     return(w)
   }
@@ -249,6 +253,15 @@ format_weather <- function(w,
       "You must provide time values either as a `POSIXct_time` column or ",
       "values for `YYYY``, `MM`, `DD` and `hh`."
     )
+  }else{
+     if(is.null(POSIXct_time) == FALSE){
+     if(POSIXct_time %in% colnames(w) == FALSE){
+        stop(
+           call. = FALSE,
+           "`POSIXct_time` column name '",POSIXct_time,
+           "' not found in dataset 'w'`."
+        )}
+     }
   }
 
   if (is.null(lon) && is.null(lat) && is.null(lonlat_file)) {
@@ -318,12 +331,21 @@ format_weather <- function(w,
         stop("colname `temp`:", temp, " not found in 'w'")
      }
   }
+  if (missing(rh)) {
+     w[, rh := rep(NA, .N)]
+     rh <- "rh"
+  }else{
+     if(rh %in% colnames(w) == FALSE){
+        stop("colname `rh`:", rh, " not found in 'w'")
+     }
+  }
 
   # make sure other column names supplied in arguments are in the supplied '
   #  w' data
   if (all(c(rain, ws, wd, station) %in% colnames(w)) == FALSE) {
      stop(call. = FALSE,
-          "Supplied column names are not found in column names of `w`.")
+          "Supplied column names for rain, ws, wd and station are not",
+          "found in column names of `w`.")
   }
 
   # import and assign longitude and latitude from a file if provided
@@ -375,7 +397,6 @@ format_weather <- function(w,
     )
   }
 
-
   setnames(w,
            old = temp,
            new = "temp",
@@ -384,6 +405,10 @@ format_weather <- function(w,
   setnames(w,
            old = rain,
            new = "rain",
+           skip_absent = TRUE)
+  setnames(w,
+           old = rh,
+           new = "rh",
            skip_absent = TRUE)
 
   setnames(w,
@@ -418,6 +443,10 @@ format_weather <- function(w,
              old = lon,
              new = "lon",
              skip_absent = TRUE)
+  }
+
+  if(nrow(unique(w[,list(station,lat,lon)])) != length(unique(w$station))){
+     stop("length of unique station names and unique 'lat' 'lon' entries don't match")
   }
 
   if (!is.null(POSIXct_time)) {
@@ -456,7 +485,8 @@ format_weather <- function(w,
       call. = FALSE,
       times,
       "Time records contain NA values or duplicated times. Check you are entering",
-      " the correct `time_zone` and the continuity of weather station logging time"
+      " the correct `time_zone` and the continuity of weather station logging time.",
+      " Perhaps your times are `time_zone = 'UTC'`"
     )
   }
 
@@ -469,6 +499,7 @@ format_weather <- function(w,
                          mm = mm,
                          temp = temp,
                          rain = rain,
+                         rh = rh,
                          ws = ws,
                          wd = wd,
                          wd_sd = wd_sd,
@@ -490,6 +521,7 @@ format_weather <- function(w,
        w_dt_agg <- x_dt[, list(
           rain = sum(rain, na.rm = TRUE),
           temp = mean(temp, na.rm = TRUE),
+          rh = mean(rh, na.rm = TRUE),
           ws = mean(ws, na.rm = TRUE),
           wd = if (print_warnings == FALSE) {
              if(muffle_warnings) {
@@ -558,6 +590,8 @@ format_weather <- function(w,
        w_dt_agg[, mm := rep(0, .N)]
        mm <- "mm"
 
+       w_dt_agg <- w_dt_agg[order(station,times)]
+
        return(.fill_times(w_dt_agg))
 
     } else{
@@ -568,6 +602,7 @@ format_weather <- function(w,
           "Please supply a standard deviation of wind direction."
         )
       }
+      x_dt <- x_dt[order(station,times)]
       return(.fill_times(x_dt))
     }
   }
@@ -586,6 +621,7 @@ format_weather <- function(w,
       mm = mm,
       temp = temp,
       rain = rain,
+      rh = rh,
       ws = ws,
       wd = wd,
       wd_sd = wd_sd,
@@ -607,6 +643,7 @@ format_weather <- function(w,
       mm = mm,
       temp = temp,
       rain = rain,
+      rh = rh,
       ws = ws,
       wd = wd,
       wd_sd = wd_sd,
@@ -623,6 +660,7 @@ format_weather <- function(w,
      x_out,
      c("times",
        "temp",
+       "rh",
         "rain",
         "ws",
         "wd",
@@ -645,7 +683,7 @@ format_weather <- function(w,
     x_out[, lon := NULL]
   }
 
-  if(data_check) .check_weather(x_out)
+  if(isFALSE(FALSE %in% data_check)) .check_weather(x_out, data_check)
 
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
   return(x_out[])
@@ -667,6 +705,11 @@ format_weather <- function(w,
                                      by = "hours"))
 
    if(length(tseq_dt$times) != length(w_bystat$times)) {
+      warning("Non-continuous data detected. Extra lines will be merged into data
+              to ensure no time gaps. All weather data will be filled as NA.",
+              "\n This format request will likely cause the function to fail if
+              dat_check = TRUE. If set to false ensure data is imputed to prevent
+               model run errors.")
       # merge in missing times
       w_bystat <- merge(
          x = tseq_dt,
@@ -693,93 +736,146 @@ format_weather <- function(w,
    return(w_dt)
 }
 
-.check_weather <- function(final_w) {
+.check_weather <- function(final_w, var_check) {
   # note on cran avoidance (nocov) from data.table
-  temp <- times <- rain <- ws <- wd <- NULL
+  temp <- times <- rain <- ws <- wd <- rh <- NULL
+  if(TRUE %in% var_check){
+     var_check <- c("temp","rh","rain","ws","wd")
+  }
 
   # Check temperatures
   # For NAs
-  if (nrow(final_w[is.na(temp),]) != 0) {
-     if (all(is.na(final_w[, temp]))) {
-        warning("All temperature values are 'NA' or missing, check data if this",
-                " is not intentional")
-     } else{
+  if ("temp" %in% var_check) {
+     if (nrow(final_w[is.na(temp),]) != 0) {
+        if (all(is.na(final_w[, temp]))) {
+           warning(
+              "All temperature values are 'NA' or missing, check data if this",
+              " is not intentional"
+           )
+        } else{
+           stop(
+              call. = FALSE,
+              "NA values in temperature; \n",
+              paste0(as.character(final_w[is.na(temp), times]), sep = ",  "),
+              "\nplease use a complete dataset"
+           )
+        }
+     }
+
+     # for outside range
+     if (nrow(final_w[temp < -30 |
+                      temp > 60,]) != 0) {
         stop(
            call. = FALSE,
-           "NA values in temperature; \n",
-           paste0(as.character(final_w[is.na(temp), times]),sep = ",  "),
-           "\nplease use a complete dataset"
+           "Temperature inputs are outside expected ranges (-30 and +60 degrees Celcius); \n",
+           paste(as.character(final_w[temp < -30 |
+                                         temp > 60, times])),
+           "\nplease correct these inputs and run again"
         )
-     }}
+     }
+  }
 
-  # for outside range
-  if (nrow(final_w[temp < -30 |
-                   temp > 60, ]) != 0){
-    stop(
-      call. = FALSE,
-      "Temperature inputs are outside expected ranges (-30 and +60 degrees Celcius); \n",
-      paste(as.character(final_w[temp < -30 |
-                                   temp > 60, times])),
-      "\nplease correct these inputs and run again"
-    )}
+  # Check relative humidity
+  # For NAs
+  if ("rh" %in% var_check) {
+     if (nrow(final_w[is.na(rh), ]) != 0) {
+        if (all(is.na(final_w[, rh]))) {
+           warning(
+              "All relative humidity values are 'NA' or missing, check data if ",
+              "this is not intentional"
+           )
+        } else{
+           stop(
+              call. = FALSE,
+              "data includes NA 'rh' values; \n",
+              paste0(as.character(final_w[is.na(rh), times]), sep = ",  "),
+              "\n if a complete dataset does not require 'rh' use data_check = FALSE"
+           )
+        }
+     }
+
+     # for outside range
+     if (nrow(final_w[rh < 0 |
+                      rh > 100,]) != 0) {
+        stop(
+           call. = FALSE,
+           "Relative humidity inputs are outside expected ranges (0 and 100%); \n",
+           paste(as.character(final_w[rh < 0 |
+                                         rh > 100, times])),
+           "\nplease correct these inputs and run again"
+        )
+     }
+  }
+
 
   # Check rainfall
   # For NAs
-  if (nrow(final_w[is.na(rain), ]) != 0){
-    stop(
-      call. = FALSE,
-      "NA values in rainfall; \n",
-      paste(as.character(final_w[is.na(rain), times])),
-      "\nplease use a complete dataset"
-    )}
-  # for outside range
-  if (nrow(final_w[rain < 0 |
-                   rain > 100, ]) != 0){
-    stop(
-      call. = FALSE,
-      "rain inputs are outside expected ranges (0 and 100 mm); \n",
-      paste(as.character(final_w[rain < 0 |
-                                   rain > 100, times])),
-      "\nplease correct these inputs and run again"
-    )}
+  if ("rain" %in% var_check) {
+     if (nrow(final_w[is.na(rain),]) != 0) {
+        stop(
+           call. = FALSE,
+           "NA values in rainfall; \n",
+           paste(as.character(final_w[is.na(rain), times])),
+           "\nplease use a complete dataset"
+        )
+     }
+     # for outside range
+     if (nrow(final_w[rain < 0 |
+                      rain > 100,]) != 0) {
+        stop(
+           call. = FALSE,
+           "rain inputs are outside expected ranges (0 and 100 mm); \n",
+           paste(as.character(final_w[rain < 0 |
+                                         rain > 100, times])),
+           "\nplease correct these inputs and run again"
+        )
+     }
+  }
 
   # Check windspeed
   # For NAs
-  if (nrow(final_w[is.na(ws), ]) != 0){
-    stop(
-      call. = FALSE,
-      "NA values in wind speed; \n",
-      paste(as.character(final_w[is.na(ws), times])),
-      "\nplease use a complete dataset"
-    )}
-  # for outside range
-  if (nrow(final_w[ws < 0 |
-                   ws > 150, ]) != 0){
-    stop(
-      call. = FALSE,
-      "wind speed inputs are outside expected ranges (0 and 150 kph); \n",
-      paste(as.character(final_w[ws < 0 |
-                                   ws > 150, times])),
-      "\nplease correct these inputs and run again"
-    )}
+  if ("ws" %in% var_check) {
+     if (nrow(final_w[is.na(ws),]) != 0) {
+        stop(
+           call. = FALSE,
+           "NA values in wind speed; \n",
+           paste(as.character(final_w[is.na(ws), times])),
+           "\nplease use a complete dataset"
+        )
+     }
+     # for outside range
+     if (nrow(final_w[ws < 0 |
+                      ws > 150,]) != 0) {
+        stop(
+           call. = FALSE,
+           "wind speed inputs are outside expected ranges (0 and 150 kph); \n",
+           paste(as.character(final_w[ws < 0 |
+                                         ws > 150, times])),
+           "\nplease correct these inputs and run again"
+        )
+     }
+  }
 
   # Check Wind direction
   # For NAs
-  if (nrow(final_w[is.na(wd), ]) != 0){
-    stop(
-      call. = FALSE,
-      "NA values in wind direction; \n",
-      paste(as.character(final_w[is.na(wd), times])),
-      "\nplease use a complete dataset"
-    )}
-  # for outside range
-  if (nrow(final_w[wd < 0 |
-                   wd > 360, ]) != 0){
-    stop(
-      call. = FALSE,
-      "wind direction are outside expected ranges (0 and 360); \n",
-      paste(as.character(final_w[wd < 0 |
-                                   rain > 360, times])),
-      "\nplease correct these inputs and run again"
-    )}
-}
+  if ("wd" %in% var_check) {
+     if (nrow(final_w[is.na(wd),]) != 0) {
+        stop(
+           call. = FALSE,
+           "NA values in wind direction; \n",
+           paste(as.character(final_w[is.na(wd), times])),
+           "\nplease use a complete dataset"
+        )
+     }
+     # for outside range
+     if (nrow(final_w[wd < 0 |
+                      wd > 360,]) != 0) {
+        stop(
+           call. = FALSE,
+           "wind direction are outside expected ranges (0 and 360); \n",
+           paste(as.character(final_w[wd < 0 |
+                                         rain > 360, times])),
+           "\nplease correct these inputs and run again"
+        )
+     }
+  }}

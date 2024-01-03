@@ -124,18 +124,19 @@ get_bom_observations <- function(ftp_url,
 #' @param File_formatted character, filename and path to the formated file which
 #'  has previously merged data
 #' @param base_dir character file path giving the base directory for file_formatted
+#' @param verbose logical print extra messages to asssist debugging
 #'
 #' @return data.table, of merged dataset
 #' @export
-#'
-#' @examples
 merge_axf_weather <- function(File_compressed, # uncompressed
                               File_axf = "IDQ60910.99123.axf",
                               File_formatted = "NTamborine.csv",
-                              base_dir = getwd()){
+                              base_dir = getwd(),
+                              verbose = FALSE){
    # define data.table reference
    aifstime_utc <- NULL
 
+   if(verbose){cat(" Uncompressing: ",File_compressed,"\n")}
    # uncompress data to temporary folder
    Temp_folder <- paste0(tempdir(),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
    dir.create(Temp_folder,
@@ -143,11 +144,18 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    utils::untar(tarfile = File_compressed,
                 exdir = Temp_folder)
 
+   if(file.exists(paste0(Temp_folder, File_axf))== FALSE){
+      stop("'File_asx' not found")
+   }
+
+   if(verbose){cat("   Read in new data","\n")}
    # Read data
    dat_new <-
       data.table::fread(paste0(Temp_folder, File_axf),
                         skip = 24,
-                        nrows = 144)
+                        nrows = 144,
+                        na.strings = c("-"),
+                        integer64 = "character")
 
    colnames(dat_new) <-
       gsub(pattern = "\\[80]", replacement = "", colnames(dat_new))
@@ -167,12 +175,16 @@ merge_axf_weather <- function(File_compressed, # uncompressed
       return(dat_new)
    }else{
 
-      dat_old <- fread(file = paste0(base_dir,File_formatted))
+      if(verbose){cat("   Read in old data","\n")}
+      dat_old <- fread(file = paste0(base_dir,File_formatted),
+                       integer64 = "character")
 
+      if(verbose){cat("   Merge data","\n")}
       Merged <- rbind(dat_old,dat_new)
 
       Merged <- Merged[!duplicated(aifstime_utc)]
 
+      if(verbose){cat("   Write out successfully merged data","\n")}
       fwrite(Merged,file = paste0(base_dir,File_formatted))
       unlink(Temp_folder)
       return(Merged)
