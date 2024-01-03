@@ -24,6 +24,7 @@
 #'  *station* - Weather station name;
 #'  *lat* - latitude;
 #'  *lon* - longitude;
+#'  *rh* - NA currently not supported see epiphytoolR github issue #14;
 #'  *yearday* - integer, day of the year, see `data.table::yday()`;
 #'  *wd_rd* - numeric, mean wind direction from raw data;
 #'  *wd_sd_rd* - numeric, standard deviation of wind direction from raw data;
@@ -107,9 +108,15 @@ calc_estimated_weather <- function(w,
       if (na.rm) {
          rm_stat <- w_prox[is.na(rain_freq), unique(station_name)]
          w_prox <- w_prox[station_name %in% rm_stat == FALSE,]
-         warning("The following stations are omitted due to NA rain frequency values:\n  '",
-         paste0(w_prox[is.na(rain_freq), unique(station_name)],
-                sep = "', '"))
+
+         if(any(is.na(w_prox$rain_freq))) {
+            warning(
+               "The following stations are omitted due to NA rain frequency values:\n  '",
+               paste0(rm_stat,
+                      sep = "', '")
+            )
+         }
+
       }
    }
 
@@ -197,17 +204,19 @@ calc_estimated_weather <- function(w,
 
    # Add columns to match format_weather output
    new_w[, c("date_times",
+             "rh",
              "YYYY",
              "MM",
              "DD",
              "hh",
              "mm") :=
             list(NULL,
-              year(times),
-              month(times),
-              mday(times),
-              hour(times),
-              minute(times))]
+                 NA,
+                 year(times),
+                 month(times),
+                 mday(times),
+                 hour(times),
+                 minute(times))]
    setnames(x = new_w,
             old = "station_name",
             new = "station")
