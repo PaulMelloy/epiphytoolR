@@ -212,6 +212,9 @@ calc_estimated_weather <- function(w,
             old = "station_name",
             new = "station")
 
+   # add epiphy.weather class to make an acceptable model input without formating
+   setattr(new_w, "class", union("epiphy.weather", class(new_w)))
+
    return(new_w)
 
 }
