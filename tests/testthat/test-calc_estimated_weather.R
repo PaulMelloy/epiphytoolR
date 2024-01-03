@@ -115,6 +115,15 @@ test_that("Warnings for no temperature",{
 })
 
 
+test_that("formats for multiple stations when lat and long not provided",{
+   test_dat3 <- data.table::fread("../blackspot-pipeline/cache/BOM_weather_station_coefs.csv")
+
+   expect_no_error(calc_estimated_weather(w = test_dat,
+                                  start_date = "2023-01-10",
+                                  end_date = "2023-12-10",
+                                  na.rm = TRUE))
+})
+
 #### ADD TESTS FOR WARNINGS
 
 # test_that("Warnings for no temperature",{
