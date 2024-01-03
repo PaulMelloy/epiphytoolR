@@ -84,7 +84,8 @@ calc_estimated_weather <- function(w,
    w_prox <- .closest_station(lat = lat,
                               lon = lon,
                               bom_dat = w,
-                              station_indexs = n_stations)}
+                              station_indexs = n_stations)
+   }
 
    # add date_time column
    w_prox[,date_times := year_day1 + (day_in_secs * yearday)]
@@ -106,6 +107,9 @@ calc_estimated_weather <- function(w,
       if (na.rm) {
          rm_stat <- w_prox[is.na(rain_freq), unique(station_name)]
          w_prox <- w_prox[station_name %in% rm_stat == FALSE,]
+         warning("The following stations are omitted due to NA rain frequency values:\n  '",
+         paste0(w_prox[is.na(rain_freq), unique(station_name)],
+                sep = "', '"))
       }
    }
 
@@ -124,12 +128,12 @@ calc_estimated_weather <- function(w,
    }
    if(any(is.na(w_prox$ws_rw))){
       warning(paste0(w_prox[is.na(ws_rw),unique(station_name)], sep=",   "),": ",sum(is.na(w_prox$ws_rw)), " ws_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n")
+                  the overall mean wind speed\n")
       w_prox[is.na(ws_rw), ]$ws_rw <- mean(w_prox$ws_rw, na.rm = TRUE)
    }
    if(any(is.na(w_prox$ws_sd_rw))){
       warning(paste0(w_prox[is.na(ws_sd_rw),unique(station_name)], sep=",   "),": ",sum(is.na(w_prox$ws_sd_rw)), " ws_sd_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n")
+                  the overall mean stdev wind speed\n")
       w_prox[is.na(ws_sd_rw), ]$ws_sd_rw <- mean(w_prox$ws_sd_rw, na.rm = TRUE)
    }
 
