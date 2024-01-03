@@ -1,3 +1,6 @@
+ * `calc_estimated_weather()` now returns `epiphy.weather` classed data.tables 
+  eliminating the need for subsequent parsing through `format_weather()`
+ 
  * new functions `impute_temp()` and `impute_rh()` for imputing temperatures and 
   relative humidity using a `impute_fill()` on a rolling window function  
   
