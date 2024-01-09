@@ -46,6 +46,7 @@ following columns:
 \emph{station} - Weather station name;
 \emph{lat} - latitude;
 \emph{lon} - longitude;
+\emph{rh} - NA currently not supported see epiphytoolR github issue #14;
 \emph{yearday} - integer, day of the year, see \code{data.table::yday()};
 \emph{wd_rd} - numeric, mean wind direction from raw data;
 \emph{wd_sd_rd} - numeric, standard deviation of wind direction from raw data;
