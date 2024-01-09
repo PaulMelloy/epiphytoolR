@@ -100,6 +100,9 @@ test_that("format_weather can format it",{
    expect_no_warning(format_weather(w = out1, time_zone = "UTC"))
    expect_no_warning(format_weather(w = out2,time_zone = "UTC"))
 
+   expect_s3_class(out1, "epiphy.weather")
+   expect_s3_class(out2, "epiphy.weather")
+
 
 })
 
@@ -116,8 +119,6 @@ test_that("Warnings for no temperature",{
 
 
 test_that("formats for multiple stations when lat and long not provided",{
-   test_dat3 <- data.table::fread("../blackspot-pipeline/cache/BOM_weather_station_coefs.csv")
-
    expect_no_error(calc_estimated_weather(w = test_dat,
                                   start_date = "2023-01-10",
                                   end_date = "2023-12-10",
