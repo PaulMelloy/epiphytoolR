@@ -54,8 +54,8 @@ test_that("calc_estimated_weather example works", {
                                   n_stations = 1)
    expect_s3_class(out1, "data.table")
    expect_s3_class(out1$times, "POSIXct")
-   expect_equal(dim(out1),c((24*334)+1,24))
-   expect_true(all(c("times","temp","rain","ws","wd","wd_sd","lon","lat","station","YYYY",
+   expect_equal(dim(out1),c((24*334)+1,25))
+   expect_true(all(c("times","temp","rain","rh","ws","wd","wd_sd","lon","lat","station","YYYY",
                      "MM","DD","hh","mm") %in% colnames(out1)))
 
 })
@@ -72,7 +72,7 @@ test_that("calc_estimated_weather example works", {
    expect_s3_class(out2, "data.table")
    expect_s3_class(out2$times, "POSIXct")
    expect_equal(nrow(out2[station == "w_STATION5"]),c((24*334)+1))
-   expect_equal(dim(out2),c((24*334*4)+4,24))
+   expect_equal(dim(out2),c((24*334*4)+4,25))
    expect_equal(length(out2[, unique(station)]),4)
 
    expect_true(all(c("times","temp","rain","ws","wd","wd_sd","lon","lat","station","YYYY",
