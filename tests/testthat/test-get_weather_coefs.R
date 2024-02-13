@@ -1,5 +1,6 @@
 raw_bom_file <- system.file("/extdata/bom_data.csv",package = "epiphytoolR")
 temp_bom_file <- tempfile(fileext = ".csv")
+bom_meta <- data.table::fread(system.file("/extdata/bom_meta.csv",package = "epiphytoolR"))
 test_that("Function returns data.table with correct columns", {
    # Assuming you have a sample raw BOM file and meta_data to use for testing
 
