@@ -10,7 +10,7 @@ test_that("Function returns data.table with correct columns", {
       meta_data = bom_meta
    )
    expected_columns <- c("station_name", "lat", "lon", "state",
-                         "yearday", "min_temp", "max_temp", "temp", "rh_rw",
+                         "yearday", "min_temp", "max_temp", "temp", "rh",
                          "wd_rw", "wd_sd_rw", "ws_rw", "ws_sd_rw", "rain_freq")
    expect_true(all(expected_columns %in% names(result)))
 })
