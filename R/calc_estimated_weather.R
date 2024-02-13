@@ -63,7 +63,7 @@ calc_estimated_weather <- function(w,
    # specify non-global data.table variables
    ws <- wd <- station_name <- times <- date_times <- distance <- rain_freq <-
       wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- max_temp <-
-      min_temp <- rh <- NULL
+      min_temp <- rh <- temp <- NULL
 
    data.table::setDT(w)
    # set some time parameters
