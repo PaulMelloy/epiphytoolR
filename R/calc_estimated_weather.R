@@ -63,7 +63,7 @@ calc_estimated_weather <- function(w,
    # specify non-global data.table variables
    ws <- wd <- station_name <- times <- date_times <- distance <- rain_freq <-
       wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- max_temp <-
-      min_temp <- NULL
+      min_temp <- rh <- NULL
 
    data.table::setDT(w)
    # set some time parameters
@@ -144,28 +144,44 @@ calc_estimated_weather <- function(w,
       w_prox[is.na(ws_sd_rw), ]$ws_sd_rw <- mean(w_prox$ws_sd_rw, na.rm = TRUE)
    }
 
-
+   if("rh" %in% col_var == FALSE){
+      w_prox[,rh := NA_real_]
+      }
 
    # Do imputation
    if("max_temp" %in% col_var &
       "min_temp" %in% col_var) {
-      w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
+      w_prox[, c("rain", "temp" ,"rh", "ws", "wd", "wd_sd") :=
                 list(
                    rbinom(1, 1, rain_freq),
                    mean(impute_diurnal(max_obs = max_temp,
                                      min_obs = min_temp)),
+                   mean(rh),
                    rnorm(1, mean = ws_rw,
                          sd = ws_sd_rw),
                    wd_rw,
                    wd_sd_rw
                 ),
              by = list(station_name, yearday)]
-   } else{
+   } else if("temp" %in% col_var){
+      w_prox[, c("rain", "temp" ,"rh", "ws", "wd", "wd_sd") :=
+                list(
+                   rbinom(1, 1, rain_freq),
+                   mean(temp),
+                   mean(rh),
+                   rnorm(1, mean = ws_rw,
+                         sd = ws_sd_rw),
+                   wd_rw,
+                   wd_sd_rw
+                ),
+             by = list(station_name, yearday)]
+      }else{
       warning("'max_temp' and 'min_temp' not detected, returning NAs for mean daily 'temp'")
-      w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
+      w_prox[, c("rain", "temp" ,"rh", "ws", "wd", "wd_sd") :=
                 list(
                    rbinom(1, 1, rain_freq),
                    NA_real_,
+                   mean(rh),
                    rnorm(1, mean = ws_rw,
                          sd = ws_sd_rw),
                    wd_rw,
