@@ -821,7 +821,8 @@ test_that("I can make fake datasets and format them through preformat",{
          wd_sd_rw = rnorm(365, 80, 20),
          ws_rw = runif(365, 1, 60),
          ws_sd_rw = abs(rnorm(365, 10, sd = 5)),
-         rain_freq = runif(365, 0.05, 0.45)
+         rain_freq = runif(365, 0.05, 0.45),
+
       )
       if (i == 1) {
          test_dat <- dat
