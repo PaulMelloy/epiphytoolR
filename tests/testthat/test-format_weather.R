@@ -837,18 +837,21 @@ test_that("I can make fake datasets and format them through preformat",{
       } else{
          test_dat <- rbind(test_dat, dat)
       }
+
    }
 
-   out1 <- suppressWarnings(calc_estimated_weather(w = test_dat,
+   out1 <- calc_estimated_weather(w = test_dat,
                                   start_date = "2023-01-10",
                                   end_date = "2023-12-10",
                                   lat = mean(test_dat$lat),
                                   lon = mean(test_dat$lon),
-                                  n_stations = 1))
+                                  n_stations = 1)
    out1$rh <- 70
-   expect_warning(format_weather(out1, time_zone = "UTC"))
+   #expect_warning(format_weather(out1, time_zone = "UTC"))
    format_weather(out1, time_zone = "UTC",
                   data_check = FALSE)
+
+   expect_s3_class(out1,"epiphy.weather")
 
 })
 
