@@ -125,6 +125,45 @@ test_that("formats for multiple stations when lat and long not provided",{
                                   na.rm = TRUE))
 })
 
+### temperature is taken as a preference
+
+# set.seed(753)
+# for(i in 1:10) {
+#    dat <- data.table(
+#       station_name = paste0("w_STATION", i),
+#       lat = runif(1, 15.5, 28),
+#       lon = -runif(1, 115, 150),
+#       state = "SA",
+#       yearday = 1:365,
+#       temp = replicate(365,
+#                        mean(impute_diurnal(max_obs = runif(1,20,35),
+#                                            min_obs = runif(1,-4,20),
+#                                            max_hour = 14,min_hour = round(runif(1,3,6))
+#                        ))),
+#       rh = replicate(365,
+#                      mean(impute_diurnal(max_obs = runif(1,75,100),
+#                                          min_obs = runif(1,30,75))
+#                      )),
+#       wd_rw = abs(rnorm(365, 180, 90)),
+#       wd_sd_rw = rnorm(365, 80, 20),
+#       ws_rw = runif(365, 1, 60),
+#       ws_sd_rw = abs(rnorm(365, 10, sd = 5)),
+#       rain_freq = runif(365, 0.05, 0.45)
+#    )
+#    if (i == 1) {
+#       test_dat <- dat
+#    } else{
+#       test_dat <- rbind(test_dat, dat)
+#    }
+# }
+
+
+
+
+
+
+
+
 #### ADD TESTS FOR WARNINGS
 
 # test_that("Warnings for no temperature",{
