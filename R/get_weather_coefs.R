@@ -30,6 +30,8 @@
 #'  *lon* - longitude;
 #'  *state* - political juristiction or state;
 #'  *yearday* - integer, day of the year, see `data.table::yday()`;
+#'  *temp* - numeric, mean temperature;
+#'  *rh* - numeric, mean temperature;
 #'  *wd_rd* - numeric, mean wind direction from rolling window;
 #'  *wd_sd_rd* - numeric, standard deviation of wind direction from rolling window;
 #'  *ws_rd* - numeric, mean wind speed from rolling window;
@@ -133,8 +135,8 @@ get_weather_coefs <- function(raw_bom_file,
                           yearday = 1:365,
                           min_temp = NA_real_,
                           max_temp = NA_real_,
-                          mean_tm = NA_real_,
-                          rh_rw = NA_real_,
+                          temp = NA_real_,
+                          rh = NA_real_,
                           wd_rw = NA_real_,
                           wd_sd_rw = NA_real_,
                           ws_rw = NA_real_,
@@ -226,8 +228,8 @@ get_weather_coefs <- function(raw_bom_file,
       } else{
          dat_coef[index, c("min_temp",
                            "max_temp",
-                           "mean_tm",
-                           "mean_rh",
+                           "temp",
+                           "rh",
                            "wd_rw",
                            "wd_sd_rw",
                            "ws_rw",
