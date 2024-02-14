@@ -76,7 +76,9 @@ get_weather_coefs <- function(raw_bom_file,
 
 
    # remove duplicate columns
-   d1 <- d1[,-c(3:7)]
+   if(any(duplicated(colnames(d1)))) {
+      d1 <- d1[, -c(3:7)]
+   }
    d1[,MM := as.integer(MM)]
    d1[,DD := as.integer(DD)]
 
@@ -125,6 +127,8 @@ get_weather_coefs <- function(raw_bom_file,
       warning("NA values in rainfall column.\n",
               st_num," station returning `NULL` data.table")
       return(NULL)}
+
+   if(nrow(mdat) > 1) stop("data station number matches more than one metadata station number file")
 
    # initialise coefficient data.table
    dat_coef <- data.table(station_name = mdat$station_name,
