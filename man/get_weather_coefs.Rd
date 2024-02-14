@@ -4,7 +4,13 @@
 \alias{get_weather_coefs}
 \title{Calculate weather coefficients}
 \usage{
-get_weather_coefs(raw_bom_file, rolling_window = 60, meta_data)
+get_weather_coefs(
+  raw_bom_file,
+  rolling_window = 60,
+  meta_data,
+  i_year = 2020,
+  rainfall_na_fill = "mean"
+)
 }
 \arguments{
 \item{raw_bom_file}{character, file path to raw bureau of Meteorology txt file}
@@ -12,6 +18,12 @@ get_weather_coefs(raw_bom_file, rolling_window = 60, meta_data)
 \item{rolling_window}{integer, number of days to summarise over a rolling window}
 
 \item{meta_data}{data.table Bureau of Meteorology, meta-data}
+
+\item{i_year}{integer, the year the coeffients are likely to be imputed. Defaults
+to \code{2020}}
+
+\item{rainfall_na_fill}{numeric proportion, likihood of rain to fill NA values
+Defaults to rainfall_na_fill = "mean", which takes the overall mean proportion.}
 }
 \value{
 data.table, of coefficients to estimate weather during a rainfall event.
@@ -32,6 +44,8 @@ warning.
 \emph{lon} - longitude;
 \emph{state} - political juristiction or state;
 \emph{yearday} - integer, day of the year, see \code{data.table::yday()};
+\emph{temp} - numeric, mean temperature;
+\emph{rh} - numeric, mean temperature;
 \emph{wd_rd} - numeric, mean wind direction from rolling window;
 \emph{wd_sd_rd} - numeric, standard deviation of wind direction from rolling window;
 \emph{ws_rd} - numeric, mean wind speed from rolling window;

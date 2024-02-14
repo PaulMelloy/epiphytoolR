@@ -9,7 +9,10 @@
 #' @param raw_bom_file character, file path to raw bureau of Meteorology txt file
 #' @param rolling_window integer, number of days to summarise over a rolling window
 #' @param meta_data data.table Bureau of Meteorology, meta-data
-#'
+#' @param i_year integer, the year the coeffients are likely to be imputed. Defaults
+#'  to `2020`
+#' @param rainfall_na_fill numeric proportion, likihood of rain to fill NA values
+#'  Defaults to rainfall_na_fill = "mean", which takes the overall mean proportion.
 #' @return data.table, of coefficients to estimate weather during a rainfall event.
 #'  If no rainfall data is recorded in the raw weather NULL is returned without
 #'  warning.
@@ -27,6 +30,8 @@
 #'  *lon* - longitude;
 #'  *state* - political juristiction or state;
 #'  *yearday* - integer, day of the year, see `data.table::yday()`;
+#'  *temp* - numeric, mean temperature;
+#'  *rh* - numeric, mean temperature;
 #'  *wd_rd* - numeric, mean wind direction from rolling window;
 #'  *wd_sd_rd* - numeric, standard deviation of wind direction from rolling window;
 #'  *ws_rd* - numeric, mean wind speed from rolling window;
@@ -46,12 +51,17 @@
 #'                     meta_data = meta_dat)}
 get_weather_coefs <- function(raw_bom_file,
                              rolling_window = 60,
-                             meta_data){
+                             meta_data,
+                             i_year = 2020,
+                             rainfall_na_fill = "mean"){
 
    # binding the global variable locally to the function.
    MM <- `Station Number` <- DD <- `station_name` <- `station_number` <- lat <-
       lon <- state <- mm <- `MI format in Local standard time` <- rain <- YYYY <-
       rain_day <- min_temp <- max_temp <- wd <- ws <- rain_freq <- NULL
+
+   if(rolling_window <3 |
+      rolling_window >300){stop("provide a rolling window between 3 and 300 days")}
 
    # Read in raw BOM weather data
    d1 <- fread(raw_bom_file,
@@ -66,7 +76,9 @@ get_weather_coefs <- function(raw_bom_file,
 
 
    # remove duplicate columns
-   d1 <- d1[,-c(3:7)]
+   if(any(duplicated(colnames(d1)))) {
+      d1 <- d1[, -c(3:7)]
+   }
    d1[,MM := as.integer(MM)]
    d1[,DD := as.integer(DD)]
 
@@ -93,6 +105,7 @@ get_weather_coefs <- function(raw_bom_file,
             old = c("Year Month Day Hour Minutes in YYYY",
                     "Precipitation since last (AWS) observation in mm",
                     "Air Temperature in degrees Celsius",
+                    "Relative humidity in percentage %",
                     "Wind (1 minute) direction in degrees true",
                     "Wind (1 minute) speed in km/h",
                     "Air temperature (1-minute minimum) in degrees Celsius",
@@ -101,6 +114,7 @@ get_weather_coefs <- function(raw_bom_file,
             new = c("YYYY",
                     "rain",
                     "tm",
+                    "rh",
                     "wd",
                     "ws",
                     "min_temp",
@@ -109,7 +123,12 @@ get_weather_coefs <- function(raw_bom_file,
    )
 
    # if all rain was not collected return nothing
-   if(d1[, any(is.na(rain) == FALSE)] == FALSE) return(NULL)
+   if(d1[, any(is.na(rain) == FALSE)] == FALSE){
+      warning("NA values in rainfall column.\n",
+              st_num," station returning `NULL` data.table")
+      return(NULL)}
+
+   if(nrow(mdat) > 1) stop("data station number matches more than one metadata station number file")
 
    # initialise coefficient data.table
    dat_coef <- data.table(station_name = mdat$station_name,
@@ -120,6 +139,8 @@ get_weather_coefs <- function(raw_bom_file,
                           yearday = 1:365,
                           min_temp = NA_real_,
                           max_temp = NA_real_,
+                          temp = NA_real_,
+                          rh = NA_real_,
                           wd_rw = NA_real_,
                           wd_sd_rw = NA_real_,
                           ws_rw = NA_real_,
@@ -128,19 +149,21 @@ get_weather_coefs <- function(raw_bom_file,
    # rolling imputation function
    for(index in 1:365){
       # get index day
-      index_date <- as.POSIXct("2020-12-31")+(index *(86400)) # 86400 seconds in a day
+      index_date <- as.POSIXct(paste0(i_year,"-12-31"))+(index *(86400)) # 86400 seconds in a day
       index_mon <- data.table::month(index_date)
       index_day <- data.table::mday(index_date)
 
       # set month day of the year columns in input bom data and filter out data with
       #  large time gaps
-      rw_dat <- d1[(MM == data.table::month(as.POSIXct("2020-12-31")+((index-n_NA) *(86400))) &
-                       DD >= data.table::mday(as.POSIXct("2020-12-31")+((index-n_NA) *(86400)))) |
-                      (MM == data.table::month(as.POSIXct("2020-12-31")+((index+n_NA) *(86400))) &
-                          DD <= data.table::mday(as.POSIXct("2020-12-31")+((index+n_NA) *(86400)))) |
-                      (MM > data.table::month(as.POSIXct("2020-12-31")+((index-n_NA) *(86400))) &
-                          MM < data.table::month(as.POSIXct("2020-12-31")+((index+n_NA) *(86400)))),
-      ]
+      # filter to a dataset in rolling window (n_NA)
+      rw_dat <- d1[(
+         MM == data.table::month(as.POSIXct(paste0(i_year,"-12-31"))+((index-n_NA) *(86400))) &
+            DD >= data.table::mday(as.POSIXct(paste0(i_year,"-12-31"))+((index-n_NA) *(86400)))) |
+         (MM == data.table::month(as.POSIXct(paste0(i_year,"-12-31"))+((index+n_NA) *(86400))) &
+             DD <= data.table::mday(as.POSIXct(paste0(i_year,"-12-31"))+((index+n_NA) *(86400)))) |
+         (MM > data.table::month(as.POSIXct(paste0(i_year,"-12-31"))+((index-n_NA) *(86400))) &
+                MM < data.table::month(as.POSIXct(paste0(i_year,"-12-31"))+((index+n_NA) *(86400)))),
+         ]
 
 
 
@@ -148,17 +171,47 @@ get_weather_coefs <- function(raw_bom_file,
       daily_rain_frequency <- rw_dat[,list(rain_day = any(rain > 0)),
                                      by= list(YYYY,MM,DD)]
 
-      # fill NAs based on rainfall probabilities
-      daily_rain_frequency[is.na(rain_day),
-                           rain_day := as.logical(rbinom(1,1,
-                                                         mean(daily_rain_frequency$rain_day,
-                                                              na.rm = TRUE)))]
-      # return the rainfall frequency
-      daily_rain_frequency <-
-         daily_rain_frequency[,fifelse(
-            sum(rain_day,na.rm = TRUE) == 0 |
+      # fill daily rainfall NAs based on rainfall probabilities
+      if(is.na(rainfall_na_fill)){
+         daily_rain_frequency <-
+            daily_rain_frequency[,fifelse(
+               is.na(sum(rain_day,na.rm = TRUE)), # This needs to be tested with or without
+               NA_real_, mean(rain_day,na.rm = TRUE))]
+
+         }else if(rainfall_na_fill == "mean") {
+         daily_rain_frequency[is.na(rain_day),
+                              rain_day := as.logical(rbinom(1, 1,
+                                                            mean(
+                                                               daily_rain_frequency$rain_day,
+                                                               na.rm = TRUE
+                                                            )))]
+            # return the rainfall frequency
+            # return the overall mean if NAs or no rain
+            daily_rain_frequency <-
+               daily_rain_frequency[,fifelse(
+                  sum(rain_day,na.rm = TRUE) == 0 |
+                     is.na(sum(rain_day,na.rm = TRUE)), # This needs to be tested with or without
+                  0, mean(rain_day,na.rm = TRUE))]
+
+
+      }else if(rainfall_na_fill > 1 |
+               rainfall_na_fill < 0){
+         daily_rain_frequency[is.na(rain_day),
+                              rain_day := as.logical(rbinom(1, 1,rainfall_na_fill))]
+
+         # return the rainfall frequency
+         # return the overall mean if NAs or no rain
+         daily_rain_frequency <-
+            daily_rain_frequency[,fifelse(
                is.na(sum(rain_day,na.rm = TRUE)),
-            0, mean(rain_day,na.rm = TRUE))]
+               rainfall_na_fill, mean(rain_day,na.rm = TRUE))]
+
+      }else{
+         stop("`rainfall_na_fill` argument input unrecognised. input proportion between
+              0 and 1 or \"mean\" or NA_logical")
+      }
+
+
 
       if (nrow(rw_dat[rain > 0]) == 0) {
          # if no rainfall in the rolling window return NAs
@@ -179,26 +232,32 @@ get_weather_coefs <- function(raw_bom_file,
       } else{
          dat_coef[index, c("min_temp",
                            "max_temp",
+                           "temp",
+                           "rh",
                            "wd_rw",
                            "wd_sd_rw",
                            "ws_rw",
                            "ws_sd_rw") :=
-                     rw_dat[rain >0,
-                            list(mean(min_temp, na.rm = TRUE),
-                              mean(max_temp, na.rm = TRUE),
-                              wd_rw = as.numeric(circular::mean.circular(
-                                 circular::circular(wd,
-                                                    units = "degrees",
-                                                    modulo = "2pi"),
-                                 na.rm = TRUE)),
-                              wd_sd_rw = as.numeric(circular::sd.circular(
-                                 circular::circular(wd,
-                                                    units = "degrees",
-                                                    modulo = "2pi"),
-                                 na.rm = TRUE)*57.29578),
-                              ws_rw = mean(ws, na.rm = TRUE),
-                              ws_sd_rw = sd(ws, na.rm = TRUE)
-                            )]
+                     list(fcase("min_temp" %in% colnames(rw_dat) == FALSE &
+                                   "tm"  %in% colnames(rw_dat), quantile(rw_dat$tm, 0.05,na.rm = TRUE),
+                                "min_temp" %in% colnames(rw_dat), mean(rw_dat$min_temp, na.rm = TRUE),
+                                default = NA_real_),
+                          fcase("max_temp" %in% colnames(rw_dat) == FALSE &
+                                   "tm"  %in% colnames(rw_dat), quantile(rw_dat$tm, 0.95,na.rm = TRUE),
+                                "max_temp" %in% colnames(rw_dat), mean(rw_dat$max_temp, na.rm = TRUE),
+                                default = NA_real_),
+                          mean(rw_dat$tm,na.rm = TRUE),
+                          mean(rw_dat$rh,na.rm = TRUE),
+                     rw_dat[rain >0, as.numeric(
+                        circular::mean.circular(
+                           circular::circular(wd,units = "degrees",modulo = "2pi"),
+                           na.rm = TRUE))],
+                     rw_dat[rain >0, as.numeric(
+                        circular::sd.circular(
+                           circular::circular(wd,units = "degrees",modulo = "2pi"),
+                           na.rm = TRUE)*57.29578)],
+                     rw_dat[rain >0, as.numeric(mean(ws, na.rm = TRUE))],
+                     rw_dat[rain >0, as.numeric(sd(ws, na.rm = TRUE))])
          ]
 
       }

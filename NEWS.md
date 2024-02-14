@@ -1,3 +1,12 @@
+# epiphytoolR 0.0.2
+
+ * R function to generate mock raw bom file for testing and examples `make_bom_data()`  
+ * tests for `get_weather_coefs()`  
+ * patch some bugs to tests and allow calc_estimated_weather to return `rh` and 
+  `temp`
+ * `calc_estimated_weather()` now returns `epiphy.weather` classed data.tables 
+  eliminating the need for subsequent parsing through `format_weather()`
+ 
  * new functions `impute_temp()` and `impute_rh()` for imputing temperatures and 
   relative humidity using a `impute_fill()` on a rolling window function  
   

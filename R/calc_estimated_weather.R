@@ -24,6 +24,7 @@
 #'  *station* - Weather station name;
 #'  *lat* - latitude;
 #'  *lon* - longitude;
+#'  *rh* - NA currently not supported see epiphytoolR github issue #14;
 #'  *yearday* - integer, day of the year, see `data.table::yday()`;
 #'  *wd_rd* - numeric, mean wind direction from raw data;
 #'  *wd_sd_rd* - numeric, standard deviation of wind direction from raw data;
@@ -62,7 +63,7 @@ calc_estimated_weather <- function(w,
    # specify non-global data.table variables
    ws <- wd <- station_name <- times <- date_times <- distance <- rain_freq <-
       wd_rw <- wd_sd_rw <- ws <- ws_rw <- ws_sd_rw <- yearday <- max_temp <-
-      min_temp <- NULL
+      min_temp <- rh <- temp <- NULL
 
    data.table::setDT(w)
    # set some time parameters
@@ -84,7 +85,8 @@ calc_estimated_weather <- function(w,
    w_prox <- .closest_station(lat = lat,
                               lon = lon,
                               bom_dat = w,
-                              station_indexs = n_stations)}
+                              station_indexs = n_stations)
+   }
 
    # add date_time column
    w_prox[,date_times := year_day1 + (day_in_secs * yearday)]
@@ -106,6 +108,15 @@ calc_estimated_weather <- function(w,
       if (na.rm) {
          rm_stat <- w_prox[is.na(rain_freq), unique(station_name)]
          w_prox <- w_prox[station_name %in% rm_stat == FALSE,]
+
+         if(any(is.na(w_prox$rain_freq))) {
+            warning(
+               "The following stations are omitted due to NA rain frequency values:\n  '",
+               paste0(rm_stat,
+                      sep = "', '")
+            )
+         }
+
       }
    }
 
@@ -124,37 +135,53 @@ calc_estimated_weather <- function(w,
    }
    if(any(is.na(w_prox$ws_rw))){
       warning(paste0(w_prox[is.na(ws_rw),unique(station_name)], sep=",   "),": ",sum(is.na(w_prox$ws_rw)), " ws_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n")
+                  the overall mean wind speed\n")
       w_prox[is.na(ws_rw), ]$ws_rw <- mean(w_prox$ws_rw, na.rm = TRUE)
    }
    if(any(is.na(w_prox$ws_sd_rw))){
       warning(paste0(w_prox[is.na(ws_sd_rw),unique(station_name)], sep=",   "),": ",sum(is.na(w_prox$ws_sd_rw)), " ws_sd_rw lines have NA data. This is replaced with
-                  the overall mean stdev wind direction\n")
+                  the overall mean stdev wind speed\n")
       w_prox[is.na(ws_sd_rw), ]$ws_sd_rw <- mean(w_prox$ws_sd_rw, na.rm = TRUE)
    }
 
-
+   if("rh" %in% col_var == FALSE){
+      w_prox[,rh := NA_real_]
+      }
 
    # Do imputation
    if("max_temp" %in% col_var &
       "min_temp" %in% col_var) {
-      w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
+      w_prox[, c("rain", "temp" ,"rh", "ws", "wd", "wd_sd") :=
                 list(
                    rbinom(1, 1, rain_freq),
                    mean(impute_diurnal(max_obs = max_temp,
                                      min_obs = min_temp)),
+                   mean(rh),
                    rnorm(1, mean = ws_rw,
                          sd = ws_sd_rw),
                    wd_rw,
                    wd_sd_rw
                 ),
              by = list(station_name, yearday)]
-   } else{
+   } else if("temp" %in% col_var){
+      w_prox[, c("rain", "temp" ,"rh", "ws", "wd", "wd_sd") :=
+                list(
+                   rbinom(1, 1, rain_freq),
+                   mean(temp),
+                   mean(rh),
+                   rnorm(1, mean = ws_rw,
+                         sd = ws_sd_rw),
+                   wd_rw,
+                   wd_sd_rw
+                ),
+             by = list(station_name, yearday)]
+      }else{
       warning("'max_temp' and 'min_temp' not detected, returning NAs for mean daily 'temp'")
-      w_prox[, c("rain", "temp" , "ws", "wd", "wd_sd") :=
+      w_prox[, c("rain", "temp" ,"rh", "ws", "wd", "wd_sd") :=
                 list(
                    rbinom(1, 1, rain_freq),
                    NA_real_,
+                   mean(rh),
                    rnorm(1, mean = ws_rw,
                          sd = ws_sd_rw),
                    wd_rw,
@@ -193,20 +220,25 @@ calc_estimated_weather <- function(w,
 
    # Add columns to match format_weather output
    new_w[, c("date_times",
+             "rh",
              "YYYY",
              "MM",
              "DD",
              "hh",
              "mm") :=
             list(NULL,
-              year(times),
-              month(times),
-              mday(times),
-              hour(times),
-              minute(times))]
+                 NA,
+                 year(times),
+                 month(times),
+                 mday(times),
+                 hour(times),
+                 minute(times))]
    setnames(x = new_w,
             old = "station_name",
             new = "station")
+
+   # add epiphy.weather class to make an acceptable model input without formating
+   setattr(new_w, "class", union("epiphy.weather", class(new_w)))
 
    return(new_w)
 

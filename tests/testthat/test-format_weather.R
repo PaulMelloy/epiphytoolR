@@ -813,10 +813,19 @@ test_that("I can make fake datasets and format them through preformat",{
    for(i in 1:10) {
       dat <- data.table(
          station_name = paste0("w_STATION", i),
-         lat = -runif(1, 15.5, 28),
-         lon = runif(1, 115, 150),
+         lat = runif(1, 15.5, 28),
+         lon = -runif(1, 115, 150),
          state = "SA",
          yearday = 1:365,
+         temp = replicate(365,
+                          mean(impute_diurnal(max_obs = runif(1,20,35),
+                               min_obs = runif(1,-4,20),
+                               max_hour = 14,min_hour = round(runif(1,3,6))
+                               ))),
+         rh = replicate(365,
+                               mean(impute_diurnal(max_obs = runif(1,75,100),
+                                                   min_obs = runif(1,30,75))
+                               )),
          wd_rw = abs(rnorm(365, 180, 90)),
          wd_sd_rw = rnorm(365, 80, 20),
          ws_rw = runif(365, 1, 60),
@@ -828,18 +837,21 @@ test_that("I can make fake datasets and format them through preformat",{
       } else{
          test_dat <- rbind(test_dat, dat)
       }
+
    }
 
-   out1 <- suppressWarnings(calc_estimated_weather(w = test_dat,
+   out1 <- calc_estimated_weather(w = test_dat,
                                   start_date = "2023-01-10",
                                   end_date = "2023-12-10",
                                   lat = mean(test_dat$lat),
                                   lon = mean(test_dat$lon),
-                                  n_stations = 1))
+                                  n_stations = 1)
    out1$rh <- 70
-   expect_warning(format_weather(out1, time_zone = "UTC"))
+   #expect_warning(format_weather(out1, time_zone = "UTC"))
    format_weather(out1, time_zone = "UTC",
                   data_check = FALSE)
+
+   expect_s3_class(out1,"epiphy.weather")
 
 })
 
@@ -921,26 +933,4 @@ test_that("Non-unique stations and coordinates are detected",{
 # })
 
 # Relative humidity added
-
-gatton <- read.csv("../../Weather observations/Gatton_weather_obs.csv",
-                   colClasses = c("integer","character","character","character",
-                                  "character","character","character","character",
-                                  "numeric","numeric","numeric","character",
-                                  "integer","integer","integer","character",
-                                  "numeric","integer","integer","numeric","numeric",
-                                  "integer","integer","integer","character",
-                                  "numeric","numeric","numeric","character","character",
-                                  "character","character","integer","integer","character",
-                                  "character","integer","integer","character",
-                                  "character","character","integer","integer",
-                                  "integer","character"))
-setDT(gatton)
-as.POSIXct(gatton$aifstime_utc)
-
-gatton[, c("aifstime_utc","aifstime_local") :=
-          .(as.POSIXct(aifstime_utc,format = "%Y%m%d%H%M%S"),
-            as.POSIXct(aifstime_local,format = "%Y%m%d%H%M%S", tz = "Australia/Brisbane"))]
-
-tail(gatton)
-cat(unlist(lapply(gatton,class),use.names = FALSE),sep = "\",\"")
 
