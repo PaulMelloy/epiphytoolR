@@ -14,7 +14,7 @@ Audpc(evaluation, dates, type = "absolute", na.rm = FALSE)
 \item{type}{relative, absolute}
 
 \item{na.rm}{weather to remove NA values or return NA when there are only NA
-vales}
+values}
 }
 \value{
 Vector with relative or absolute audpc.
@@ -25,19 +25,19 @@ Calculate area under the disease progress curve
 \details{
 This is a wrapper for \CRANpkg{agricolae} which checks for NA values and will
 return NA values if specified in the argument
-see help\link[agricolae:audpc]{agricolae::audpc} for more details.
+see \code{agricolae::audpc()} for more details.
 }
 \examples{
 # see examples in help(agricolae::audpc)
-dates<-c(14,21,28) # days
+dates <- c(14, 21, 28) # days
 # example 1: evaluation - vector
-evaluation<-c(40,80,90)
-Audpc(evaluation,dates)
-dates<-c(14,21,NA) # days
-Audpc(evaluation,dates)
+evaluation <- c(40, 80, 90)
+Audpc(evaluation, dates)
+dates <- c(14, 21, NA) # days
+Audpc(evaluation, dates)
 # agricolae::audpc(evaluation,dates)
-dates<-c(14,21,28) # days
-evaluation<-c(40,80,NA)
-Audpc(evaluation,dates)
+dates <- c(14, 21, 28) # days
+evaluation <- c(40, 80, NA)
+Audpc(evaluation, dates)
 # agricolae::audpc(evaluation,dates)
 }
