@@ -17,7 +17,7 @@ A data frame with 8,786 rows and 15 columns:
 }
 }
 \source{
-simlulated
+simulated
 }
 \usage{
 weather
