@@ -6,12 +6,12 @@ Authors@R:
            family = "Melloy",
            role = c("aut", "cre"),
            email = "p.melloy@uq.edu.au",
-           comment = c(ORCID = "0000-0003-4253-7167"))
+           comment = c(ORCID = "0000-0003-4253-7167")),
       person(given = "Adam H.",
           family = "Sparks",
           role = c("ctb"),
           email = "adamhsparks@gmail.com",
-          comment = c(ORCID = "0000-0002-0061-8359")),
+          comment = c(ORCID = "0000-0002-0061-8359"))
 Description: epiphytoolR provides functions for undertaking epiphytotic modelling 
     and simulation studies in R. This package provides common base level functions
     that can be used in modelling the spatial movement of splash and wind 
