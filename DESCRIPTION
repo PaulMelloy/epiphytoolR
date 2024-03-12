@@ -28,7 +28,8 @@ Imports:
     sf,
     units,
     geosphere
-Suggests: 
+Suggests:
+    agricolae,
     testthat (>= 3.0.0),
     lubridate (>= 1.7.10)
 Config/testthat/edition: 3

@@ -1,17 +1,18 @@
-#' Calculate area under the disease progress curve
+#' Calculate the Area Under the Disease Progress Curve (AUDPC)
 #'
-#' @details
-#' This is a wrapper for \CRANpkg{agricolae} which checks for NA values and will
-#'  return NA values if specified in the argument
-#'  see `agricolae::audpc()` for more details.
+#' This is a modified version of [agricolae::audpc()], which checks for `NA`
+#'  values and will return `NA` values if specified in the argument. See
+#'  `help(agricolae::audpc())` for more details. Note that this function starts
+#'  with a capital \dQuote{A} to avoid namespace clashes with
+#'  \CRANpkg{agricolae}.
 #'
 #' @param evaluation Table of data of the evaluations: Data frame
 #' @param dates Vector of dates corresponding to each evaluation
 #' @param type relative, absolute
-#' @param na.rm weather to remove NA values or return NA when there are only NA
-#'  values
+#' @param na.rm weather to remove NA values or return `NA` when there are only
+#'   `NA` values
 #'
-#' @return Vector with relative or absolute audpc.
+#' @return Vector with relative or absolute \acronym{AUDPC}.
 #' @export
 #'
 #' @examples

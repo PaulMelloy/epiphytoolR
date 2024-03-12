@@ -2,7 +2,7 @@
 % Please edit documentation in R/Audpc.R
 \name{Audpc}
 \alias{Audpc}
-\title{Calculate area under the disease progress curve}
+\title{Calculate the Area Under the Disease Progress Curve (AUDPC)}
 \usage{
 Audpc(evaluation, dates, type = "absolute", na.rm = FALSE)
 }
@@ -13,19 +13,18 @@ Audpc(evaluation, dates, type = "absolute", na.rm = FALSE)
 
 \item{type}{relative, absolute}
 
-\item{na.rm}{weather to remove NA values or return NA when there are only NA
-values}
+\item{na.rm}{weather to remove NA values or return \code{NA} when there are only
+\code{NA} values}
 }
 \value{
-Vector with relative or absolute audpc.
+Vector with relative or absolute \acronym{AUDPC}.
 }
 \description{
-Calculate area under the disease progress curve
-}
-\details{
-This is a wrapper for \CRANpkg{agricolae} which checks for NA values and will
-return NA values if specified in the argument
-see \code{agricolae::audpc()} for more details.
+This is a modified version of \code{\link[agricolae:audpc]{agricolae::audpc()}}, which checks for \code{NA}
+values and will return \code{NA} values if specified in the argument. See
+\code{help(agricolae::audpc())} for more details. Note that this function starts
+with a capital \dQuote{A} to avoid namespace clashes with
+\CRANpkg{agricolae}.
 }
 \examples{
 # see examples in help(agricolae::audpc)
