@@ -10,7 +10,7 @@
 #'   \item{rh}{hourly mean relative humidity}
 #'   ...
 #' }
-#' @source simlulated
+#' @source simulated
 "weather"
 
 
@@ -28,7 +28,7 @@
 #'   \item{rh}{hourly mean relative humidity}
 #'   ...
 #' }
-#' @source simlulated
+#' @source simulated
 #' @export
 #'
 #' @examples

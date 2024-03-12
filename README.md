@@ -21,6 +21,6 @@ Or you can install the development version from the `dev` branch with the follow
 remotes::install_github("PaulMelloy/epiphytoolR", ref = "dev")
 ```
 
-The `dev` branch will have newer bug fixes and more features, see (NEWS.nd)[https://github.com/PaulMelloy/epiphytoolR/blob/dev/NEWS.md]
+The `dev` branch will have newer bug fixes and more features, see [NEWS.md](https://github.com/PaulMelloy/epiphytoolR/blob/dev/NEWS.md)
 
 Report bugs or add requests by creating an issue on this repo

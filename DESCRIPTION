@@ -1,12 +1,17 @@
 Package: epiphytoolR
 Title: Epiphytotic Modeling Tools
 Version: 0.0.2
-Authors@R: 
-    person(given = "Paul",
+Authors@R:
+    c(person(given = "Paul",
            family = "Melloy",
            role = c("aut", "cre"),
            email = "p.melloy@uq.edu.au",
-           comment = c(ORCID = "0000-0003-4253-7167"))
+           comment = c(ORCID = "0000-0003-4253-7167")),
+      person(given = "Adam H.",
+          family = "Sparks",
+          role = c("ctb"),
+          email = "adamhsparks@gmail.com",
+          comment = c(ORCID = "0000-0002-0061-8359")))
 Description: epiphytoolR provides functions for undertaking epiphytotic modelling 
     and simulation studies in R. This package provides common base level functions
     that can be used in modelling the spatial movement of splash and wind 
@@ -15,7 +20,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports:
     stats,
     data.table,
@@ -29,3 +34,4 @@ Suggests:
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
+URL: https://paulmelloy.github.io/epiphytoolR/

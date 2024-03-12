@@ -1,0 +1,7 @@
+url: https://paulmelloy.github.io/epiphytoolR/
+template:
+  bootstrap: 5
+  bootswatch: darkly
+  navbar:
+    bg: light
+

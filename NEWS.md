@@ -1,5 +1,5 @@
 # epiphytoolR 0.0.2
-
+ * Make `pkgdown` site
  * R function to generate mock raw bom file for testing and examples `make_bom_data()`  
  * tests for `get_weather_coefs()`  
  * patch some bugs to tests and allow calc_estimated_weather to return `rh` and 
