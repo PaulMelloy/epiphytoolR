@@ -4,7 +4,7 @@
 \alias{make_bom_data}
 \title{Mock Bureau of Meteorology weather data}
 \source{
-simlulated
+simulated
 }
 \usage{
 make_bom_data()

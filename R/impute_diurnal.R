@@ -61,7 +61,7 @@ impute_diurnal <-
             ind_out = "all") {
       # define unknown data.table globals
 
-         if (max_obs < min_obs){
+         if (any(max_obs < min_obs)){
             stop("'min_obs': ",
                  min_obs,
                  " is larger than 'max_obs': ",
@@ -70,10 +70,10 @@ impute_diurnal <-
          # adjust to 24 hour
          l_out <- (l_out / 24)
 
-         if (max_hour > min_hour) {
+         if (any(max_hour > min_hour)) {
             max2min_time <- (24 - max_hour) + min_hour
          } else{
-            if (max_hour == min_hour)
+            if (any(max_hour == min_hour))
                stop("max_hour can not be equal to min_hour")
             max2min_time <- min_hour - max_hour
          }
