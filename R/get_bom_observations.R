@@ -109,7 +109,7 @@ get_bom_observations <- function(ftp_url,
 
 #' Merge BOM axf weather data
 #'
-#'  @details
+#' @details
 #'   This function takes new BOM axf files which hold 72 hours of weather observations
 #`   in 10 minute intervals and an old formatted weather data file, row binds them,
 #`   then saves them back as the File_formatted csv.
@@ -176,8 +176,9 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    }else{
 
       if(verbose){cat("   Read in old data","\n")}
-      dat_old <- fread(file = paste0(base_dir,File_formatted),
-                       integer64 = "character")
+      dat_old <-
+         data.table::fread(file = paste0(base_dir,File_formatted),
+                           integer64 = "character")
 
       if(verbose){cat("   Merge data","\n")}
       Merged <- rbind(dat_old,dat_new)
