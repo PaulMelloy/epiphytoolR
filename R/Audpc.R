@@ -16,17 +16,18 @@
 #'
 #' @examples
 #' # see examples in help(agricolae::audpc)
-#' dates<-c(14,21,28) # days
+#' dates <- c(14,21,28,32,39,41,50) # days
 #' # example 1: evaluation - vector
-#' evaluation<-c(40,80,90)
+#' evaluation <- c(1,2,4,15,40,80,90)
 #' Audpc(evaluation,dates)
-#' dates<-c(14,21,NA) # days
+#'
+#' # add NA values
+#' evaluation<-c(1,2,4,NA,40,80,90)
+#' Audpc(evaluation,dates, na.rm = TRUE)
+#' \dontrun{agricolae::audpc(evaluation,dates)}
+#' # if NA is at the start or end of vector it will return NA
+#' dates<-c(14,21,28,32,39,41,NA) # days
 #' Audpc(evaluation,dates)
-#' # agricolae::audpc(evaluation,dates)
-#' dates<-c(14,21,28) # days
-#' evaluation<-c(40,80,NA)
-#' Audpc(evaluation,dates)
-#' # agricolae::audpc(evaluation,dates)
 Audpc <-
   function (evaluation,
             dates,
@@ -42,12 +43,31 @@ Audpc <-
       stop("Error:\nThe number of dates of evaluation \nmust agree with the number of evaluations\n")
     }
 
+    # check start and end have observations
+    if(na.rm & (is.na(evaluation[,1]) | is.na(evaluation[,k]) |
+                is.na(dates[1]) | is.na(dates[n]))){
+       return(NA)}
+
+    if(na.rm){
+       # identify NA index
+       na_i <- c(which(is.na(evaluation)),
+                 which(is.na(dates)))
+
+       # remove indices with NA
+       evaluation <- rbind(evaluation[,-na_i])
+       dates <- dates[-na_i]
+
+       # update lengths
+       n <- length(dates)
+       k <- ncol(evaluation)
+
+    }
+
     audpc <- 0
     area.total <- 100 * (dates[n] - dates[1])
 
-    # check start and end have observations
-    if(na.rm & (is.na(evaluation[,1]) | is.na(evaluation[,n])))
-      return(NA)
+
+
 
     for (i in 1:(n - 1)) {
       if(na.rm & is.na(evaluation[,i])) next

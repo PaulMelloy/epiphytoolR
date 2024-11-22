@@ -29,15 +29,16 @@ see help\link[agricolae:audpc]{agricolae::audpc} for more details.
 }
 \examples{
 # see examples in help(agricolae::audpc)
-dates<-c(14,21,28) # days
+dates <- c(14,21,28,32,39,41,50) # days
 # example 1: evaluation - vector
-evaluation<-c(40,80,90)
+evaluation <- c(1,2,4,15,40,80,90)
 Audpc(evaluation,dates)
-dates<-c(14,21,NA) # days
+
+# add NA values
+evaluation<-c(1,2,4,NA,40,80,90)
+Audpc(evaluation,dates, na.rm = TRUE)
+\dontrun{agricolae::audpc(evaluation,dates)}
+# if NA is at the start or end of vector it will return NA
+dates<-c(14,21,28,32,39,41,NA) # days
 Audpc(evaluation,dates)
-# agricolae::audpc(evaluation,dates)
-dates<-c(14,21,28) # days
-evaluation<-c(40,80,NA)
-Audpc(evaluation,dates)
-# agricolae::audpc(evaluation,dates)
 }
