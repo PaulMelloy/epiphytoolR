@@ -16,7 +16,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Paul Melloy \email{p.melloy@uq.edu.au} (\href{https://orcid.org/0000-0003-4253-7167}{ORCID})
+\strong{Maintainer}: Paul Melloy \email{Paul.Melloy@csiro.au} (\href{https://orcid.org/0000-0003-4253-7167}{ORCID})
 
 Other contributors:
 \itemize{
