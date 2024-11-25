@@ -32,10 +32,11 @@
 #'  *ws_sd_rd* - numeric, standard deviation of wind speed from raw data;
 #'  *rain_freq* - numeric, proportional chance of rainfall on this dat 0 - 1
 #'
-#'  can be formated with `format_weather()`
+#' Output can be formatted with `format_weather()`
 #' @export
 #'
 #' @examples
+#' set.seed(61)
 #' dat <- data.frame(
 #'   station_name = "w_STATION",
 #'   lat = -runif(1, 15.5, 28),
