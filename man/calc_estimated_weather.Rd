@@ -54,12 +54,13 @@ following columns:
 \emph{ws_sd_rd} - numeric, standard deviation of wind speed from raw data;
 \emph{rain_freq} - numeric, proportional chance of rainfall on this dat 0 - 1
 
-can be formated with \code{format_weather()}
+Output can be formatted with \code{format_weather()}
 }
 \description{
 Calculate estimated weather from coefficients
 }
 \examples{
+set.seed(61)
 dat <- data.frame(
   station_name = "w_STATION",
   lat = -runif(1, 15.5, 28),

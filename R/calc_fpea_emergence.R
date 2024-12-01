@@ -11,8 +11,8 @@
 #' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
 #'
 #'
-#' @param sowing_date sowing date (date)
-#' @param hemisphere 'North' or 'South' hemishere
+#' @param sowing_date sowing date \code{POSIXct.date}
+#' @param hemisphere 'North' or 'South' hemisphere
 #'
 #' @return number of degree days predicted from time of sowing to emergence
 #' @export
@@ -22,7 +22,7 @@
 calc_fpea_emergence <- function(sowing_date, hemisphere = "south"){
 
    # calibrate the sowing date to suit the input for northern or southern hemisphere
-   # the Schoeny paper was in France and centered on 19/9/2003 8 days before the
+   # the Schoeny paper was in France and centred on 19/9/2003 8 days before the
    # autumn equinox, hence the adjustment
    if (hemisphere == "north" |
        hemisphere == "N" |

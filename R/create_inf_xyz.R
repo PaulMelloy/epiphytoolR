@@ -1,32 +1,33 @@
 #' Create xyz data.frame with z plots
 #'
-#' Creates an xy data.frame and a z column "load" with a specified value in paddock
-#'  plots
+#' Creates an xy data.frame and a z column \code{load} with a specified value in
+#'  paddock plots
 #'
 #' @param plot_length numeric, length of experimental plots in paddock (meters)
 #' @param plot_width numeric, width of experimental plots in paddock (meters)
 #' @param paddock_length numeric, length of paddock (meters)
 #' @param paddock_width numeric, width of paddock (meters)
-#' @param infected_plots numeric vector of plot numbers which are infected. Plot 1
-#'  starts in the corner and then are allocated across the width (x) of the paddock
-#'  as plot numbers increase. Default is `"random"` and will randomly assign infected
-#'  `n_plots` in quantity.
+#' @param infected_plots numeric vector of plot numbers which are infected. Plot
+#'  1 starts in the corner and then are allocated across the width (x) of the
+#'  paddock as plot numbers increase. Default is \code{"random"} and will
+#'  randomly assign infected \code{n_plots} in quantity.
 #' @param n_plots numeric, number of infected plots, used when infected_plots is
 #'  specified as `"random"`
-#' @param infection_weight the value applied to the *z* `load` column of infected
-#'  plots
-#' @param external_buffer_end numeric, length of buffers on the end of the paddock
-#'  (meters)
-#' @param external_buffer_adj numeric, length of buffers on the sides of the paddock
-#'  (meters)
-#' @param internal_buffer_adj numeric, length of buffers between plots adjacent to the
-#'  row direction (meters)
-#' @param internal_buffer_end numeric, length of buffers between plots ends in the
-#'  row direction (meters)
+#' @param infection_weight the value applied to the *z* \code{load} column of
+#'  infected plots
+#' @param external_buffer_end numeric, length of buffers on the end of the
+#'  paddock (meters)
+#' @param external_buffer_adj numeric, length of buffers on the sides of the
+#'  paddock (meters)
+#' @param internal_buffer_adj numeric, length of buffers between plots adjacent
+#'  to the row direction (meters)
+#' @param internal_buffer_end numeric, length of buffers between plots ends in
+#'  the row direction (meters)
 #' @param verbose logical, if 'TRUE' function will return a message with total plots
 #'  and extra length or width in meters
 #'
-#' @return and xyz `data.frame` with colnames `x`,`y` amd `load`
+#' @return and xyz \code{data.frame} with colnames \code{x},\code{y} and
+#'  \code{load}
 #' @export
 #'
 #' @examples
@@ -70,11 +71,15 @@ create_inf_xyz <- function(plot_length = 20,
 
    w_n <- floor(adj_paddock_width / adj_plot_width)
    w_extra <- adj_paddock_width %% adj_plot_width
-   if(w_extra != 0 & verbose) message("Field plan has ", w_extra, " meters in excess width")
+   if(w_extra != 0 & verbose) message("Field plan has ",
+                                      w_extra,
+                                      " meters in excess width")
 
    l_n <- floor(adj_paddock_length / adj_plot_length)
    l_extra <- adj_paddock_length %% adj_plot_length
-   if(l_extra != 0 & verbose) message("Field plan has ", l_extra, " meters in excess length")
+   if(l_extra != 0 & verbose) message("Field plan has ",
+                                      l_extra,
+                                      " meters in excess length")
 
    total_plots <- w_n * l_n
    if(verbose) message("Total plots: ", total_plots)
@@ -89,8 +94,8 @@ create_inf_xyz <- function(plot_length = 20,
    }
 
    if(any(infected_plots > total_plots))
-      stop("'infected_plots' includes a plot number higher than the number of calculated plots ", total_plots)
-
+      stop("'infected_plots' includes a plot number higher than the number of calculated plots ",
+           total_plots)
 
    paddock <-
       expand.grid(x = 1:paddock_width,
@@ -108,9 +113,11 @@ create_inf_xyz <- function(plot_length = 20,
 
       # offset for buffers
       x_inf <-
-         (1 + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge) - internal_buffer_adj) + external_buffer_adj
+         (1 + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge) -
+                                                  internal_buffer_adj) + external_buffer_adj
       y_inf <-
-         (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end) + external_buffer_end
+         (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) -
+                                                 internal_buffer_end) + external_buffer_end
 
       # apply the infecion weight value to the infected plot
       if(length(infection_weight) ==
@@ -136,7 +143,8 @@ create_inf_xyz <- function(plot_length = 20,
          (1 + (adj_plot_width * (ra_ge - 1))):((adj_plot_width * ra_ge) -
                                                              internal_buffer_adj) + external_buffer_adj
       y_inf <-
-         (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) - internal_buffer_end) + external_buffer_end
+         (1 + (adj_plot_length * (r_w - 1))):((adj_plot_length * r_w) -
+                                                 internal_buffer_end) + external_buffer_end
 
       paddock$load[paddock$x %in% x_inf &
                       paddock$y %in% y_inf] <- 0

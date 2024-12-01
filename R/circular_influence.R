@@ -9,8 +9,8 @@
 #' @param offset degrees (numeric), what angle should the function offset to and
 #'  the returned value be 1.
 #'
-#' @return numeric double vector giving the proportion of influence from two dimensions,
-#'  the 'x' dimension and 'y' dimension between -1 and 1
+#' @return numeric double vector giving the proportion of influence from two
+#'  dimensions, the \emph{x} dimension and \emph{y} dimension between -1 and 1
 #' @export
 #'
 #' @examples

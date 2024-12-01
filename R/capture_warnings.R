@@ -11,7 +11,6 @@
 #'  as a data.frame (logs)
 #'
 #' @noRd
-#' @export
 #' @examples
 #' f <- function(x) {
 #'    warning("This is a warning")

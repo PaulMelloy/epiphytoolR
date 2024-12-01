@@ -1,12 +1,12 @@
 #' DiseaseAUGSoil - number of girdled internodes
 #'
-#' Estimates the number of girdleed field pea internodes at the end of winter from
-#'  the sum quantitative PCR blackspot pathogens, Didymella pinodes, Phoma medicaginis
-#'  var pinodella and P. koolunga. Formula described in paper linked in the DOI
-#'  below
+#' Estimates the number of girdled field pea internodes at the end of winter
+#'  from the sum quantitative PCR blackspot pathogens, *Didymella pinodes*,
+#'  *Phoma medicaginis* var. *pinodella* and P. *koolunga*. Formula described in
+#'  paper linked in the DOI below
 #'
 #' @param DNA_pg Quantity of DNA in picograms per gram of soil of
-#'  D. pinodes, P. medicaginis var pinodella and P. koolunga.
+#'  *D. pinodes*, *P. medicaginis* var *pinodella* and *P. koolunga*.
 #'
 #' @return estimated number of girdled field pea internodes at the end of winter.
 #' @source <https://doi.org/10.1094/PDIS-01-11-0077>
