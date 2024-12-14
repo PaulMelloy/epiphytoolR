@@ -39,7 +39,7 @@ get_bom_observations <- function(ftp_url,
       stop(
          "'get_bom_observations' requires the Bureau of Meterology FTP address. ",
          "This can be obtained from the BOM website. Please read their policies on ",
-         "scraping data and accessing thier public FTP site before using this function.
+         "scraping data and accessing their public FTP site before using this function.
            The author of this function provides the code as is, and is free to use but takes no ",
          "responsibility for how this code is used and assumes the user has done their ",
          "due diligence in understanding the copyright assigned to BOM weather data. ",
