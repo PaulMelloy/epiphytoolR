@@ -4,10 +4,10 @@
 #'  file contains three file formats for all automated weather station, xml, axf,
 #'  and json.
 #' An FTP url is needed for this function, find this on the Bureau of Meterology
-#'  website. Please read the copyright and disclaimer for use of the data while
-#'  you are there.
+#'  (BOM) website. Please read the copyright and disclaimer for use of the data
+#'  while you are there.
 #'
-#' @param ftp_url character, ftp url obtained from the BOMs website
+#' @param ftp_url character, ftp url obtained from the BOM's website
 #' @param download_location character, Folder location of where to download the
 #'  compreseed data
 #' @param access_warning logical, default = `TRUE`. Elects whether to print the warning
