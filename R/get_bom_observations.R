@@ -4,7 +4,7 @@
 #'  file contains three file formats for all automated weather station, xml, axf,
 #'  and json.
 #' An FTP URL is needed for this function, find this on the Bureau of Meteorology
-#'  \acronym{BOM} website.
+#'  (\acronym{BOM}) website.
 #'  Please read the copyright and disclaimer for use of the data while
 #'  you are there.
 #'
