@@ -13,8 +13,8 @@ circular_influence(x, offset = 0)
 the returned value be 1.}
 }
 \value{
-numeric double vector giving the proportion of influence from two dimensions,
-the 'x' dimension and 'y' dimension between -1 and 1
+numeric double vector giving the proportion of influence from two
+dimensions, the \emph{x} dimension and \emph{y} dimension between -1 and 1
 }
 \description{
 Calculate the influence of 2 dimensional vectors

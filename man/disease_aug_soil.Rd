@@ -11,16 +11,16 @@ disease_aug_soil(DNA_pg)
 }
 \arguments{
 \item{DNA_pg}{Quantity of DNA in picograms per gram of soil of
-D. pinodes, P. medicaginis var pinodella and P. koolunga.}
+\emph{D. pinodes}, \emph{P. medicaginis} var \emph{pinodella} and \emph{P. koolunga}.}
 }
 \value{
 estimated number of girdled field pea internodes at the end of winter.
 }
 \description{
-Estimates the number of girdleed field pea internodes at the end of winter from
-the sum quantitative PCR blackspot pathogens, Didymella pinodes, Phoma medicaginis
-var pinodella and P. koolunga. Formula described in paper linked in the DOI
-below
+Estimates the number of girdled field pea internodes at the end of winter
+from the sum quantitative PCR blackspot pathogens, \emph{Didymella pinodes},
+\emph{Phoma medicaginis} var. \emph{pinodella} and P. \emph{koolunga}. Formula described in
+paper linked in the DOI below
 }
 \examples{
 disease_aug_soil(50)

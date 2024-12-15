@@ -1,6 +1,7 @@
 #' Calculate estimated weather from coefficients
 #'
-#' @param w A `data.table` of weather coefficients, output from `epiphytoolR::get_weather_coefs`
+#' @param w A \code{data.table} of weather coefficients, output from
+#'  \code{\link{get_weather_coefs}}`
 #' @param start_date a character string of a date value indicating the first date
 #'  for in the returning data.table Must be in \acronym{ISO8601} format (YYYY-MM-DD),
 #'  \emph{e.g.} \dQuote{2020-04-26}
@@ -13,29 +14,31 @@
 #'  estimated.  If missing all stations will be returned
 #' @param n_stations integer or vector of integers indicating the number of station/s
 #'  to return from the closest (1), or 3rd closest (3) or closest five stations
-#'  (1:5). ect
+#'  (1:5), ect.
 #' @param na.rm logical, remove all weather data from stations with NA rain_fall
 #'  frequency **Not Recommended**. We advise the best way is to manually remove
 #'  weather stations with NAs or correct the weather data. This argument is
-#'  available if these two options are not available to the user. Default is `FALSE`
+#'  available if these two options are not available to the user. Default is
+#'  \code{FALSE}
 #'
-#' @return A `data.table` output of calculated on `get_weather_coefs.R` with the
-#' following columns:
+#' @return A \code{data.table} output of calculated on
+#'  \code{\link{get_weather_coefs}} with the following columns:
 #'  *station* - Weather station name;
 #'  *lat* - latitude;
 #'  *lon* - longitude;
 #'  *rh* - NA currently not supported see epiphytoolR github issue #14;
-#'  *yearday* - integer, day of the year, see `data.table::yday()`;
+#'  *yearday* - integer, day of the year, see \code{data.table::yday()};
 #'  *wd_rd* - numeric, mean wind direction from raw data;
 #'  *wd_sd_rd* - numeric, standard deviation of wind direction from raw data;
 #'  *ws_rd* - numeric, mean wind speed from raw data;
 #'  *ws_sd_rd* - numeric, standard deviation of wind speed from raw data;
 #'  *rain_freq* - numeric, proportional chance of rainfall on this dat 0 - 1
 #'
-#'  can be formated with `format_weather()`
+#' Output can be formatted with \code{\link{format_weather}}
 #' @export
 #'
 #' @examples
+#' set.seed(61)
 #' dat <- data.frame(
 #'   station_name = "w_STATION",
 #'   lat = -runif(1, 15.5, 28),
@@ -251,12 +254,12 @@ calc_estimated_weather <- function(w,
 #'
 #' @param lat numeric, latitude of query point
 #' @param lon numeric, longitude of query point
-#' @param bom_dat A `data.table` an output of `get_weather_coefs.R` with the
-#' following columns:
+#' @param bom_dat A \code{data.table} an output of \code{\link{get_weather_coefs}}
+#'  with the following columns:
 #'  *station_name* - Weather station name;
 #'  *lat* - latitude;
 #'  *lon* - longitude;
-#'  *yearday* - integer, day of the year, see `data.table::yday()`;
+#'  *yearday* - integer, day of the year, see \code{\link[data.table]{yday}}`;
 #'  *wd_rd* - numeric, mean wind direction from raw data;
 #'  *wd_sd_rd* - numeric, standard deviation of wind direction from raw data;
 #'  *ws_rd* - numeric, mean wind speed from raw data;
@@ -266,8 +269,8 @@ calc_estimated_weather <- function(w,
 #'  to return from the closest (1), or 3rd closest (3) or closest five stations
 #'  (1:5). ect
 #'
-#' @return  The same input `data.table` but only containing the closest weather
-#'  station/s to the query coordinates.
+#' @return  The same input \code{data.table} but only containing the closest
+#'  weather station/s to the query coordinates.
 #' @noRd
 .closest_station <- function(lat, lon, bom_dat, station_indexs = 1) {
 

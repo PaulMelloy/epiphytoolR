@@ -2,41 +2,48 @@
 % Please edit documentation in R/Audpc.R
 \name{Audpc}
 \alias{Audpc}
-\title{Calculate the Area Under the Disease Progress Curve (AUDPC)}
+\title{Calculate area under the disease progress curve (AUPDC)}
 \usage{
 Audpc(evaluation, dates, type = "absolute", na.rm = FALSE)
 }
 \arguments{
-\item{evaluation}{Table of data of the evaluations: Data frame}
+\item{evaluation}{Table of data of the evaluations: Data frame with
+evaluations as columns; or a vector of evaluations}
 
 \item{dates}{Vector of dates corresponding to each evaluation}
 
-\item{type}{relative, absolute}
+\item{type}{"relative" or "absolute", relative returns a proportion,
+whereas absolute returns the area.}
 
-\item{na.rm}{weather to remove NA values or return \code{NA} when there are only
-\code{NA} values}
+\item{na.rm}{logical, remove observations with either an \code{NA} in the evaluation
+or the date. Does not allow \code{NA} values at the start or end observations.}
 }
 \value{
-Vector with relative or absolute \acronym{AUDPC}.
+Vector with relative or absolute area under the disease progress curve
 }
 \description{
-This is a modified version of \code{\link[agricolae:audpc]{agricolae::audpc()}}, which checks for \code{NA}
-values and will return \code{NA} values if specified in the argument. See
-\code{help(agricolae::audpc())} for more details. Note that this function starts
-with a capital \dQuote{A} to avoid namespace clashes with
-\CRANpkg{agricolae}.
+Calculate area under the disease progress curve (AUPDC)
+}
+\details{
+This is a wrapper for \CRANpkg{agricolae} which checks for NA values and will
+return omit NA values if specified. However it will still return NA if the
+first or last values contain \code{NA}
+This is intentional as audpc values are completely not comparable when these
+values are missing.
+See help \code{\link[agricolae]{audpc}} for more details.
 }
 \examples{
 # see examples in help(agricolae::audpc)
-dates <- c(14, 21, 28) # days
+dates <- c(14,21,28,32,39,41,50) # days
 # example 1: evaluation - vector
-evaluation <- c(40, 80, 90)
-Audpc(evaluation, dates)
-dates <- c(14, 21, NA) # days
-Audpc(evaluation, dates)
-# agricolae::audpc(evaluation,dates)
-dates <- c(14, 21, 28) # days
-evaluation <- c(40, 80, NA)
-Audpc(evaluation, dates)
-# agricolae::audpc(evaluation,dates)
+evaluation <- c(1,2,4,15,40,80,90)
+Audpc(evaluation,dates)
+
+# add NA values
+evaluation<-c(1,2,4,NA,40,80,90)
+Audpc(evaluation,dates, na.rm = TRUE)
+\dontrun{agricolae::audpc(evaluation,dates)}
+# if NA is at the start or end of vector it will return NA
+dates<-c(14,21,28,32,39,41,NA) # days
+Audpc(evaluation,dates)
 }

@@ -10,7 +10,7 @@
 DIV_Tm_index(temp, rainfall = 0.2)
 }
 \arguments{
-\item{temp}{daily average temperature in degrees celcius}
+\item{temp}{daily average temperature in degrees Celsius}
 
 \item{rainfall}{rainfall in mm}
 }
@@ -18,9 +18,9 @@ DIV_Tm_index(temp, rainfall = 0.2)
 Temperature index value (numeric), used in calculating DIV
 }
 \description{
-Calculates the Temperature index for day i and hour j. Temperature index is used
-to calculate the Daily Infection Values (DIV) for the model published by Shoeny et. al
-(2007).
+Calculates the Temperature index for day i and hour j. Temperature index is
+used to calculate the Daily Infection Values (DIV) for the model published
+by Schoeny et. al (2007).
 }
 \details{
 Formula adapted from Schoeny. et al. (2007) in European Journal of Plant

@@ -28,38 +28,39 @@ create_inf_xyz(
 
 \item{paddock_width}{numeric, width of paddock (meters)}
 
-\item{infected_plots}{numeric vector of plot numbers which are infected. Plot 1
-starts in the corner and then are allocated across the width (x) of the paddock
-as plot numbers increase. Default is \code{"random"} and will randomly assign infected
-\code{n_plots} in quantity.}
+\item{infected_plots}{numeric vector of plot numbers which are infected. Plot
+1 starts in the corner and then are allocated across the width (x) of the
+paddock as plot numbers increase. Default is \code{"random"} and will
+randomly assign infected \code{n_plots} in quantity.}
 
 \item{n_plots}{numeric, number of infected plots, used when infected_plots is
 specified as \code{"random"}}
 
-\item{infection_weight}{the value applied to the \emph{z} \code{load} column of infected
-plots}
+\item{infection_weight}{the value applied to the \emph{z} \code{load} column of
+infected plots}
 
-\item{external_buffer_end}{numeric, length of buffers on the end of the paddock
-(meters)}
+\item{external_buffer_end}{numeric, length of buffers on the end of the
+paddock (meters)}
 
-\item{external_buffer_adj}{numeric, length of buffers on the sides of the paddock
-(meters)}
+\item{external_buffer_adj}{numeric, length of buffers on the sides of the
+paddock (meters)}
 
-\item{internal_buffer_adj}{numeric, length of buffers between plots adjacent to the
-row direction (meters)}
+\item{internal_buffer_adj}{numeric, length of buffers between plots adjacent
+to the row direction (meters)}
 
-\item{internal_buffer_end}{numeric, length of buffers between plots ends in the
-row direction (meters)}
+\item{internal_buffer_end}{numeric, length of buffers between plots ends in
+the row direction (meters)}
 
 \item{verbose}{logical, if 'TRUE' function will return a message with total plots
 and extra length or width in meters}
 }
 \value{
-and xyz \code{data.frame} with colnames \code{x},\code{y} amd \code{load}
+and xyz \code{data.frame} with colnames \code{x},\code{y} and
+\code{load}
 }
 \description{
-Creates an xy data.frame and a z column "load" with a specified value in paddock
-plots
+Creates an xy data.frame and a z column \code{load} with a specified value in
+paddock plots
 }
 \examples{
 p1 <- create_inf_xyz()

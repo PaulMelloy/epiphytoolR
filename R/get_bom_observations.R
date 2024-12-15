@@ -1,15 +1,16 @@
 #' Download state weather observations
 #'
-#' Function downloads a compressed file to a desegnated location. The downloaded
+#' Function downloads a compressed file to a designated location. The downloaded
 #'  file contains three file formats for all automated weather station, xml, axf,
 #'  and json.
-#' An FTP url is needed for this function, find this on the Bureau of Meterology
-#'  website. Please read the copyright and disclaimer for use of the data while
+#' An FTP URL is needed for this function, find this on the Bureau of Meteorology
+#'  (\acronym{BOM}) website.
+#'  Please read the copyright and disclaimer for use of the data while
 #'  you are there.
 #'
-#' @param ftp_url character, ftp url obtained from the BOMs website
+#' @param ftp_url character, ftp URL obtained from the BOMs website
 #' @param download_location character, Folder location of where to download the
-#'  compreseed data
+#'  compressed data
 #' @param access_warning logical, default = `TRUE`. Elects whether to print the warning
 #'  when the function is run
 #' @param state character, Australian state for which weather observations files
@@ -18,11 +19,12 @@
 #' @param file_prefix character, prefix applied to file name. Default is the date
 #'  and time in hours and minutes.
 #'
-#' @return character string of the download file loaction of the downloaded compressed
+#' @return character string of the download file location of the downloaded compressed
 #'    file `.tgz`
 #' @export
 #' @source http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state ;
-#'  http://www.bom.gov.au/other/copyright.shtml; http://reg.bom.gov.au/other/disclaimer.shtml
+#'  http://www.bom.gov.au/other/copyright.shtml;
+#'  http://reg.bom.gov.au/other/disclaimer.shtml
 #'
 #' @examples
 #' \dontrun{
@@ -109,22 +111,27 @@ get_bom_observations <- function(ftp_url,
 
 #' Merge BOM axf weather data
 #'
-#'  @details
-#'   This function takes new BOM axf files which hold 72 hours of weather observations
-#`   in 10 minute intervals and an old formatted weather data file, row binds them,
-#`   then saves them back as the File_formatted csv.
-#`  `File_axf` uncompressed axf BOM file containing 10 minute weather observations. default is North Tamborine
-#`  `File_formatted` previously read axf files with removed headers and saved as a csv file
-#`   `base_dir` weather directory which folders of weather data are saved and where formatted data is put
-#`   `data_dir` Directory with compressed and uncompressed data
+#' @details
+#'  This function takes new \acronym{BOM} axf files which hold 72 hours of
+#'  weather observations in 10-30 minute intervals and an old formatted weather
+#'  data file, row binds them, then saves them back as the File_formatted csv.
+#'  \code{File_axf} uncompressed axf BOM file containing 10 minute weather
+#'  observations, default is North Tamborine.
+#'  \code{File_formatted} previously read axf files with removed headers and
+#'  saved as a csv file
+#'  \code{base_dir} weather directory which contains folders where weather data
+#'  are saved, and where formatted data is saved.
+#'  \code{data_dir} Directory with compressed and uncompressed data
 #'
 #' @param File_compressed character, file path of compressed weather file "tgz"
-#' @param File_axf character, filename of axf weather data observation file from
-#'  bom
-#' @param File_formatted character, filename and path to the formated file which
-#'  has previously merged data
-#' @param base_dir character file path giving the base directory for file_formatted
-#' @param verbose logical print extra messages to asssist debugging
+#' @param File_axf character, uncompressed axf BOM file containing 10 minute weather
+#'  observations, default is North Tamborine.
+#' @param File_formatted character, file name and path to the formatted file for
+#'  which to store formatted data and which previously stored data will be merged
+#'  with.
+#' @param base_dir character file path giving the base directory for
+#'  \code{file_formatted}
+#' @param verbose logical print extra messages to assist debugging
 #'
 #' @return data.table, of merged dataset
 #' @export
@@ -138,9 +145,10 @@ merge_axf_weather <- function(File_compressed, # uncompressed
 
    if(verbose){cat(" Uncompressing: ",File_compressed,"\n")}
    # uncompress data to temporary folder
-   Temp_folder <- paste0(tempdir(),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
+   Temp_folder <- paste0(tempdir(check = TRUE),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
    dir.create(Temp_folder,
-              recursive = TRUE)
+              recursive = TRUE,
+              showWarnings = FALSE)
    utils::untar(tarfile = File_compressed,
                 exdir = Temp_folder)
 
@@ -176,8 +184,9 @@ merge_axf_weather <- function(File_compressed, # uncompressed
    }else{
 
       if(verbose){cat("   Read in old data","\n")}
-      dat_old <- fread(file = paste0(base_dir,File_formatted),
-                       integer64 = "character")
+      dat_old <-
+         data.table::fread(file = paste0(base_dir,File_formatted),
+                           integer64 = "character")
 
       if(verbose){cat("   Merge data","\n")}
       Merged <- rbind(dat_old,dat_new)

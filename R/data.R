@@ -2,7 +2,7 @@
 #'
 #' Simulated weather data from two weather stations
 #'
-#' @format ## `weather`
+#' @format weather
 #' A data frame with 8,786 rows and 15 columns:
 #' \describe{
 #'   \item{times}{record time from weather station}
@@ -120,7 +120,3 @@ make_bom_data <-
       )
       return(raw_bom)
    }
-
-# prop_rain <- function(weit, p = 0.01, multiplyr = 2){
-#    stats::rbinom(1,1,prob = p+(mean(weit)*multiplyr))
-# }

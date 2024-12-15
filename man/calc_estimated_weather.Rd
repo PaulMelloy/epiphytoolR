@@ -15,7 +15,8 @@ calc_estimated_weather(
 )
 }
 \arguments{
-\item{w}{A \code{data.table} of weather coefficients, output from \code{epiphytoolR::get_weather_coefs}}
+\item{w}{A \code{data.table} of weather coefficients, output from
+\code{\link{get_weather_coefs}}`}
 
 \item{start_date}{a character string of a date value indicating the first date
 for in the returning data.table Must be in \acronym{ISO8601} format (YYYY-MM-DD),
@@ -33,16 +34,17 @@ estimated.  If missing all stations will be returned}
 
 \item{n_stations}{integer or vector of integers indicating the number of station/s
 to return from the closest (1), or 3rd closest (3) or closest five stations
-(1:5). ect}
+(1:5), ect.}
 
 \item{na.rm}{logical, remove all weather data from stations with NA rain_fall
 frequency \strong{Not Recommended}. We advise the best way is to manually remove
 weather stations with NAs or correct the weather data. This argument is
-available if these two options are not available to the user. Default is \code{FALSE}}
+available if these two options are not available to the user. Default is
+\code{FALSE}}
 }
 \value{
-A \code{data.table} output of calculated on \code{get_weather_coefs.R} with the
-following columns:
+A \code{data.table} output of calculated on
+\code{\link{get_weather_coefs}} with the following columns:
 \emph{station} - Weather station name;
 \emph{lat} - latitude;
 \emph{lon} - longitude;
@@ -54,12 +56,13 @@ following columns:
 \emph{ws_sd_rd} - numeric, standard deviation of wind speed from raw data;
 \emph{rain_freq} - numeric, proportional chance of rainfall on this dat 0 - 1
 
-can be formated with \code{format_weather()}
+Output can be formatted with \code{\link{format_weather}}
 }
 \description{
 Calculate estimated weather from coefficients
 }
 \examples{
+set.seed(61)
 dat <- data.frame(
   station_name = "w_STATION",
   lat = -runif(1, 15.5, 28),
