@@ -5,7 +5,8 @@
 \title{Download state weather observations}
 \source{
 http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state ;
-http://www.bom.gov.au/other/copyright.shtml; http://reg.bom.gov.au/other/disclaimer.shtml
+http://www.bom.gov.au/other/copyright.shtml;
+http://reg.bom.gov.au/other/disclaimer.shtml
 }
 \usage{
 get_bom_observations(
@@ -17,10 +18,10 @@ get_bom_observations(
 )
 }
 \arguments{
-\item{ftp_url}{character, ftp url obtained from the BOMs website}
+\item{ftp_url}{character, ftp URL obtained from the BOMs website}
 
 \item{download_location}{character, Folder location of where to download the
-compreseed data}
+compressed data}
 
 \item{access_warning}{logical, default = \code{TRUE}. Elects whether to print the warning
 when the function is run}
@@ -33,15 +34,16 @@ will be downloaded. Options include \code{"QLD"},\code{"NSW"},\code{"NT"},\code{
 and time in hours and minutes.}
 }
 \value{
-character string of the download file loaction of the downloaded compressed
+character string of the download file location of the downloaded compressed
 file \code{.tgz}
 }
 \description{
-Function downloads a compressed file to a desegnated location. The downloaded
+Function downloads a compressed file to a designated location. The downloaded
 file contains three file formats for all automated weather station, xml, axf,
 and json.
-An FTP url is needed for this function, find this on the Bureau of Meterology
-website. Please read the copyright and disclaimer for use of the data while
+An FTP URL is needed for this function, find this on the Bureau of Meteorology
+(\acronym{BOM}) website.
+Please read the copyright and disclaimer for use of the data while
 you are there.
 }
 \examples{

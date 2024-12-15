@@ -10,9 +10,9 @@
 calc_fpea_emergence(sowing_date, hemisphere = "south")
 }
 \arguments{
-\item{sowing_date}{sowing date (date)}
+\item{sowing_date}{sowing date \code{POSIXct.date}}
 
-\item{hemisphere}{'North' or 'South' hemishere}
+\item{hemisphere}{'North' or 'South' hemisphere}
 }
 \value{
 number of degree days predicted from time of sowing to emergence

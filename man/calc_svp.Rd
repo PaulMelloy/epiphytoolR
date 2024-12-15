@@ -2,29 +2,33 @@
 % Please edit documentation in R/calc_svp.R
 \name{calc_svp}
 \alias{calc_svp}
-\title{Calculate saturated Vapour-pressure}
+\title{Calculate Saturated Vapour-Pressure (SVP)}
 \usage{
 calc_svp(Tm, eq = "BOM")
 }
 \arguments{
-\item{Tm}{Temperature in degrees Celsius}
+\item{Tm}{numeric, Temperature in degrees Celsius}
 
-\item{eq}{Type of equation to use while calculation VPD. defaults to the \code{BOM}
-(Bureau of Meterology equation, Australia). Other options, \code{"Murray"} and
-\code{"Sapak"}}
+\item{eq}{character, Type of equation to use while calculation VPD. defaults to the "BOM"
+(Bureau of Meteorology equation, Australia). Other options, "Murray" and
+"Sapak".}
 }
 \value{
 Saturated vapour-pressure in kPa, class \CRANpkg{units}
 }
 \description{
-This formula uses Tetens (1930) equation as described by Murray
-(1967) to calculate the saturated vapour pressure from temperature in degrees
-Celsius.
+This formula uses the same formula described by the Bureau of
+Meteorology (BOM) and the American Meteorological Society. Other formulas
+described by described by Murray (1967) or Tetens (1930) to calculate
+saturated vapour pressure from temperature in degrees and Celsius and
+relative humidity can also be called.
 }
 \examples{
 calc_svp(Tm = 30)
 calc_svp(Tm = 30, eq = "Murray")
 }
 \references{
+Murray, F. W., 1967: On the Computation of Saturation Vapor Pressure.
+\emph{J. Appl. Meteor. Climatol.}, \emph{6}, 203–204,
 https://doi.org/10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2
 }

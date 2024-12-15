@@ -121,7 +121,7 @@ get_bom_observations <- function(ftp_url,
 #'  saved as a csv file
 #'  \code{base_dir} weather directory which contains folders where weather data
 #'  are saved, and where formatted data is saved.
-#'  \code`data_dir` Directory with compressed and uncompressed data
+#'  \code{data_dir} Directory with compressed and uncompressed data
 #'
 #' @param File_compressed character, file path of compressed weather file "tgz"
 #' @param File_axf character, uncompressed axf BOM file containing 10 minute weather

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Audpc.R
 \name{Audpc}
 \alias{Audpc}
-\title{Calculate area under the disease progress curve}
+\title{Calculate area under the disease progress curve (AUPDC)}
 \usage{
 Audpc(evaluation, dates, type = "absolute", na.rm = FALSE)
 }
@@ -19,18 +19,18 @@ whereas absolute returns the area.}
 or the date. Does not allow \code{NA} values at the start or end observations.}
 }
 \value{
-Vector with relative or absolute audpc.
+Vector with relative or absolute area under the disease progress curve
 }
 \description{
-Calculate area under the disease progress curve
+Calculate area under the disease progress curve (AUPDC)
 }
 \details{
 This is a wrapper for \CRANpkg{agricolae} which checks for NA values and will
 return omit NA values if specified. However it will still return NA if the
-first or last values contain NA.
+first or last values contain \code{NA}
 This is intentional as audpc values are completely not comparable when these
 values are missing.
-See help\link[agricolae:audpc]{agricolae::audpc} for more details.
+See help \code{\link[agricolae]{audpc}} for more details.
 }
 \examples{
 # see examples in help(agricolae::audpc)

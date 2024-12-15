@@ -7,23 +7,26 @@
 calc_vpd(RH, Tm, eq = "BOM", verbose = FALSE)
 }
 \arguments{
-\item{RH}{Relative humidity}
+\item{RH}{numeric, Relative humidity}
 
-\item{Tm}{Temperature in degrees Celsius}
+\item{Tm}{numeric, Temperature in degrees Celsius}
 
-\item{eq}{Type of equation to use while calculation VPD. defaults to the \code{BOM}
-(Bureau of Meteorology equation, Australia). Other options, \code{"Murray"} and
-\code{"Sapak"}}
+\item{eq}{character, Type of equation to use while calculation VPD. defaults
+to the "BOM" (Bureau of Meteorology equation, Australia). Other options,
+"Murray" and "Sapak"}
 
-\item{verbose}{prints saturated vapour pressure (SVP) and vapour pressure
-in kPa before returning the VPD result}
+\item{verbose}{logical, prints saturated vapour pressure (SVP) and vapour
+pressure in kPa before returning the VPD result.}
 }
 \value{
 Vapour-pressure deficit kPa, class \CRANpkg{units}
 }
 \description{
-This formula uses Tetens (1930) equation as described by Murray
-(1967)
+This formula uses the same formula described by the Bureau of
+Meteorology (BOM) and the American Meteorological Society. Other formulas
+described by described by Murray (1967) or Tetens (1930) to calculate
+vapour pressure from temperature in degrees and Celsius and relative
+humidity can also be called.
 }
 \examples{
 calc_vpd(RH = 99, Tm = 30)
