@@ -4,7 +4,7 @@ An R package that provides functions for undertaking epiphytotic modelling
 and simulation studies in R.
 This package provides common base level functions that can be used in modelling
 the spatial movement of splash and wind dispersed plant disease inoculum.
-This packe also provides many weather functions for obtaining, formating and imputing
+This package also provides many weather functions for obtaining, formating and imputing
 weather data.
 
 ## How to install

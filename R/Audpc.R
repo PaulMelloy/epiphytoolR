@@ -17,6 +17,7 @@
 #'  or the date. Does not allow \code{NA} values at the start or end observations.
 #'
 #' @return Vector with relative or absolute area under the disease progress curve
+
 #' @export
 #'
 #' @examples
@@ -34,12 +35,13 @@
 #' dates<-c(14,21,28,32,39,41,NA) # days
 #' Audpc(evaluation,dates)
 Audpc <-
-  function (evaluation,
-            dates,
-            type = "absolute",
-            na.rm = FALSE) {
+  function(evaluation,
+           dates,
+           type = "absolute",
+           na.rm = FALSE) {
     if (!(is.matrix(evaluation) | is.data.frame(evaluation))) {
-      evaluation <- rbind(evaluation)}
+      evaluation <- rbind(evaluation)
+    }
 
     n <- length(dates)
     k <- ncol(evaluation)
@@ -71,23 +73,28 @@ Audpc <-
     audpc <- 0
     area.total <- 100 * (dates[n] - dates[1])
 
-
-
+    # check start and end have observations
+    if (na.rm & (is.na(evaluation[, 1]) | is.na(evaluation[, n]))) {
+      return(NA)
+    }
 
     for (i in 1:(n - 1)) {
-      if(na.rm & is.na(evaluation[,i])) next
+      if (na.rm & is.na(evaluation[, i])) next
 
-      audpc <- audpc + (evaluation[, i] + evaluation[, i +1]) * (dates[i + 1] - dates[i]) / 2
+      audpc <- audpc + (evaluation[, i] + evaluation[, i + 1]) * (dates[i + 1] - dates[i]) / 2
     }
-    if(is.na(audpc))
+    if (is.na(audpc)) {
       return(NA_real_)
-    if(audpc == 0)
+    }
+    if (audpc == 0) {
       return(NA_real_)
-    if (type == "relative")
+    }
+    if (type == "relative") {
       audpc <- audpc / area.total
+    }
     if (type == "absolute" | type == "relative") {
       return(audpc)
-    }
-    else
+    } else {
       stop("Error: type is 'absolute' or 'relative'\n\n")
+    }
   }

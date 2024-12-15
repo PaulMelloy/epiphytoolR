@@ -28,11 +28,12 @@ Imports:
     sf,
     units,
     geosphere
-Suggests: 
+Suggests:
+    agricolae,
     testthat (>= 3.0.0),
     lubridate (>= 1.7.10),
     agricolae
 Config/testthat/edition: 3
 Depends: 
-    R (>= 2.10)
+    R (>= 4.0.1)
 URL: https://paulmelloy.github.io/epiphytoolR/
