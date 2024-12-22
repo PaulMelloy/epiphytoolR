@@ -27,7 +27,8 @@ Imports:
     circular,
     sf,
     units,
-    geosphere
+    geosphere,
+    jsonlite
 Suggests:
     agricolae,
     testthat (>= 3.0.0),

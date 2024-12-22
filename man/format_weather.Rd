@@ -92,10 +92,6 @@ the data. Optional, see also \code{lon} and \code{lat}.}
 vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
 to check data from specific variables. If FALSE it ignores all variables and
 could cause subsequent models using this data to fail.}
-
-\item{muffle_warnings}{default is \code{FALSE}. IF \code{TRUE} any warnings or messages
-will be muffled and not printed to console. Only use if there is a lot of NA
-wind data which you are aware about and happy to ignore.}
 }
 \value{
 A \code{epiphy.weather} object (an extension of \CRANpkg{data.table})

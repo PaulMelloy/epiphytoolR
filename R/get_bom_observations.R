@@ -115,7 +115,7 @@ get_bom_observations <- function(ftp_url,
 #'  This function takes new \acronym{BOM} axf files which hold 72 hours of
 #'  weather observations in 10-30 minute intervals and an old formatted weather
 #'  data file, row binds them, then saves them back as the File_formatted csv.
-#'  \code{File_axf} uncompressed axf BOM file containing 10 minute weather
+#'  \code{station_file} uncompressed axf BOM file containing 10 minute weather
 #'  observations, default is North Tamborine.
 #'  \code{File_formatted} previously read axf files with removed headers and
 #'  saved as a csv file
@@ -124,8 +124,8 @@ get_bom_observations <- function(ftp_url,
 #'  \code{data_dir} Directory with compressed and uncompressed data
 #'
 #' @param File_compressed character, file path of compressed weather file "tgz"
-#' @param File_axf character, uncompressed axf BOM file containing 10 minute weather
-#'  observations, default is North Tamborine.
+#' @param station_file character, uncompressed axf or json BOM file containing
+#'  10 minute weather observations, default is North Tamborine.
 #' @param File_formatted character, file name and path to the formatted file for
 #'  which to store formatted data and which previously stored data will be merged
 #'  with.
@@ -135,50 +135,75 @@ get_bom_observations <- function(ftp_url,
 #'
 #' @return data.table, of merged dataset
 #' @export
-merge_axf_weather <- function(File_compressed, # uncompressed
-                              File_axf = "IDQ60910.99123.axf",
-                              File_formatted = "NTamborine.csv",
-                              base_dir = getwd(),
-                              verbose = FALSE){
+merge_weather <- function(File_compressed, # uncompressed
+                          station_file = "IDQ60910.99123.axf",
+                          File_formatted = "NTamborine.csv",
+                          base_dir = getwd(),
+                          verbose = FALSE){
    # define data.table reference
    aifstime_utc <- NULL
 
-   if(verbose){cat(" Uncompressing: ",File_compressed,"\n")}
    # uncompress data to temporary folder
+   if(verbose){cat(" Uncompressing: ",File_compressed,"\n")}
+
+   # create temp folder and file
    Temp_folder <- paste0(tempdir(check = TRUE),"/",format(Sys.time(), format = "%y%m%d_%H%M%S"),"/")
    dir.create(Temp_folder,
               recursive = TRUE,
               showWarnings = FALSE)
+
+   # Extract
    utils::untar(tarfile = File_compressed,
                 exdir = Temp_folder)
 
-   if(file.exists(paste0(Temp_folder, File_axf))== FALSE){
-      stop("'File_asx' not found")
+   # Check 'station_file' is contained in tar archive
+   if(file.exists(paste0(Temp_folder, station_file))== FALSE){
+      stop("'station_file' not found")
    }
 
-   if(verbose){cat("   Read in new data","\n")}
-   # Read data
-   dat_new <-
-      data.table::fread(paste0(Temp_folder, File_axf),
-                        skip = 24,
-                        nrows = 144,
-                        na.strings = c("-"),
-                        integer64 = "character")
+   # check the extension of the file name and read in data
+   s_file_ext <- tools::file_ext(station_file)
+   if(s_file_ext == "axf"){
 
-   colnames(dat_new) <-
-      gsub(pattern = "\\[80]", replacement = "", colnames(dat_new))
+      if(verbose) {
+         cat("   Read in new data", "\n")
+      }
 
-   # detect if last character is a / and add if needed
-   if (substr(base_dir,
-              nchar(base_dir),
-              nchar(base_dir)) !=
-       "/") {
-      base_dir <- paste0(base_dir, "/")
+      # Read data
+      dat_new <-
+         data.table::fread(
+            # paste0(Temp_folder, station_file),
+            skip = 24,
+            nrows = 144,
+            na.strings = c("-"),
+            integer64 = "character"
+         )
+
+      colnames(dat_new) <-
+         gsub(pattern = "\\[80]",
+              replacement = "",
+              colnames(dat_new))
+
+      # detect if last character is a / and add if needed
+      if (substr(base_dir, nchar(base_dir), nchar(base_dir)) !=
+          "/") {
+         base_dir <- paste0(base_dir, "/")
+      }
+      }
+
+   # read in weather json
+   if(s_file_ext == "json"){
+      dat_new <- read_bom_json(f_path = paste0(Temp_folder, station_file),
+                               header = verbose)
+      data.table::setDT(dat_new)
+   }else{
+      stop("file extension '",s_file_ext, "' not recognised")
    }
 
+   # Look for the file to be merged into, if it does not exist create a new file
    if(file.exists(paste0(base_dir,File_formatted)) == FALSE){
       warning(File_formatted, " not found, creating new file\n")
-      fwrite(dat_new,file = paste0(base_dir,File_formatted))
+      fwrite(dat_new, file = file.path(base_dir,File_formatted))
       unlink(Temp_folder)
       return(dat_new)
    }else{
@@ -194,7 +219,7 @@ merge_axf_weather <- function(File_compressed, # uncompressed
       Merged <- Merged[!duplicated(aifstime_utc)]
 
       if(verbose){cat("   Write out successfully merged data","\n")}
-      fwrite(Merged,file = paste0(base_dir,File_formatted))
+      fwrite(Merged, file = paste0(base_dir,File_formatted))
       unlink(Temp_folder)
       return(Merged)
    }
