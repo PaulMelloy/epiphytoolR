@@ -1,11 +1,14 @@
 test_that("get_bom_observations works", {
    expect_no_error({
-   dl_location <- tempdir()
-  suppressMessages({
-   dl_loc <-
-     get_bom_observations(ftp_url = "ftp://ftp.bom.gov.au/anon/gen/fwo/",
-                          download_location = dl_location,
-                          access_warning = FALSE)})
+      dl_location <- tempdir()
+      suppressMessages({
+         dl_loc <-
+            get_bom_observations(
+               ftp_url = "ftp://ftp.bom.gov.au/anon/gen/fwo/",
+               download_location = dl_location,
+               access_warning = FALSE
+            )
+      })
    })
 })
 
@@ -16,14 +19,15 @@ test_that("merge_axf_weather works", {
    download.file("https://filedn.eu/lKw35gljYV2BIxxlGg9SUJb/weather/tgz/240825_0750_IDQ60910.tgz",
                  destfile = wethr_dl)
 
-   untar(tarfile = wethr_dl,exdir = tmp_dir)
-   list.files(tmp_dir)
 
-  suppressWarnings(dat <-
-     merge_axf_weather(File_compressed = dl_loc,
-                    File_axf = "IDQ60910.99123.axf",
+   expect_warning(
+      merge_weather(File_compressed = wethr_dl,
+                    station_file = "IDQ60910.99123.axf",
                     File_formatted = "NTamborine.csv",
-                    base_dir = getwd()))
+                    base_dir = getwd()),
+     "NTamborine.csv not found, creating new file"
+     )
+  # clean up
   file.remove("NTamborine.csv")
 })
 
@@ -101,17 +105,58 @@ test_that("read_bom_json works", {
 
 test_that("merge_json_weather works", {
 
-   SA_weather <-
-      list.files("/home/paul/Documents/weather/tgz",
-                 full.names = TRUE,
-                 pattern = "IDS60910")
+   if(Sys.info()["nodename"] == "PURPLE-DP"){
+      SA_weather <-
+         list.files("P:/Public Folder/weather/tgz",
+                    full.names = TRUE,
+                    pattern = "IDS60910")
+   }
+   if(Sys.info()["nodename"] == "pepper"){
+      SA_weather <-
+         list.files("/home/paul/Documents/weather/tgz",
+                    full.names = TRUE,
+                    pattern = "IDS60910")
+   }else{
 
+   }
+
+   expect_warning(
+      merge_weather(SA_weather[1],
+                    station_file = "IDS60910.95687.json",
+                    File_formatted = "Renmark.csv",
+                    base_dir = getwd()),
+      "Renmark.csv not found, creating new file")
+
+   # read in all the weather station data as json
    lapply(SA_weather,
           merge_weather,
           station_file = "IDS60910.95687.json",
           File_formatted = "Renmark.csv",
           base_dir = getwd())
 
-   fread()
+   ren_dat <- fread(file.path(getwd(),"Renmark.csv"))
+
+   expect_s3_class(ren_dat, "data.table")
+   expect_named(ren_dat, c("sort_order", "wmo", "name",
+                           "history_product","time_zone_name", "TDZ",
+                           "aifstime_utc", "aifstime_local", "lat",
+                           "lon", "apparent_t", "cloud",
+                           "cloud_base_m", "cloud_oktas", "cloud_type_id",
+                           "cloud_type", "delta_t", "gust_kmh",
+                           "gust_kt", "air_temp", "dewpt",
+                           "press", "press_msl", "press_qnh",
+                           "press_tend", "rain_hour", "rain_ten",
+                           "rain_trace", "rain_trace_time", "rain_trace_time_utc",
+                           "local_9am_date_time", "local_9am_date_time_utc", "duration_from_local_9am_date",
+                           "rel_hum", "sea_state", "swell_dir_worded",
+                           "swell_height", "swell_period", "vis_km",
+                           "weather", "wind_dir", "wind_dir_deg",
+                           "wind_spd_kmh", "wind_spd_kt", "wind_src"))
+
+
+
+
+   unlink(file.path(getwd(),"Renmark.csv"))
+
 })
 
