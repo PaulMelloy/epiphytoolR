@@ -75,7 +75,7 @@ Estimating Daily Infection Values, AUDPC, ect.
 
 
 ### Weather formatting
-Epidemiological models need clean consisant weather data, this package contains
+Epidemiological models need clean consistent weather data, this package contains
 functions to provide clean interpolated data for models.
 
 ## Find out more
