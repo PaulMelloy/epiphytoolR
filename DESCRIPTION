@@ -1,6 +1,6 @@
 Package: epiphytoolR
 Title: Epiphytotic Modeling Tools
-Version: 0.0.2
+Version: 0.0.2.9000
 Authors@R:
     c(person(given = "Paul",
            family = "Melloy",
