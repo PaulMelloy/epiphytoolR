@@ -132,7 +132,7 @@ get_bom_observations <- function(ftp_url,
 #' @export
 merge_weather <- function(File_compressed,
                           # uncompressed
-                          station_file = "IDQ60910.99123.axf",
+                          station_file = "IDQ60910.99123.json",
                           File_formatted = "NTamborine.csv",
                           base_dir = getwd(),
                           verbose = FALSE) {
