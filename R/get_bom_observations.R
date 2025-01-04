@@ -224,6 +224,8 @@ merge_weather <- function(File_compressed,
       }
       Merged <- rbind(dat_old, dat_new)
 
+      Merged <- Merged[order(aifstime_utc),]
+
       Merged <- Merged[!duplicated(aifstime_utc)]
 
       if (verbose) {
