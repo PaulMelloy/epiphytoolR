@@ -68,6 +68,10 @@
 #'  could cause subsequent models using this data to fail.
 #' @param rh Column name `character` or index in `w` that refers to relative
 #'   humidity as a percentage.
+#' @param vebose If `TRUE` (default) it will print messages and warnings associated
+#'   with the internal handling of the weather formatting.
+#'   It is not recommended to use `FALSE` to suppress these messages. Instead
+#'   first attempt to correct the underlying data.
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
@@ -295,23 +299,31 @@ format_weather <- function(w,
 
   # make basic weather observations are supplied for function
   model_compliant <- vector(mode = "character")
-  if(all(c("rain","ws","wd","temp") %in% colnames(w)) == TRUE){
-     c(model_compliant, "blackspot.sp")
+  if(all(missing(rain) == FALSE,
+         missing(ws) == FALSE,
+         missing(wd) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "blackspot.sp")
   }
-  if(all(c("rain","temp") %in% colnames(w)) == TRUE){
-     c(model_compliant, "ascotraceR")
+  if(all(missing(rain) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "ascotraceR")
   }
-  if(all(c("rain","temp", "rh") %in% colnames(w)) == TRUE){
-     c(model_compliant, "viticolaR")
+  if(all(missing(rain) == FALSE,
+         missing(rh) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "viticolaR")
   }
-  if(all(c("rain","temp", "rh") %in% colnames(w)) == TRUE){
-     c(model_compliant, "cercospoRa")
+  if(all(missing(rain) == FALSE,
+         missing(rh) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "cercospoRa")
   }
   if(verbose == TRUE){
      if(length(model_compliant) >= 1){
-     print(paste("Weather data is compliant with the following models: ",
+     message(paste("Weather data is compliant with the following models: ",
                  paste(model_compliant, collapse = ", ")))}else{
-                    "Weather data is not compliant with any known models.\n"
+                    message("Weather data is not compliant with any known models.\n")
                  }
   }
 

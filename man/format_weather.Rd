@@ -24,7 +24,10 @@ format_weather(
   lon = NULL,
   lat = NULL,
   lonlat_file = NULL,
-  data_check = TRUE
+  impute_nas = c("temp", "rh"),
+  Irolling_window = 70,
+  data_check = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -86,6 +89,15 @@ latitude. See details.}
 \item{lonlat_file}{A file path (\code{character}) to a \acronym{CSV} which included station
 name/id and longitude and latitude coordinates if they are not supplied in
 the data. Optional, see also \code{lon} and \code{lat}.}
+
+\item{impute_nas}{\code{character} vector indicating which variables to impute
+missing or \code{NA} values. Options include, "temp" (see \code{epiphytoolR::impute_temp()}),
+"rh"(see \code{epiphytoolR::impute_rh()}).
+If \code{TRUE} (logical) it will impute missing values for all available options.
+If \code{FALSE} (logical) it will not impute any missing values.}
+
+\item{Irolling_window}{\code{integer} value indicating the number of hours to use
+for the rolling window to impute missing values. See \code{impute_nas}}
 
 \item{data_check}{If \code{TRUE}, it checks for NA values in all 'rain', 'temp',
 'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
