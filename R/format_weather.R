@@ -177,6 +177,8 @@ format_weather <- function(w,
                            lon = NULL,
                            lat = NULL,
                            lonlat_file = NULL,
+                           impute_nas = c("temp","rh"),
+                           Irolling_window = 70,
                            data_check = TRUE,
                            verbose = TRUE) {
   # CRAN Note avoidance
@@ -689,19 +691,27 @@ format_weather <- function(w,
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
 
   # impute missing values if requested
-  if(all(impute_nas)){
-     if(any(is.na(x_out[, temp]))){
+  if(all(impute_nas %in% TRUE)){
+     i_nas <- c(TRUE, TRUE)
+     }else if(all(impute_nas %in% FALSE)){
+        i_nas <- c(FALSE, FALSE)
+     }else{
+        i_nas <- impute_nas %in% c("temp","rh")}
+
+
+  if(any(i_nas)){
+     if(i_nas[1] & any(is.na(x_out[, temp]))){
         if(verbose) warning("Temperature data contains NA values, imputing missing values")
         x_out <- impute_temp(x_out, rolling_window = Irolling_window)
      }
-     if(any(is.na(x_out[, rh]))){
+     if(i_nas[2] & any(is.na(x_out[, rh]))){
         if(verbose) warning("Relative humidity data contains NA values, imputing missing values")
-        x_out <- impute_rh(x_out)
+        x_out <- impute_rh(x_out, rolling_window = Irolling_window)
      }
 
   }
 
-  if(FALSE %in% data_check) .check_weather(x_out, data_check)
+  if(TRUE %in% data_check) .check_weather(x_out, data_check)
 
 
   return(x_out[])
