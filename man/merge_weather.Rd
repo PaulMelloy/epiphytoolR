@@ -6,7 +6,7 @@
 \usage{
 merge_weather(
   File_compressed,
-  station_file = "IDQ60910.99123.axf",
+  station_file = "IDQ60910.99123.json",
   File_formatted = "NTamborine.csv",
   base_dir = getwd(),
   verbose = FALSE
