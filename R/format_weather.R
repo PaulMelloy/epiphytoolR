@@ -56,9 +56,10 @@
 #'   the data. Optional, see also `lon` and `lat`.
 #' @param impute_nas `character` vector indicating which variables to impute
 #'   missing or `NA` values. Options include, "temp" (see `epiphytoolR::impute_temp()`),
-#'   "rh"(see `epiphytoolR::impute_rh()`).
+#'   "rh"(see `epiphytoolR::impute_rh()`). "rain" will be filled with zeros.
 #'   If `TRUE` (logical) it will impute missing values for all available options.
 #'   If `FALSE` (logical) it will not impute any missing values.
+#'   The default is c("temp,"rh) to impute only temperature and humidity.
 #' @param Irolling_window `integer` value indicating the number of hours to use
 #'   for the rolling window to impute missing values. See `impute_nas`
 #' @param data_check If `TRUE`, it checks for NA values in all 'rain', 'temp',
@@ -68,7 +69,7 @@
 #'  could cause subsequent models using this data to fail.
 #' @param rh Column name `character` or index in `w` that refers to relative
 #'   humidity as a percentage.
-#' @param vebose If `TRUE` (default) it will print messages and warnings associated
+#' @param verbose If `TRUE` (default) it will print messages and warnings associated
 #'   with the internal handling of the weather formatting.
 #'   It is not recommended to use `FALSE` to suppress these messages. Instead
 #'   first attempt to correct the underlying data.
@@ -704,11 +705,11 @@ format_weather <- function(w,
 
   # impute missing values if requested
   if(all(impute_nas %in% TRUE)){
-     i_nas <- c(TRUE, TRUE)
+     i_nas <- c(TRUE, TRUE, TRUE)
      }else if(all(impute_nas %in% FALSE)){
-        i_nas <- c(FALSE, FALSE)
+        i_nas <- c(FALSE, FALSE, FALSE)
      }else{
-        i_nas <- impute_nas %in% c("temp","rh")}
+        i_nas <- c("temp","rh", "rain") %in% impute_nas}
 
 
   if(any(i_nas)){
@@ -719,6 +720,10 @@ format_weather <- function(w,
      if(i_nas[2] & any(is.na(x_out[, rh]))){
         if(verbose) warning("Relative humidity data contains NA values, imputing missing values")
         x_out <- impute_rh(x_out, rolling_window = Irolling_window)
+     }
+     if(i_nas[3] & any(is.na(x_out[, rain]))){
+        if(verbose) warning("Rainfall data contains NA values, NAs will be replaced by '0'")
+        x_out <- x_out[is.na(rain),rain := 0]
      }
 
   }
@@ -796,7 +801,7 @@ format_weather <- function(w,
            stop(
               call. = FALSE,
               "NA values in temperature; \n",
-              paste0(as.character(final_w[is.na(temp), times]), sep = ",  "),
+              paste0(as.character(final_w[is.na(temp), times]), collapse = ",  "),
               "\nplease use a complete dataset"
            )
         }
@@ -809,7 +814,7 @@ format_weather <- function(w,
            call. = FALSE,
            "Temperature inputs are outside expected ranges (-30 and +60 degrees Celcius); \n",
            paste(as.character(final_w[temp < -30 |
-                                         temp > 60, times])),
+                                         temp > 60, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }
@@ -828,7 +833,7 @@ format_weather <- function(w,
            stop(
               call. = FALSE,
               "data includes NA 'rh' values; \n",
-              paste0(as.character(final_w[is.na(rh), times]), sep = ",  "),
+              paste0(as.character(final_w[is.na(rh), times]), collapse = ",  "),
               "\n if a complete dataset does not require 'rh' use data_check = FALSE"
            )
         }
@@ -841,7 +846,7 @@ format_weather <- function(w,
            call. = FALSE,
            "Relative humidity inputs are outside expected ranges (0 and 100%); \n",
            paste(as.character(final_w[rh < 0 |
-                                         rh > 100, times])),
+                                         rh > 100, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }
@@ -855,7 +860,7 @@ format_weather <- function(w,
         stop(
            call. = FALSE,
            "NA values in rainfall; \n",
-           paste(as.character(final_w[is.na(rain), times])),
+           paste(as.character(final_w[is.na(rain), times]), collapse = "   "),
            "\nplease use a complete dataset"
         )
      }
@@ -866,7 +871,7 @@ format_weather <- function(w,
            call. = FALSE,
            "rain inputs are outside expected ranges (0 and 100 mm); \n",
            paste(as.character(final_w[rain < 0 |
-                                         rain > 100, times])),
+                                         rain > 100, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }
@@ -879,7 +884,7 @@ format_weather <- function(w,
         stop(
            call. = FALSE,
            "NA values in wind speed; \n",
-           paste(as.character(final_w[is.na(ws), times])),
+           paste(as.character(final_w[is.na(ws), times]), collapse = "   "),
            "\nplease use a complete dataset"
         )
      }
@@ -890,7 +895,7 @@ format_weather <- function(w,
            call. = FALSE,
            "wind speed inputs are outside expected ranges (0 and 150 kph); \n",
            paste(as.character(final_w[ws < 0 |
-                                         ws > 150, times])),
+                                         ws > 150, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }

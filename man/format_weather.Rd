@@ -92,9 +92,10 @@ the data. Optional, see also \code{lon} and \code{lat}.}
 
 \item{impute_nas}{\code{character} vector indicating which variables to impute
 missing or \code{NA} values. Options include, "temp" (see \code{epiphytoolR::impute_temp()}),
-"rh"(see \code{epiphytoolR::impute_rh()}).
+"rh"(see \code{epiphytoolR::impute_rh()}). "rain" will be filled with zeros.
 If \code{TRUE} (logical) it will impute missing values for all available options.
-If \code{FALSE} (logical) it will not impute any missing values.}
+If \code{FALSE} (logical) it will not impute any missing values.
+The default is c("temp,"rh) to impute only temperature and humidity.}
 
 \item{Irolling_window}{\code{integer} value indicating the number of hours to use
 for the rolling window to impute missing values. See \code{impute_nas}}
@@ -104,6 +105,11 @@ for the rolling window to impute missing values. See \code{impute_nas}}
 vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
 to check data from specific variables. If FALSE it ignores all variables and
 could cause subsequent models using this data to fail.}
+
+\item{verbose}{If \code{TRUE} (default) it will print messages and warnings associated
+with the internal handling of the weather formatting.
+It is not recommended to use \code{FALSE} to suppress these messages. Instead
+first attempt to correct the underlying data.}
 }
 \value{
 A \code{epiphy.weather} object (an extension of \CRANpkg{data.table})
