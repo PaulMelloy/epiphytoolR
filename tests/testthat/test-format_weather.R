@@ -943,4 +943,70 @@ regexp = "Non-continuous data detected. Extra lines will be merged into data")
 # })
 
 # Relative humidity added
-
+# test_that("weather values are imputed",{
+#    wdata <- fread("/home/paul/weather_data/23-24_Applethorpe.csv")
+#
+#    wdata[,aifstime_utc := as.POSIXct(as.character(aifstime_utc),
+#                                      format = "%Y%m%d%H%M%S",
+#                                      tz = "UTC")]
+#
+#    wdata <- wdata[order(aifstime_utc)]
+#
+#    # Check for error entries
+#    wdata[rain_ten < 0, rain_ten := 0]
+#
+#    tm_out <- which(wdata$air_temp < -30 |
+#                       wdata$air_temp > 60)
+#    wdata[tm_out,air_temp := NA_real_]
+#    wdata[tm_out, air_temp := frollmean(air_temp,
+#                                        n = 5,
+#                                        align = "center",
+#                                        na.rm = TRUE)]
+#
+#    rh_out <- which(wdata$rel_hum < 0 |
+#                       wdata$rel_hum > 100)
+#    wdata[rh_out,rel_hum := NA_real_]
+#    wdata[rh_out, rel_hum := frollmean(rel_hum,
+#                                       n = 5,
+#                                       align = "center",
+#                                       na.rm = TRUE)]
+#
+#    ws_out <- which(wdata$wind_spd_kmh < 0 |
+#                       wdata$wind_spd_kmh > 150)
+#    wdata[ws_out, wind_spd_kmh := NA_real_]
+#    wdata[ws_out, wind_spd_kmh := frollmean(wind_spd_kmh,
+#                                            n = 5,
+#                                            align = "center",
+#                                            na.rm = TRUE)]
+#
+#    wd_out <- which(wdata$wind_dir_deg < 0 |
+#                       wdata$wind_dir_deg > 360)
+#    wdata[wd_out, wind_dir_deg := NA_real_]
+#    circle_mean <- function(x){
+#       as.numeric(circular::mean.circular(
+#          circular::circular(x,
+#                             units = "degrees",
+#                             modulo = "2pi"),
+#          na.rm = TRUE))}
+#    wdata[wd_out, wind_dir_deg := frollapply(wind_dir_deg,
+#                                             n = 3,
+#                                             FUN = circle_mean,
+#                                             align = "center")]
+#
+#    data <-
+#       epiphytoolR::format_weather(
+#          wdata,
+#          POSIXct_time = "aifstime_utc",
+#          time_zone = "UTC",
+#          temp = "air_temp",
+#          rain = "rain_ten",
+#          rh = "rel_hum",
+#          ws = "wind_spd_kmh",
+#          wd = "wind_dir_deg",
+#          station = "name",
+#          lon = "lon",
+#          lat = "lat",
+#          impute_nas = c("temp","rh","rain"),
+#          Irolling_window = 60)
+#
+# })
