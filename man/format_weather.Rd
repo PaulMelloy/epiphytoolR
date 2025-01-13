@@ -104,6 +104,11 @@ for the rolling window to impute missing values. See \code{impute_nas}}
 vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
 to check data from specific variables. If FALSE it ignores all variables and
 could cause subsequent models using this data to fail.}
+
+\item{verbose}{If \code{TRUE} (default) it will print messages and warnings associated
+with the internal handling of the weather formatting.
+It is not recommended to use \code{FALSE} to suppress these messages. Instead
+first attempt to correct the underlying data.}
 }
 \value{
 A \code{epiphy.weather} object (an extension of \CRANpkg{data.table})

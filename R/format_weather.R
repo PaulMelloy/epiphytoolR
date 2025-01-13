@@ -68,7 +68,7 @@
 #'  could cause subsequent models using this data to fail.
 #' @param rh Column name `character` or index in `w` that refers to relative
 #'   humidity as a percentage.
-#' @param vebose If `TRUE` (default) it will print messages and warnings associated
+#' @param verbose If `TRUE` (default) it will print messages and warnings associated
 #'   with the internal handling of the weather formatting.
 #'   It is not recommended to use `FALSE` to suppress these messages. Instead
 #'   first attempt to correct the underlying data.
