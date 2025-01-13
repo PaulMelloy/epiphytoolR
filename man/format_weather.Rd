@@ -92,9 +92,10 @@ the data. Optional, see also \code{lon} and \code{lat}.}
 
 \item{impute_nas}{\code{character} vector indicating which variables to impute
 missing or \code{NA} values. Options include, "temp" (see \code{epiphytoolR::impute_temp()}),
-"rh"(see \code{epiphytoolR::impute_rh()}).
+"rh"(see \code{epiphytoolR::impute_rh()}). "rain" will be filled with zeros.
 If \code{TRUE} (logical) it will impute missing values for all available options.
-If \code{FALSE} (logical) it will not impute any missing values.}
+If \code{FALSE} (logical) it will not impute any missing values.
+The default is c("temp,"rh) to impute only temperature and humidity.}
 
 \item{Irolling_window}{\code{integer} value indicating the number of hours to use
 for the rolling window to impute missing values. See \code{impute_nas}}
