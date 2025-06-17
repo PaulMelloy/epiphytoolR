@@ -28,7 +28,8 @@ Imports:
     sf,
     units,
     geosphere,
-    jsonlite
+    jsonlite,
+    openmeteo
 Suggests:
     agricolae,
     testthat (>= 3.0.0),

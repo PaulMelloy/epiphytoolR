@@ -703,6 +703,35 @@ format_weather <- function(w,
   # set specific weather attribute
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
 
+  # fill missing weather if requested
+  if(is.null(fill_missing) == FALSE){
+     for(l_n in unique(x_out[, station])){
+        # retrieve missing timeframes
+        na_range <- x_out[is.na(rain) |
+                          is.na(temp) |
+                          is.na(rh) |
+                          is.na(wd) |
+                          is.na(ws),times]
+
+        open_weather <-
+           openmeteo::weather_history(location = c(x_out[station == l_n, lat],
+                                                   x_out[station == l_n, lon]),
+                                      start = min(na_range),
+                                      end = max(na_range),
+                                      hourly = c("rain",
+                                                 "temperature_2m",
+                                                 "relative_humidity_2m",
+                                                 "wind_direction_10m",
+                                                 "wind_speed_10m"),
+                                      timezone = "UTC")
+
+        x_out[open_weather, ]
+
+     }
+
+
+  }
+
   # impute missing values if requested
   if(all(impute_nas %in% TRUE)){
      i_nas <- c(TRUE, TRUE, TRUE)
