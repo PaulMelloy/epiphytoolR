@@ -6,6 +6,8 @@
  * Remove capture warnings functions and format_weather()  
  * merge_axf_weather() changed to merge_weather() and now reads and merges JSON
    weather data.  
+ * update the README, to give more information about the package and how to 
+ contribute
 
 # epiphytoolR 0.0.2
  * Make `pkgdown` site
