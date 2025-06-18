@@ -1,6 +1,6 @@
 Package: epiphytoolR
 Title: Epiphytotic Modeling Tools
-Version: 0.0.2
+Version: 0.0.2.9000
 Authors@R:
     c(person(given = "Paul",
            family = "Melloy",
@@ -27,12 +27,12 @@ Imports:
     circular,
     sf,
     units,
-    geosphere
+    geosphere,
+    jsonlite
 Suggests:
     agricolae,
     testthat (>= 3.0.0),
-    lubridate (>= 1.7.10),
-    agricolae
+    lubridate (>= 1.7.10)
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.0.1)

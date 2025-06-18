@@ -53,14 +53,6 @@
 #' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
-#' @param print_warnings default is `TRUE`. If `FALSE`, warnings will not be
-#'  printed to the console while aggregating weather data into hourly time
-#'  intervals but instead will be captured and exported to object
-#'  warn$captured_warnings and can be retrieved with function
-#'  `check_weather_warnings()`.
-#' @param muffle_warnings default is `FALSE`. IF `TRUE` any warnings or messages
-#'  will be muffled and not printed to console. Only use if there is a lot of NA
-#'  wind data which you are aware about and happy to ignore.
 #' @param data_check If `TRUE`, it checks for NA values in all 'rain', 'temp',
 #'  'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
 #'  vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
@@ -177,11 +169,9 @@ format_weather <- function(w,
                            lon = NULL,
                            lat = NULL,
                            lonlat_file = NULL,
-                           print_warnings = TRUE,
-                           muffle_warnings = FALSE,
                            data_check = TRUE) {
   # CRAN Note avoidance
-  times <- V1 <- NULL #nocov
+  times <- V1 <- NULL
 
   # Check w class
   if (!is.data.frame(w)) {
@@ -523,57 +513,18 @@ format_weather <- function(w,
           temp = mean(temp, na.rm = TRUE),
           rh = mean(rh, na.rm = TRUE),
           ws = mean(ws, na.rm = TRUE),
-          wd = if (print_warnings == FALSE) {
-             if(muffle_warnings) {
-                as.numeric(.capture_warnings(circular::mean.circular(
-                   circular::circular(wd,
-                                      units = "degrees",
-                                      modulo = "2pi"),
-                   na.rm = TRUE
-                ), silent = muffle_warnings))
-             } else{
-                as.numeric(.capture_warnings(circular::mean.circular(
-                   circular::circular(wd,
-                                      units = "degrees",
-                                      modulo = "2pi"),
-                   na.rm = TRUE
-                )))
-             }
-          } else{
-             as.numeric(circular::mean.circular(
+          wd = as.numeric(circular::mean.circular(
                 circular::circular(wd,
                                    units = "degrees",
                                    modulo = "2pi"),
                 na.rm = TRUE
-             ))
-          },
-          wd_sd = if (print_warnings == FALSE) {
-             if(muffle_warnings){
-                as.numeric(.capture_warnings(
-                   circular::sd.circular(
-                      circular::circular(wd,
-                                         units = "degrees",
-                                         modulo = "2pi"),
-                      na.rm = TRUE
-                   ),silent = muffle_warnings
-                )) * 57.29578
-             }else{
-                as.numeric(.capture_warnings(
-                   circular::sd.circular(
-                      circular::circular(wd,
-                                         units = "degrees",
-                                         modulo = "2pi"),
-                      na.rm = TRUE
-                   )
-                )) * 57.29578}
-          } else{
-             as.numeric(circular::sd.circular(
-                circular::circular(wd,
-                                   units = "degrees",
-                                   modulo = "2pi"),
+             )),
+          wd_sd = as.numeric(circular::sd.circular(
+             circular::circular(wd,
+                                units = "degrees",
+                                modulo = "2pi"),
                 na.rm = TRUE
-             )) * 57.29578
-          },
+             )) * 57.29578,
           # this is equal to (180 / pi), this is because
           # sd.circular returns in radians, but mean.circular returns degrees
           lon = unique(lon),

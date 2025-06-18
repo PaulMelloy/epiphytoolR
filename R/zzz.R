@@ -8,10 +8,6 @@ NULL
    match(x, table, nomatch = 0L) == 0L
 }
 
-# a warnings environment is needed for capture.warnings
-warn <- new.env(parent = .GlobalEnv)
-warn$logs <- list()
-
 # This function is never called.
 # It only makes `sf` available in the package for `lutz` to use.
 # `lutz` only has `sf` in Suggests, but it is needed for the function we use
@@ -23,15 +19,30 @@ stub <- function() {
 # nocov end
 
 
-.uq_fleet <- function(km, Days, half_days = 0){
-   cat("Minibus: ", (125 * Days)+ (65 * half_days) + (0.15 * km))
-   cat("\nPeople Mover: ", (140 * Days)+ (70 * half_days) + (0.17 * km))
-   cat("\nTesla: ", (160 * Days)+ (80 * half_days) + (0.05 * km))
-   cat("\nCamry Hybrid: ", (125 * Days)+ (62.50 * half_days) + (0.12 * km))
-   cat("\nHyundai Staria: ", (130 * Days)+ (70 * half_days) + (0.18 * km))
-   cat("\nKia Hybrid wagon: ", (90 * Days)+ (55 * half_days) + (0.10 * km))
-   cat("\nMitsubisho Outlander: ", (125 * Days)+ (62.50 * half_days) + (0.20 * km))
-   cat("\nHiLux Extra Cab: ", (135 * Days)+ (67.5 * half_days) + (0.20 * km))
-   cat("\nHiLux Double Cab: ", (100 * Days)+ (60 * half_days) + (0.18 * km))
 
+#' Read Australian Bureau of Meteorology json
+#'
+#' Wrapper for \code{\link[jsonlite]{read_JSON}} specific for BOM weather data
+#'
+#' @param f_path character, file path to BOM weather data in json format.
+#' @param header logical, weather to display the copyright header or not. Default
+#' is 'TRUE'
+#' @param ... additional arguments to be parsed to \code{\link[jsonlite]{read_JSON}}
+#'
+#' @returns data.frame of weather data
+#'
+#' @noRd
+read_bom_json <- function(f_path,
+                          header = TRUE,
+                          ...){
+   weathr_j <- jsonlite::read_json(path = f_path,
+                                   simplifyVector = TRUE,
+                                   ...)
+
+   if(header){
+      message(weathr_j$observations$notice$copyright)
+   }
+
+   out <- as.data.table(weathr_j$observations$data)
+   return(out)
 }

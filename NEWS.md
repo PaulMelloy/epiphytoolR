@@ -1,3 +1,14 @@
+# epiphytoolR (development version)
+
+# development version  1.0.0.9000
+ * *goal is to have released to CRAN*  
+ *  **Potential breaking changes**  
+ * Remove capture warnings functions and format_weather()  
+ * merge_axf_weather() changed to merge_weather() and now reads and merges JSON
+   weather data.  
+ * update the README, to give more information about the package and how to 
+ contribute
+
 # epiphytoolR 0.0.2
  * Make `pkgdown` site
  * R function to generate mock raw bom file for testing and examples `make_bom_data()`  

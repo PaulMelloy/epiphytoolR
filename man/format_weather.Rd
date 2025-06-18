@@ -24,8 +24,6 @@ format_weather(
   lon = NULL,
   lat = NULL,
   lonlat_file = NULL,
-  print_warnings = TRUE,
-  muffle_warnings = FALSE,
   data_check = TRUE
 )
 }
@@ -88,16 +86,6 @@ latitude. See details.}
 \item{lonlat_file}{A file path (\code{character}) to a \acronym{CSV} which included station
 name/id and longitude and latitude coordinates if they are not supplied in
 the data. Optional, see also \code{lon} and \code{lat}.}
-
-\item{print_warnings}{default is \code{TRUE}. If \code{FALSE}, warnings will not be
-printed to the console while aggregating weather data into hourly time
-intervals but instead will be captured and exported to object
-warn$captured_warnings and can be retrieved with function
-\code{check_weather_warnings()}.}
-
-\item{muffle_warnings}{default is \code{FALSE}. IF \code{TRUE} any warnings or messages
-will be muffled and not printed to console. Only use if there is a lot of NA
-wind data which you are aware about and happy to ignore.}
 
 \item{data_check}{If \code{TRUE}, it checks for NA values in all 'rain', 'temp',
 'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
