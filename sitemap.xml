@@ -13,7 +13,6 @@
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/calc_svp.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/calc_vp.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/calc_vpd.html</loc></url>
-<url><loc>https://paulmelloy.github.io/epiphytoolR/reference/check_weather_warnings.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/circular_influence.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/create_inf_xyz.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/disease_aug_soil.html</loc></url>
@@ -30,7 +29,7 @@
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/impute_temp.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/index.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/make_bom_data.html</loc></url>
-<url><loc>https://paulmelloy.github.io/epiphytoolR/reference/merge_axf_weather.html</loc></url>
+<url><loc>https://paulmelloy.github.io/epiphytoolR/reference/merge_weather.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/multi_var_binom.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/power_dk.html</loc></url>
 <url><loc>https://paulmelloy.github.io/epiphytoolR/reference/weather.html</loc></url>

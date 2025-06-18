@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiphytoolR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,7 +91,7 @@ warning.
 <em>lat</em> - latitude;
 <em>lon</em> - longitude;
 <em>state</em> - political juristiction or state;
-<em>yearday</em> - integer, day of the year, see <code><a href="https://rdrr.io/pkg/data.table/man/IDateTime.html" class="external-link">data.table::yday()</a></code>;
+<em>yearday</em> - integer, day of the year, see <code><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">data.table::yday()</a></code>;
 <em>temp</em> - numeric, mean temperature;
 <em>rh</em> - numeric, mean temperature;
 <em>wd_rd</em> - numeric, mean wind direction from rolling window;
@@ -113,7 +113,7 @@ Formally called impute_rainywind</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">meta_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"cache/bom_stations.csv"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">meta_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"cache/bom_stations.csv"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">imp_dat</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>   <span class="fu">get_weather_coefs</span><span class="op">(</span>raw_bom_file <span class="op">=</span> <span class="st">"./data/Weather_data/HD01D_Data_090182_999999999959761.txt"</span>,</span></span>
 <span class="r-in"><span>                    rolling_window <span class="op">=</span> <span class="fl">60</span>,</span></span>
@@ -129,7 +129,7 @@ Formally called impute_rainywind</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

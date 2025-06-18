@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">epiphytoolR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,17 +48,154 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="epiphytoolr">epiphytoolR<a class="anchor" aria-label="anchor" href="#epiphytoolr"></a>
 </h1></div>
-<p>An R package that provides functions for undertaking epiphytotic modelling and simulation studies in R. This package provides common base level functions that can be used in modelling the spatial movement of splash and wind dispersed plant disease inoculum. This package also provides many weather functions for obtaining, formating and imputing weather data.</p>
+<p>An R package that provides functions for undertaking epiphytotic modelling and simulation studies in R.</p>
+<div class="section level2">
+<h2 id="epiphytoolr-aims">epiphytoolR aims<a class="anchor" aria-label="anchor" href="#epiphytoolr-aims"></a>
+</h2>
+<p>This package aims to be a collaborative project to provide a suite of functions for epidemiologists to build models from. The functions should be at their most basic and easy to adapt to the various epidemiological models. We hope this becomes a dependency for many more models. We welcome contributions additional branches to explore additional functionality and features.</p>
+</div>
+<div class="section level2">
+<h2 id="what-epiphytoolr-is-not">What epiphytoolR is not<a class="anchor" aria-label="anchor" href="#what-epiphytoolr-is-not"></a>
+</h2>
+<p>This does not provide full epidemiological models. See the following R packages for flexible complete models:</p>
+<div class="section level3">
+<h3 id="my-suggestions">my suggestions<a class="anchor" aria-label="anchor" href="#my-suggestions"></a>
+</h3>
+<ul>
+<li><a href="https://codeberg.org/adamhsparks/epicrop" class="external-link">epicrop</a></li>
+</ul>
+<div class="section level4">
+<h4 id="weather">Weather<a class="anchor" aria-label="anchor" href="#weather"></a>
+</h4>
+<ul>
+<li>
+<a href="https://github.com/ropensci/weatherOz" class="external-link">weatherOz</a><br>
+</li>
+<li>
+<a href="https://github.com/ropensci/nasapower" class="external-link">nasapower</a><br>
+</li>
+<li>
+<a href="https://github.com/ropensci/GSODR" class="external-link">GSODR</a><br>
+</li>
+<li>
+<a href="https://github.com/rich-iannone/stationaRy" class="external-link">stationaRy</a><br>
+</li>
+<li><a href="https://open-meteo.com/" class="external-link">openmeteo</a></li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="cran-task-views">CRAN Task views<a class="anchor" aria-label="anchor" href="#cran-task-views"></a>
+</h4>
+<ul>
+<li><a href="https://cran.r-project.org/web/views/Agriculture.html#PlantPath" class="external-link">Agriculture: Plant Pathology</a></li>
+</ul>
+</div>
+</div>
+<div class="section level3">
+<h3 id="co-pilot-suggestions">Co-pilot suggestions<a class="anchor" aria-label="anchor" href="#co-pilot-suggestions"></a>
+</h3>
+<p><em>not yet vetted</em><br>
+- <a href="https://cran.r-project.org/web/packages/EpiDynamics/index.html" class="external-link">EpiDynamics</a><br>
+- <a href="https://github.com/waleedalmutiry/EpiILM" class="external-link">EpiILM</a><br>
+- <a href="https://cran.r-project.org/web/packages/EpiNow2/index.html" class="external-link">EpiNow2</a><br>
+- <a href="https://cran.r-project.org/web/packages/EpiEstim/index.html" class="external-link">EpiEstim</a><br>
+- <a href="https://cran.r-project.org/web/packages/EpiCurve/index.html" class="external-link">EpiCurve</a><br>
+- <a href="https://cran.r-project.org/web/packages/EpiModel/index.html" class="external-link">EpiModel</a><br>
+- <a href="https://cran.r-project.org/web/packages/epiR/index.html" class="external-link">epiR</a><br>
+- <a href="https://cran.r-project.org/web/packages/epiDisplay/index.html" class="external-link">epiDisplay</a></p>
+</div>
+</div>
 <div class="section level2">
 <h2 id="how-to-install">How to install<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
 </h2>
-<p><code>epiphytoolR</code> is not on CRAN and is currently under development in an ad hoc manner.</p>
+<p><code>epiphytoolR</code> is not on CRAN but is aimed for a release sometime in 2025.</p>
 <p>You can install a stable version from the <code>main</code> branch with the following code</p>
 <pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PaulMelloy/epiphytoolR"</span><span class="op">)</span></span></code></pre>
-<p>Or you can install the development version from the <code>dev</code> branch with the following code</p>
+<p>Or you can install the development version from the development (<code>dev</code>) branch with the following command in R</p>
 <pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PaulMelloy/epiphytoolR"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></code></pre>
-<p>The <code>dev</code> branch will have newer bug fixes and more features, see <a href="https://github.com/PaulMelloy/epiphytoolR/blob/dev/NEWS.md" class="external-link">NEWS.md</a></p>
-<p>Report bugs or add requests by creating an issue on this repo</p>
+<p>The <code>dev</code> branch will have newer bug fixes and more features, see <a href="https://github.com/PaulMelloy/epiphytoolR/blob/dev/NEWS.md" class="external-link">NEWS.md</a>. However may have new bugs yet to be fully tested</p>
+</div>
+<div class="section level2">
+<h2 id="how-to-contribute">How to contribute<a class="anchor" aria-label="anchor" href="#how-to-contribute"></a>
+</h2>
+<div class="section level3">
+<h3 id="reporting-bugs">Reporting bugs<a class="anchor" aria-label="anchor" href="#reporting-bugs"></a>
+</h3>
+<p>Create an <a href="https://github.com/PaulMelloy/epiphytoolR/issues" class="external-link">issue</a> on this repo.</p>
+</div>
+<div class="section level3">
+<h3 id="contributing-code">Contributing code<a class="anchor" aria-label="anchor" href="#contributing-code"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Fork the repo make changes and create a pull request.<br>
+</li>
+<li>Request contribute access in the pull request.</li>
+</ol>
+<p>Contributing is easy, you may notice the reuse of common functions in plant epidemiological modelling. Translate these equations to R code and add them to this package through a pull request.</p>
+<div class="section level4">
+<h4 id="contribution-example">Contribution Example<a class="anchor" aria-label="anchor" href="#contribution-example"></a>
+</h4>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>a</mi><mo>*</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>c</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mi>b</mi></mrow></msup></mrow><annotation encoding="application/x-tex">y=a*(x+c)^{-b}</annotation></semantics></math></p>
+<p>can become a function</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">calc_spores</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">a</span>, <span class="va">con</span>, <span class="va">b</span><span class="op">)</span><span class="op">{</span></span>
+<span>   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">a</span> <span class="op">*</span> <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">con</span><span class="op">)</span> <span class="op">^</span> <span class="op">(</span><span class="op">-</span><span class="va">b</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Also use <a href="https://roxygen2.r-lib.org/" class="external-link">roxygen</a> headers to describe the function in the file. ‘Ctrl + Alt + Shift + R’ Inserts an Roxygen header skeleton to edit.</p>
+<pre><code><span><span class="co">#' Estimate spore dispersal</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @description</span></span>
+<span><span class="co">#' A modified inverse power function redescribed by Severns et al. (2018).</span></span>
+<span><span class="co">#'  "Consequences of Long-Distance Dispersal for Epidemic Spread: Patterns,</span></span>
+<span><span class="co">#'   Scaling, and Mitigation"</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @source &lt;https://doi.org/10.1094/PDIS-03-18-0505-FE&gt;</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @param x numeric, distance from source lesion in meters</span></span>
+<span><span class="co">#' @param a numeric, a constant proportional to the amount of source inoculum</span></span>
+<span><span class="co">#' @param con numeric, a constant that allows for a finite amount of disease at the source</span></span>
+<span><span class="co">#' @param b numeric, modifies the steepness of the curve</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @return numeric, The number of effective spores, or infections per unit area</span></span>
+<span><span class="co">#' @export</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @examples</span></span>
+<span><span class="co">#' calc_spores(x = 5,a = 1000, con = 3, b = 4)</span></span></code></pre>
+</div>
+<div class="section level4">
+<h4 id="function-naming">Function naming<a class="anchor" aria-label="anchor" href="#function-naming"></a>
+</h4>
+<p>Function naming should be concise and have the consistent use of prefixes as follows. - <code>est_</code> estimate, usually used when the function or equation is based on empirical evidence.<br>
+- <code>get_</code> a wrapper for retrieving data or accessing an API, or calculations form data. - <code>impute_</code> imputation functions.<br>
+- <code>calc_</code> Calculate from common equations.</p>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
+</h2>
+<div class="section level3">
+<h3 id="inoculum-dispersal-and-movement">Inoculum dispersal and movement<a class="anchor" aria-label="anchor" href="#inoculum-dispersal-and-movement"></a>
+</h3>
+<p>This package provides common base level functions that can be used in modelling the spatial movement of splash and wind dispersed plant disease inoculum.</p>
+</div>
+<div class="section level3">
+<h3 id="disease-progress">Disease progress<a class="anchor" aria-label="anchor" href="#disease-progress"></a>
+</h3>
+<p>Estimating Daily Infection Values, AUDPC, ect.</p>
+</div>
+<div class="section level3">
+<h3 id="weather-formatting">Weather formatting<a class="anchor" aria-label="anchor" href="#weather-formatting"></a>
+</h3>
+<p>Epidemiological models need clean consistent weather data, this package contains functions to provide clean interpolated data for models.</p>
+<p>Future versions will look towards an international standard for weather data format.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="find-out-more">Find out more<a class="anchor" aria-label="anchor" href="#find-out-more"></a>
+</h2>
+<p>For more information see pkgdown website <a href="https://paul.melloy.github.io/epiphytoolR/" class="external-link">epiphytoolR</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
@@ -80,7 +217,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Paul Melloy <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-4253-7167" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Paul Melloy <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-4253-7167" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -96,7 +233,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

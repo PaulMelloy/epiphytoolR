@@ -17,7 +17,7 @@ a point in time."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiphytoolR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,8 +73,6 @@ a point in time.</p>
 <span>  lon <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lonlat_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  print_warnings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  muffle_warnings <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  data_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -180,20 +178,6 @@ name/id and longitude and latitude coordinates if they are not supplied in
 the data. Optional, see also <code>lon</code> and <code>lat</code>.</p></dd>
 
 
-<dt id="arg-print-warnings">print_warnings<a class="anchor" aria-label="anchor" href="#arg-print-warnings"></a></dt>
-<dd><p>default is <code>TRUE</code>. If <code>FALSE</code>, warnings will not be
-printed to the console while aggregating weather data into hourly time
-intervals but instead will be captured and exported to object
-warn$captured_warnings and can be retrieved with function
-<code><a href="check_weather_warnings.html">check_weather_warnings()</a></code>.</p></dd>
-
-
-<dt id="arg-muffle-warnings">muffle_warnings<a class="anchor" aria-label="anchor" href="#arg-muffle-warnings"></a></dt>
-<dd><p>default is <code>FALSE</code>. IF <code>TRUE</code> any warnings or messages
-will be muffled and not printed to console. Only use if there is a lot of NA
-wind data which you are aware about and happy to ignore.</p></dd>
-
-
 <dt id="arg-data-check">data_check<a class="anchor" aria-label="anchor" href="#arg-data-check"></a></dt>
 <dd><p>If <code>TRUE</code>, it checks for NA values in all 'rain', 'temp',
 'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
@@ -294,7 +278,7 @@ created by specifying the file path to a <acronym>CSV</acronym> file using
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
