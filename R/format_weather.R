@@ -72,7 +72,9 @@
 #' @param verbose If `TRUE` (default) it will print messages and warnings associated
 #'   with the internal handling of the weather formatting.
 #'   It is not recommended to use `FALSE` to suppress these messages. Instead
-#'   first attempt to correct the underlying data.
+#' @param fill_missing
+#'   If `TRUE` the function will use \CRANpkg{openmeteo} to fill missing weather
+#'   data. Still experimental!!!
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
@@ -188,7 +190,9 @@ format_weather <- function(w,
                            data_check = TRUE,
                            verbose = TRUE) {
   # CRAN Note avoidance
-  times <- V1 <- NULL
+  times <- V1 <- datetime <- hourly_rain <-
+     hourly_temperature_2m <- hourly_relative_humidity_2m <-
+     hourly_wind_direction_10m <- hourly_wind_speed_10m <-NULL
 
   # Check w class
   if (!is.data.frame(w)) {

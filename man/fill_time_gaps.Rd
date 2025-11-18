@@ -22,7 +22,7 @@ fill_time_gaps(
 \item{max_interval}{numeric, maximum acceptable interval between data
 observaions in minutes.}
 
-\item{impute}{logical, not in operation, possible future functionability.
+\item{impute}{logical, not in operation, possible future functionality.
 default is FALSE}
 }
 \value{
