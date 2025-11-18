@@ -183,6 +183,7 @@ format_weather <- function(w,
                            lat = NULL,
                            lonlat_file = NULL,
                            impute_nas = c("temp","rh"),
+                           fill_missing = NULL,
                            Irolling_window = 70,
                            data_check = TRUE,
                            verbose = TRUE) {
@@ -712,24 +713,47 @@ format_weather <- function(w,
                           is.na(rh) |
                           is.na(wd) |
                           is.na(ws),times]
-
+         if(verbose){message("Retrieving missing weather with openmeteo data ...\n")}
         open_weather <-
-           openmeteo::weather_history(location = c(x_out[station == l_n, lat],
-                                                   x_out[station == l_n, lon]),
-                                      start = min(na_range),
-                                      end = max(na_range),
-                                      hourly = c("rain",
-                                                 "temperature_2m",
-                                                 "relative_humidity_2m",
-                                                 "wind_direction_10m",
-                                                 "wind_speed_10m"),
-                                      timezone = "UTC")
+           openmeteo::weather_history(
+              location = unique(c(x_out[station == l_n, lat],
+                                  x_out[station == l_n, lon])),
+              start = as.Date(min(na_range)),
+              end = as.Date(max(na_range)),
+              hourly = c(
+                 "rain",
+                 "temperature_2m",
+                 "relative_humidity_2m",
+                 "wind_direction_10m",
+                 "wind_speed_10m"),
+              timezone = "UTC")
 
-        x_out[open_weather, ]
+        data.table::setDT(open_weather)
+        # create obscure colnames so they wont match with any input data
+        ow_names <- grep("hourly",names(open_weather),value = TRUE)
+
+        if(any(is.na(x_out$rain))){
+           missed <- x_out[is.na(rain),times]
+           x_out[times %in% missed,rain := open_weather[datetime %in% missed,hourly_rain]]
+        }
+        if(any(is.na(x_out$temp))){
+           missed <- x_out[is.na(temp),times]
+           x_out[times %in% missed,temp := open_weather[datetime %in% missed,hourly_temperature_2m]]
+        }
+        if(any(is.na(x_out$rh))){
+           missed <- x_out[is.na(rh),times]
+           x_out[times %in% missed,rh := open_weather[datetime %in% missed,hourly_relative_humidity_2m]]
+        }
+        if(any(is.na(x_out$wd))){
+           missed <- x_out[is.na(wd),times]
+           x_out[times %in% missed,wd := open_weather[datetime %in% missed,hourly_wind_direction_10m]]
+        }
+        if(any(is.na(x_out$ws))){
+           missed <- x_out[is.na(ws),times]
+           x_out[times %in% missed,ws := open_weather[datetime %in% missed,hourly_wind_speed_10m]]
+        }
 
      }
-
-
   }
 
   # impute missing values if requested

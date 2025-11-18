@@ -860,6 +860,55 @@ test_that("I can make fake datasets and format them through preformat",{
 
 })
 
+test_that("Fill missing pulls weather from openmet",{
+   brisvegas <-
+      system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+   bris <- fread(brisvegas)
+   # Format times
+   bris[,aifstime_utc := as.POSIXct(aifstime_utc,tz = "UTC")]
+
+   # suppress all the other warnings indicating what is wrong
+      suppressWarnings({
+         expect_error(
+            format_weather(w = bris,
+                        POSIXct_time = "aifstime_utc",
+                        temp = "air_temp",
+                        rain = "rain_ten",
+                        rh = "rel_hum",
+                        ws = "wind_spd_kmh",
+                        wd = "wind_dir_deg",
+                        lon = "lon",
+                        lat = "lat",
+                        station = "name",
+                        time_zone = "UTC"),
+         regexp = "NA values")
+      })
+      bris_fixed <-
+         fill_time_gaps(bris,"aifstime_utc")
+
+      # suppress circular warnings
+      suppressWarnings({
+         expect_no_error(
+            format_weather(w = bris_fixed,
+                           POSIXct_time = "aifstime_utc",
+                           temp = "air_temp",
+                           rain = "rain_ten",
+                           rh = "rel_hum",
+                           ws = "wind_spd_kmh",
+                           wd = "wind_dir_deg",
+                           lon = "lon",
+                           lat = "lat",
+                           station = "name",
+                           time_zone = "UTC",
+                           fill_missing = TRUE,)
+         )
+         })
+
+
+})
+
+
+
 # import BOM data file
 brisvegas <-
    system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
