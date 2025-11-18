@@ -3,7 +3,7 @@
 #' @param dat data.frame or data.table with column of times
 #' @param t_col character, colname of column containing times
 #' @param interval numeric, expected time interval in minutes between times
-#' @param impute logical, not in operation, possible future functionability.
+#' @param impute logical, not in operation, possible future functionality.
 #'  default is FALSE
 #' @param max_interval numeric, maximum acceptable interval between data
 #'  observaions in minutes.

@@ -24,7 +24,11 @@ format_weather(
   lon = NULL,
   lat = NULL,
   lonlat_file = NULL,
-  data_check = TRUE
+  impute_nas = c("temp", "rh"),
+  fill_missing = NULL,
+  Irolling_window = 70,
+  data_check = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -87,11 +91,28 @@ latitude. See details.}
 name/id and longitude and latitude coordinates if they are not supplied in
 the data. Optional, see also \code{lon} and \code{lat}.}
 
+\item{impute_nas}{\code{character} vector indicating which variables to impute
+missing or \code{NA} values. Options include, "temp" (see \code{epiphytoolR::impute_temp()}),
+"rh"(see \code{epiphytoolR::impute_rh()}). "rain" will be filled with zeros.
+If \code{TRUE} (logical) it will impute missing values for all available options.
+If \code{FALSE} (logical) it will not impute any missing values.
+The default is c("temp,"rh) to impute only temperature and humidity.}
+
+\item{fill_missing}{If \code{TRUE} the function will use \CRANpkg{openmeteo} to fill missing weather
+data. Still experimental!!!}
+
+\item{Irolling_window}{\code{integer} value indicating the number of hours to use
+for the rolling window to impute missing values. See \code{impute_nas}}
+
 \item{data_check}{If \code{TRUE}, it checks for NA values in all 'rain', 'temp',
 'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
 vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
 to check data from specific variables. If FALSE it ignores all variables and
 could cause subsequent models using this data to fail.}
+
+\item{verbose}{If \code{TRUE} (default) it will print messages and warnings associated
+with the internal handling of the weather formatting.
+It is not recommended to use \code{FALSE} to suppress these messages. Instead}
 }
 \value{
 A \code{epiphy.weather} object (an extension of \CRANpkg{data.table})

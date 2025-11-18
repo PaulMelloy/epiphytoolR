@@ -20,7 +20,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports:
     stats,
     data.table,
@@ -28,7 +28,8 @@ Imports:
     sf,
     units,
     geosphere,
-    jsonlite
+    jsonlite,
+    openmeteo
 Suggests:
     agricolae,
     testthat (>= 3.0.0),

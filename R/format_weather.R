@@ -24,9 +24,10 @@
 #' @param POSIXct_time Column name `character` or index in `w` which contains a `POSIXct`
 #'   formatted time. This can be used instead of arguments `YYYY`, `MM`, `DD`,
 #'   `hh`, `mm.`.
-#' @param time_zone Local time zone (Olsen time zone format) `character` which was used
-#'   for `times` when recording observations times at the weather station. If unsure
-#'   and time data has continuity, use "UTC".
+#' @param time_zone Time zone of the weather observation `times` (Olsen time zone
+#'   format) supplied as a `character` string.
+#'   Ideally in "UTC" format to avoid errors associated with daylight savings.
+#'   If unsure and time data has continuity, use "UTC".
 #' @param temp Column name `character` or index in `w` that refers to temperature in degrees
 #'   Celsius.
 #' @param time_zone Time zone (Olsen time zone format) `character` where the
@@ -53,6 +54,14 @@
 #' @param lonlat_file A file path (`character`) to a \acronym{CSV} which included station
 #'   name/id and longitude and latitude coordinates if they are not supplied in
 #'   the data. Optional, see also `lon` and `lat`.
+#' @param impute_nas `character` vector indicating which variables to impute
+#'   missing or `NA` values. Options include, "temp" (see `epiphytoolR::impute_temp()`),
+#'   "rh"(see `epiphytoolR::impute_rh()`). "rain" will be filled with zeros.
+#'   If `TRUE` (logical) it will impute missing values for all available options.
+#'   If `FALSE` (logical) it will not impute any missing values.
+#'   The default is c("temp,"rh) to impute only temperature and humidity.
+#' @param Irolling_window `integer` value indicating the number of hours to use
+#'   for the rolling window to impute missing values. See `impute_nas`
 #' @param data_check If `TRUE`, it checks for NA values in all 'rain', 'temp',
 #'  'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
 #'  vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
@@ -60,6 +69,12 @@
 #'  could cause subsequent models using this data to fail.
 #' @param rh Column name `character` or index in `w` that refers to relative
 #'   humidity as a percentage.
+#' @param verbose If `TRUE` (default) it will print messages and warnings associated
+#'   with the internal handling of the weather formatting.
+#'   It is not recommended to use `FALSE` to suppress these messages. Instead
+#' @param fill_missing
+#'   If `TRUE` the function will use \CRANpkg{openmeteo} to fill missing weather
+#'   data. Still experimental!!!
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
@@ -169,19 +184,20 @@ format_weather <- function(w,
                            lon = NULL,
                            lat = NULL,
                            lonlat_file = NULL,
-                           data_check = TRUE) {
+                           impute_nas = c("temp","rh"),
+                           fill_missing = NULL,
+                           Irolling_window = 70,
+                           data_check = TRUE,
+                           verbose = TRUE) {
   # CRAN Note avoidance
-  times <- V1 <- NULL
+  times <- V1 <- datetime <- hourly_rain <-
+     hourly_temperature_2m <- hourly_relative_humidity_2m <-
+     hourly_wind_direction_10m <- hourly_wind_speed_10m <-NULL
 
   # Check w class
   if (!is.data.frame(w)) {
     stop(call. = FALSE,
          "`w` must be provided as a `data.frame` object for formatting.")
-  }
-
-  # If a warnings object exists delete it
-  if(exists("warn")){
-     warn <- NULL
   }
 
   # is this a pre-formatted data.frame that needs to be reformatted?
@@ -213,7 +229,7 @@ format_weather <- function(w,
               was pre-formatted, use 'UTC'"
       )
     } else{
-       # check for any midnight times convertee to dates and append HMS
+       # check for any midnight times and convert to POSIXct with HMS
        w[inherits(times,"character") &
             grepl(":", times) == FALSE, times := paste0(times," 00:00:00")]
 
@@ -287,8 +303,39 @@ format_weather <- function(w,
   # convert to data.table and start renaming and reformatting -----------------
   w <- data.table(w)
 
+  # make basic weather observations are supplied for function
+  model_compliant <- vector(mode = "character")
+  if(all(missing(rain) == FALSE,
+         missing(ws) == FALSE,
+         missing(wd) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "blackspot.sp")
+  }
+  if(all(missing(rain) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "ascotraceR")
+  }
+  if(all(missing(rain) == FALSE,
+         missing(rh) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "viticolaR")
+  }
+  if(all(missing(rain) == FALSE,
+         missing(rh) == FALSE,
+         missing(temp) == FALSE)){
+     model_compliant <- c(model_compliant, "cercospoRa")
+  }
+  if(verbose == TRUE){
+     if(length(model_compliant) >= 1){
+     message(paste("Weather data is compliant with the following models: ",
+                 paste(model_compliant, collapse = ", ")))}else{
+                    message("Weather data is not compliant with any known models.\n")
+                 }
+  }
+
   # check missing args
   # If some input are missing input defaults
+  #   minutes
   if (missing(mm)) {
     w[, mm := rep(0, .N)]
     mm <- "mm"
@@ -297,6 +344,7 @@ format_weather <- function(w,
         stop("colname `mm`:", mm, " not found in 'w'")
      }
   }
+  #   seconds
   if (missing(ss)) {
      w[, ss := rep(0, .N)]
      ss <- "ss"
@@ -305,6 +353,7 @@ format_weather <- function(w,
         stop("colname `ss`:", ss, " not found in 'w'")
      }
   }
+  #   standard deviation of wind direction
   if (missing(wd_sd)) {
     w$wd_sd <- NA
     wd_sd <- "wd_sd"
@@ -313,6 +362,7 @@ format_weather <- function(w,
         stop("colname `wd_sd`:", wd_sd, " not found in 'w'")
      }
   }
+  #   temperature
   if (missing(temp)) {
     w[, temp := rep(NA, .N)]
     temp <- "temp"
@@ -321,6 +371,7 @@ format_weather <- function(w,
         stop("colname `temp`:", temp, " not found in 'w'")
      }
   }
+  #   relative humidity
   if (missing(rh)) {
      w[, rh := rep(NA, .N)]
      rh <- "rh"
@@ -329,13 +380,33 @@ format_weather <- function(w,
         stop("colname `rh`:", rh, " not found in 'w'")
      }
   }
-
-  # make sure other column names supplied in arguments are in the supplied '
-  #  w' data
-  if (all(c(rain, ws, wd, station) %in% colnames(w)) == FALSE) {
-     stop(call. = FALSE,
-          "Supplied column names for rain, ws, wd and station are not",
-          "found in column names of `w`.")
+  #   wind speed at 2 meters
+  if (missing(ws)) {
+     w[, ws := rep(NA, .N)]
+     ws <- "ws"
+  }else{
+     if(ws %in% colnames(w) == FALSE){
+        stop("colname `ws`:", ws, " not found in 'w'")
+     }
+  }
+  #   wind direction at 2 meters
+  if (missing(wd)) {
+     w[, wd := rep(NA, .N)]
+     wd <- "wd"
+  }else{
+     if(wd %in% colnames(w) == FALSE){
+        stop("colname `wd`:", wd, " not found in 'w'")
+     }
+  }
+  #   wind direction at 2 meters
+  if (missing(rain)) {
+     w[, rain := rep(NA, .N)]
+     rain <- "rain"
+     if(verbose) warning("Rainfall not supplied, which is generally required for most models\n")
+  }else{
+     if(rain %in% colnames(w) == FALSE){
+        stop("colname `rain`:", rain, " not found in 'w'")
+     }
   }
 
   # import and assign longitude and latitude from a file if provided
@@ -546,11 +617,11 @@ format_weather <- function(w,
        return(.fill_times(w_dt_agg))
 
     } else{
-      if (all(is.na(x_dt[, wd_sd]))) {
-        stop(
+      if (all(is.na(x_dt[, wd_sd])) & verbose) {
+        warning(
           call. = FALSE,
           "`format_weather()` was unable to detect or calculate `wd_sd`. ",
-          "Please supply a standard deviation of wind direction."
+          "You may wish to supply a standard deviation of wind direction."
         )
       }
       x_dt <- x_dt[order(station,times)]
@@ -634,9 +705,89 @@ format_weather <- function(w,
     x_out[, lon := NULL]
   }
 
-  if(isFALSE(FALSE %in% data_check)) .check_weather(x_out, data_check)
-
+  # set specific weather attribute
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
+
+  # fill missing weather if requested
+  if(is.null(fill_missing) == FALSE){
+     for(l_n in unique(x_out[, station])){
+        # retrieve missing timeframes
+        na_range <- x_out[is.na(rain) |
+                          is.na(temp) |
+                          is.na(rh) |
+                          is.na(wd) |
+                          is.na(ws),times]
+         if(verbose){message("Retrieving missing weather with openmeteo data ...\n")}
+        open_weather <-
+           openmeteo::weather_history(
+              location = unique(c(x_out[station == l_n, lat],
+                                  x_out[station == l_n, lon])),
+              start = as.Date(min(na_range)),
+              end = as.Date(max(na_range)),
+              hourly = c(
+                 "rain",
+                 "temperature_2m",
+                 "relative_humidity_2m",
+                 "wind_direction_10m",
+                 "wind_speed_10m"),
+              timezone = "UTC")
+
+        data.table::setDT(open_weather)
+        # create obscure colnames so they wont match with any input data
+        ow_names <- grep("hourly",names(open_weather),value = TRUE)
+
+        if(any(is.na(x_out$rain))){
+           missed <- x_out[is.na(rain),times]
+           x_out[times %in% missed,rain := open_weather[datetime %in% missed,hourly_rain]]
+        }
+        if(any(is.na(x_out$temp))){
+           missed <- x_out[is.na(temp),times]
+           x_out[times %in% missed,temp := open_weather[datetime %in% missed,hourly_temperature_2m]]
+        }
+        if(any(is.na(x_out$rh))){
+           missed <- x_out[is.na(rh),times]
+           x_out[times %in% missed,rh := open_weather[datetime %in% missed,hourly_relative_humidity_2m]]
+        }
+        if(any(is.na(x_out$wd))){
+           missed <- x_out[is.na(wd),times]
+           x_out[times %in% missed,wd := open_weather[datetime %in% missed,hourly_wind_direction_10m]]
+        }
+        if(any(is.na(x_out$ws))){
+           missed <- x_out[is.na(ws),times]
+           x_out[times %in% missed,ws := open_weather[datetime %in% missed,hourly_wind_speed_10m]]
+        }
+
+     }
+  }
+
+  # impute missing values if requested
+  if(all(impute_nas %in% TRUE)){
+     i_nas <- c(TRUE, TRUE, TRUE)
+     }else if(all(impute_nas %in% FALSE)){
+        i_nas <- c(FALSE, FALSE, FALSE)
+     }else{
+        i_nas <- c("temp","rh", "rain") %in% impute_nas}
+
+
+  if(any(i_nas)){
+     if(i_nas[1] & any(is.na(x_out[, temp]))){
+        if(verbose) warning("Temperature data contains NA values, imputing missing values")
+        x_out <- impute_temp(x_out, rolling_window = Irolling_window)
+     }
+     if(i_nas[2] & any(is.na(x_out[, rh]))){
+        if(verbose) warning("Relative humidity data contains NA values, imputing missing values")
+        x_out <- impute_rh(x_out, rolling_window = Irolling_window)
+     }
+     if(i_nas[3] & any(is.na(x_out[, rain]))){
+        if(verbose) warning("Rainfall data contains NA values, NAs will be replaced by '0'")
+        x_out <- x_out[is.na(rain),rain := 0]
+     }
+
+  }
+
+  if(TRUE %in% data_check) .check_weather(x_out, data_check)
+
+
   return(x_out[])
 }
 
@@ -707,7 +858,7 @@ format_weather <- function(w,
            stop(
               call. = FALSE,
               "NA values in temperature; \n",
-              paste0(as.character(final_w[is.na(temp), times]), sep = ",  "),
+              paste0(as.character(final_w[is.na(temp), times]), collapse = ",  "),
               "\nplease use a complete dataset"
            )
         }
@@ -720,7 +871,7 @@ format_weather <- function(w,
            call. = FALSE,
            "Temperature inputs are outside expected ranges (-30 and +60 degrees Celcius); \n",
            paste(as.character(final_w[temp < -30 |
-                                         temp > 60, times])),
+                                         temp > 60, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }
@@ -739,7 +890,7 @@ format_weather <- function(w,
            stop(
               call. = FALSE,
               "data includes NA 'rh' values; \n",
-              paste0(as.character(final_w[is.na(rh), times]), sep = ",  "),
+              paste0(as.character(final_w[is.na(rh), times]), collapse = ",  "),
               "\n if a complete dataset does not require 'rh' use data_check = FALSE"
            )
         }
@@ -752,7 +903,7 @@ format_weather <- function(w,
            call. = FALSE,
            "Relative humidity inputs are outside expected ranges (0 and 100%); \n",
            paste(as.character(final_w[rh < 0 |
-                                         rh > 100, times])),
+                                         rh > 100, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }
@@ -766,7 +917,7 @@ format_weather <- function(w,
         stop(
            call. = FALSE,
            "NA values in rainfall; \n",
-           paste(as.character(final_w[is.na(rain), times])),
+           paste(as.character(final_w[is.na(rain), times]), collapse = "   "),
            "\nplease use a complete dataset"
         )
      }
@@ -777,7 +928,7 @@ format_weather <- function(w,
            call. = FALSE,
            "rain inputs are outside expected ranges (0 and 100 mm); \n",
            paste(as.character(final_w[rain < 0 |
-                                         rain > 100, times])),
+                                         rain > 100, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }
@@ -790,7 +941,7 @@ format_weather <- function(w,
         stop(
            call. = FALSE,
            "NA values in wind speed; \n",
-           paste(as.character(final_w[is.na(ws), times])),
+           paste(as.character(final_w[is.na(ws), times]), collapse = "   "),
            "\nplease use a complete dataset"
         )
      }
@@ -801,7 +952,7 @@ format_weather <- function(w,
            call. = FALSE,
            "wind speed inputs are outside expected ranges (0 and 150 kph); \n",
            paste(as.character(final_w[ws < 0 |
-                                         ws > 150, times])),
+                                         ws > 150, times]), collapse = "   "),
            "\nplease correct these inputs and run again"
         )
      }

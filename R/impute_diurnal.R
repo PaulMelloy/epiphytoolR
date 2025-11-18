@@ -14,7 +14,7 @@
 #' @param min_hour integer, hour in the day when minimum observation was made.
 #' @param l_out integer, length out of function. `24` for hourly observations (default.
 #'  `1440` for minute. `48` for half hourly **Still Experimental!**
-#' @param ind_out integer, select the output useing an index number similar it
+#' @param ind_out integer, select the output using an index number similar it
 #'  `1:10[ind_out]`
 #'
 #' @return numeric vector equal to the of length h. An the respective hour from

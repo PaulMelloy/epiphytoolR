@@ -30,7 +30,7 @@ humidity for the hour returned.}
 \item{l_out}{integer, length out of function. \code{24} for hourly observations (default.
 \code{1440} for minute. \code{48} for half hourly \strong{Still Experimental!}}
 
-\item{ind_out}{integer, select the output useing an index number similar it
+\item{ind_out}{integer, select the output using an index number similar it
 \code{1:10[ind_out]}}
 }
 \value{
