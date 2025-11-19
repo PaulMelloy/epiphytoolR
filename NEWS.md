@@ -1,7 +1,6 @@
 # epiphytoolR 0.0.3
 
 # development version  0.0.3
- * *goal is to have released to CRAN*  
  *  **Potential breaking changes**  
  * Remove capture warnings functions and `format_weather()`
  * merge_axf_weather() changed to merge_weather() and now reads and merges JSON
