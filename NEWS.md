@@ -1,6 +1,6 @@
-# epiphytoolR (development version)
+# epiphytoolR 0.0.3
 
-# development version  1.0.0.9000
+# development version  0.0.3
  * *goal is to have released to CRAN*  
  *  **Potential breaking changes**  
  * Remove capture warnings functions and `format_weather()`
