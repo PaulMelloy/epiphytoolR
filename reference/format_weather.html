@@ -17,7 +17,7 @@ a point in time."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiphytoolR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,11 @@ a point in time.</p>
 <span>  lon <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lonlat_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  data_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  impute_nas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temp"</span>, <span class="st">"rh"</span><span class="op">)</span>,</span>
+<span>  fill_missing <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  Irolling_window <span class="op">=</span> <span class="fl">70</span>,</span>
+<span>  data_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -178,12 +182,37 @@ name/id and longitude and latitude coordinates if they are not supplied in
 the data. Optional, see also <code>lon</code> and <code>lat</code>.</p></dd>
 
 
+<dt id="arg-impute-nas">impute_nas<a class="anchor" aria-label="anchor" href="#arg-impute-nas"></a></dt>
+<dd><p><code>character</code> vector indicating which variables to impute
+missing or <code>NA</code> values. Options include, "temp" (see <code><a href="impute_temp.html">epiphytoolR::impute_temp()</a></code>),
+"rh"(see <code><a href="impute_rh.html">epiphytoolR::impute_rh()</a></code>). "rain" will be filled with zeros.
+If <code>TRUE</code> (logical) it will impute missing values for all available options.
+If <code>FALSE</code> (logical) it will not impute any missing values.
+The default is c("temp,"rh) to impute only temperature and humidity.</p></dd>
+
+
+<dt id="arg-fill-missing">fill_missing<a class="anchor" aria-label="anchor" href="#arg-fill-missing"></a></dt>
+<dd><p>If <code>TRUE</code> the function will use <a href="https://CRAN.R-project.org/package=openmeteo" class="external-link"><span class="pkg">openmeteo</span></a> to fill missing weather
+data. Still experimental!!!</p></dd>
+
+
+<dt id="arg-irolling-window">Irolling_window<a class="anchor" aria-label="anchor" href="#arg-irolling-window"></a></dt>
+<dd><p><code>integer</code> value indicating the number of hours to use
+for the rolling window to impute missing values. See <code>impute_nas</code></p></dd>
+
+
 <dt id="arg-data-check">data_check<a class="anchor" aria-label="anchor" href="#arg-data-check"></a></dt>
 <dd><p>If <code>TRUE</code>, it checks for NA values in all 'rain', 'temp',
 'rh', 'wd' and 'ws' data and if any values which are unlikely. Use a character
 vector of variable names, (wither any of 'rain', 'temp', 'rh', 'wd' or 'ws')
 to check data from specific variables. If FALSE it ignores all variables and
 could cause subsequent models using this data to fail.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>If <code>TRUE</code> (default) it will print messages and warnings associated
+with the internal handling of the weather formatting.
+It is not recommended to use <code>FALSE</code> to suppress these messages. Instead</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -250,6 +279,8 @@ created by specifying the file path to a <acronym>CSV</acronym> file using
 <span class="r-in"><span>   station <span class="op">=</span> <span class="st">"StationID"</span>,</span></span>
 <span class="r-in"><span>   time_zone <span class="op">=</span> <span class="st">"UTC"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Weather data is compliant with the following models:  blackspot.sp, ascotraceR</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Relative humidity data contains NA values, imputing missing values</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All relative humidity values are 'NA' or missing, check data if this is not intentional</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reformat saved weather</span></span></span>
@@ -278,7 +309,7 @@ created by specifying the file path to a <acronym>CSV</acronym> file using
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
