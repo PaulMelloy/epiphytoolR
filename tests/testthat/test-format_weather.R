@@ -1,7 +1,32 @@
+set.seed(27)
+dat_minutes <- 10080 # equal to, 7 * 24 * 60
+
+weather_station_data <- data.table(
+   Local.Time.YYYY = rep(2020, dat_minutes),
+   Local.Time.MM = rep(6, dat_minutes),
+   Local.Time.DD = rep(10:16, each = 24 * 60),
+   Local.Time.HH24 = rep(1:24, each = 60, times = 7),
+   Local.Time.MI = rep(0:59, times = 7 * 24),
+   Precipitation.since.last.observation.in.mm = round(abs(rnorm(
+      dat_minutes, mean = 0, sd = 0.2
+   )), 1),
+   Wind.speed.in.km.h = abs(rnorm(
+      dat_minutes, mean = 5, sd = 10
+   )),
+   Wind.direction.in.degrees.true = runif(n = dat_minutes,
+                                          min = 0, max = 359),
+   Temperature.in.Degrees.c = rnorm(10080,15,3),
+   Relative.Humidity = impute_diurnal(1:10080,
+                                      max_obs = 100,
+                                      min_obs = 35,
+                                      max_hour = 24,
+                                      min_hour = 16) * runif(10080,0.8,1.2),
+   Station.Number = "16096"
+)
+
 # identify lon lat from file ---------------------------------------------------
 test_that("`format_weather()` is able to identify the correct lat and lon values
           from file", {
-             set.seed(27)
              # create data.frame of station coordinates
              write.csv(data.frame(
                 station = c("69061", "16096"),
@@ -11,29 +36,6 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
              file = file.path(tempdir(), "stat_coord.csv"))
 
              dat_minutes <- 10080 # equal to, 7 * 24 * 60
-
-             weather_station_data <- data.table(
-                Local.Time.YYYY = rep(2020, dat_minutes),
-                Local.Time.MM = rep(6, dat_minutes),
-                Local.Time.DD = rep(10:16, each = 24 * 60),
-                Local.Time.HH24 = rep(1:24, each = 60, times = 7),
-                Local.Time.MI = rep(0:59, times = 7 * 24),
-                Precipitation.since.last.observation.in.mm = round(abs(rnorm(
-                   dat_minutes, mean = 0, sd = 0.2
-                )), 1),
-                Wind.speed.in.km.h = abs(rnorm(
-                   dat_minutes, mean = 5, sd = 10
-                )),
-                Wind.direction.in.degrees.true = runif(n = dat_minutes,
-                                                       min = 0, max = 359),
-                Temperature.in.Degrees.c = rnorm(10080,15,3),
-                Relative.Humidity = impute_diurnal(1:10080,
-                                               max_obs = 100,
-                                               min_obs = 35,
-                                               max_hour = 24,
-                                               min_hour = 16) * runif(10080,0.8,1.2),
-                Station.Number = "16096"
-             )
 
              weather_dt <- format_weather(
                 w = weather_station_data,
@@ -139,7 +141,8 @@ test_that("`format_weather()` handles multiple stations", {
          lon = "Station.Longitude",
          lat = "Station.Latitude",
          station = "StationID",
-         time_zone = "Australia/Brisbane"
+         time_zone = "Australia/Brisbane",
+         impute_nas = FALSE
       )
    ), regexp = "NA values in *")
 
@@ -155,6 +158,7 @@ test_that("`format_weather()` handles multiple stations", {
       lat = "Station.Latitude",
       station = "StationID",
       time_zone = "Australia/Adelaide",
+      impute_nas = FALSE,
       data_check = FALSE
       )))
 
@@ -190,28 +194,11 @@ test_that("`format_weather()` handles multiple stations", {
 test_that("`format_weather()` works when lat lon are in data", {
    dat_minutes <- 10080 # equal to, 7 * 24 * 60
 
-   weather_station_data <- data.table(
-      Local.Time.YYYY = rep(2020, dat_minutes),
-      Local.Time.MM = rep(6, dat_minutes),
-      Local.Time.DD = rep(10:16, each = 24 * 60),
-      Local.Time.HH24 = rep(1:24, each = 60, times = 7),
-      Local.Time.MI = rep(0:59, times = 7 * 24),
-      Precipitation.since.last.observation.in.mm = round(abs(rnorm(
-         dat_minutes, mean = 0, sd = 0.2
-      )), 1),
-      Wind.speed.in.km.h = abs(rnorm(
-         dat_minutes, mean = 5, sd = 10
-      )),
-      Wind.direction.in.degrees.true =
-         runif(n = dat_minutes, min = 0, max = 359),
-      Station.Number = "16096",
-      Temperature.in.Degrees.c = rnorm(10080,15,3),
-      lon = 135.7243,
-      lat = -33.26625
-   )
+   w_station_data <- weather_station_data[ , c("lon","lat") := .(135.7243, -33.26625)]
+
 
    weather_dt <- format_weather(
-      w = weather_station_data,
+      w = w_station_data,
       YYYY = "Local.Time.YYYY",
       MM = "Local.Time.MM",
       DD = "Local.Time.DD",
@@ -219,6 +206,7 @@ test_that("`format_weather()` works when lat lon are in data", {
       mm = "Local.Time.MI",
       rain = "Precipitation.since.last.observation.in.mm",
       temp = "Temperature.in.Degrees.c",
+      rh = "Relative.Humidity",
       ws = "Wind.speed.in.km.h",
       wd = "Wind.direction.in.degrees.true",
       station = "Station.Number",
@@ -278,26 +266,6 @@ test_that("`format_weather()` stops if `x` is not a data.frame object", {
 test_that("`format_weather()` stops if time cols are not provided", {
    dat_minutes <- 10080 # equal to, 7 * 24 * 60
 
-   weather_station_data <- data.table(
-      Local.Time.YYYY = rep(2020, dat_minutes),
-      Local.Time.MM = rep(6, dat_minutes),
-      Local.Time.DD = rep(10:16, each = 24 * 60),
-      Local.Time.HH24 = rep(1:24, each = 60, times = 7),
-      Local.Time.MI = rep(0:59, times = 7 * 24),
-      Precipitation.since.last.observation.in.mm = round(abs(rnorm(
-         dat_minutes, mean = 0, sd = 0.2
-      )), 1),
-      Wind.speed.in.km.h = abs(rnorm(
-         dat_minutes, mean = 5, sd = 10
-      )),
-      Wind.direction.in.degrees.true =
-         runif(n = dat_minutes, min = 0, max = 359),
-      Temperature = rnorm(10080, 25, 5),
-      Station.Number = "16096",
-      lon = 135.7243,
-      lat = -33.26625
-   )
-
    weather_dt <- format_weather(
       w = weather_station_data,
       YYYY = "Local.Time.YYYY",
@@ -306,7 +274,8 @@ test_that("`format_weather()` stops if time cols are not provided", {
       hh = "Local.Time.HH24",
       mm = "Local.Time.MI",
       rain = "Precipitation.since.last.observation.in.mm",
-      temp = "Temperature",
+      temp = "Temperature.in.Degrees.c",
+      rh = "Relative.Humidity",
       ws = "Wind.speed.in.km.h",
       wd = "Wind.direction.in.degrees.true",
       station = "Station.Number",
@@ -343,24 +312,24 @@ test_that("`format_weather() stops if lonlat input lacks proper names", {
    dat_minutes <- 10080 # equal to, 7 * 24 * 60
 
 
-   weather_station_data <- data.table(
-      Local.Time.YYYY = rep(2020, dat_minutes),
-      Local.Time.MM = rep(6, dat_minutes),
-      Local.Time.DD = rep(10:16, each = 24 * 60),
-      Local.Time.HH24 = rep(1:24, each = 60, times = 7),
-      Local.Time.MI = rep(0:59, times = 7 * 24),
-      Precipitation.since.last.observation.in.mm = round(abs(rnorm(
-         dat_minutes, mean = 0, sd = 0.2
-      )), 1),
-      Wind.speed.in.km.h = abs(rnorm(
-         dat_minutes, mean = 5, sd = 10
-      )),
-      Wind.direction.in.degrees.true =
-         runif(n = dat_minutes, min = 0, max = 359),
-      Station.Number = "16096",
-      lon = 135.7243,
-      lat = -33.26625
-   )
+   # weather_station_data <- data.table(
+   #    Local.Time.YYYY = rep(2020, dat_minutes),
+   #    Local.Time.MM = rep(6, dat_minutes),
+   #    Local.Time.DD = rep(10:16, each = 24 * 60),
+   #    Local.Time.HH24 = rep(1:24, each = 60, times = 7),
+   #    Local.Time.MI = rep(0:59, times = 7 * 24),
+   #    Precipitation.since.last.observation.in.mm = round(abs(rnorm(
+   #       dat_minutes, mean = 0, sd = 0.2
+   #    )), 1),
+   #    Wind.speed.in.km.h = abs(rnorm(
+   #       dat_minutes, mean = 5, sd = 10
+   #    )),
+   #    Wind.direction.in.degrees.true =
+   #       runif(n = dat_minutes, min = 0, max = 359),
+   #    Station.Number = "16096",
+   #    lon = 135.7243,
+   #    lat = -33.26625
+   # )
 
    expect_error(
       format_weather(
@@ -386,24 +355,24 @@ test_that("`format_weather() stops if lonlat input lacks proper names", {
 test_that("`format_weather() stops if lonlat input lacks proper names", {
    dat_minutes <- 10080 # equal to, 7 * 24 * 60
 
-   weather_station_data <- data.table(
-      Local.Time.YYYY = rep(2020, dat_minutes),
-      Local.Time.MM = rep(6, dat_minutes),
-      Local.Time.DD = rep(10:16, each = 24 * 60),
-      Local.Time.HH24 = rep(1:24, each = 60, times = 7),
-      Local.Time.MI = rep(0:59, times = 7 * 24),
-      Precipitation.since.last.observation.in.mm = round(abs(rnorm(
-         dat_minutes, mean = 0, sd = 0.2
-      )), 1),
-      Wind.speed.in.km.h = abs(rnorm(
-         dat_minutes, mean = 5, sd = 10
-      )),
-      Wind.direction.in.degrees.true =
-         runif(n = dat_minutes, min = 0, max = 359),
-      Station.Number = "16096",
-      lon = 135.7243,
-      lat = -33.26625
-   )
+   # weather_station_data <- data.table(
+   #    Local.Time.YYYY = rep(2020, dat_minutes),
+   #    Local.Time.MM = rep(6, dat_minutes),
+   #    Local.Time.DD = rep(10:16, each = 24 * 60),
+   #    Local.Time.HH24 = rep(1:24, each = 60, times = 7),
+   #    Local.Time.MI = rep(0:59, times = 7 * 24),
+   #    Precipitation.since.last.observation.in.mm = round(abs(rnorm(
+   #       dat_minutes, mean = 0, sd = 0.2
+   #    )), 1),
+   #    Wind.speed.in.km.h = abs(rnorm(
+   #       dat_minutes, mean = 5, sd = 10
+   #    )),
+   #    Wind.direction.in.degrees.true =
+   #       runif(n = dat_minutes, min = 0, max = 359),
+   #    Station.Number = "16096",
+   #    lon = 135.7243,
+   #    lat = -33.26625
+   # )
 
    expect_error(
       weather_dt <- format_weather(
@@ -446,6 +415,8 @@ test_that("`format_weather() creates a `mm` column if not provided", {
          dat_minutes, mean = 5, sd = 10
       )),
       Temperature = rnorm(10080, cos((1:25+18)/3.8)*11+25, sd = 2),
+      RelativeHumidity = impute_diurnal(h = 1:10080,
+                                        l_out = 1440),
       Wind.direction.in.degrees.true =
          runif(n = dat_minutes, min = 0, max = 359),
       Station.Number = "16096",
@@ -463,6 +434,7 @@ test_that("`format_weather() creates a `mm` column if not provided", {
          mm = "Local.Time.mm",
          rain = "Precipitation.since.last.observation.in.mm",
          temp = "Temperature",
+         rh = "RelativeHumidity",
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
          station = "Station.Number",
@@ -509,7 +481,9 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
       lon = 135.7243,
       lat = -33.26625,
       time_zone = c("Australia/Adelaide"),
-      Temperature = rnorm(dat_minutes,20,10)
+      Temperature = rnorm(dat_minutes,20,10),
+      RelativeHumidity = impute_diurnal(h = 1:10080,
+                                        l_out = 1440)
    )
 
    expect_warning(
@@ -520,6 +494,7 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
          temp = "Temperature",
+         rh = "RelativeHumidity",
          station = "Station.Number",
          lat = "lat",
          lon = "lon",
@@ -547,24 +522,30 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
    ))
 })
 
-# stop if `wd_sd` is missing or cannot be calculated ---------------------------
-test_that("`format_weather() stops if `wd_sd` is not available", {
-   weather_station_data <- data.table(
-      Precipitation.since.last.observation.in.mm = round(abs(rnorm(
-         24, mean = 0, sd = 0.2
-      )), 1),
-      Wind.speed.in.km.h = abs(rnorm(24, mean = 5, sd = 10)),
-      Wind.direction.in.degrees.true =
-         runif(n = 24, min = 0, max = 359),
-      Station.Number = "16096",
-      Ptime = seq(ISOdate(2000, 1, 1), by = "1 hour", length.out = 24),
-      lon = 135.7243,
-      lat = -33.26625
-   )
+# Warning if `wd_sd` is missing or cannot be calculated ---------------------------
+test_that("`format_weather() warns if `wd_sd` is not available", {
+   # weather_station_data <- data.table(
+   #    Precipitation.since.last.observation.in.mm = round(abs(rnorm(
+   #       24, mean = 0, sd = 0.2
+   #    )), 1),
+   #    Wind.speed.in.km.h = abs(rnorm(24, mean = 5, sd = 10)),
+   #    Wind.direction.in.degrees.true =
+   #       runif(n = 24, min = 0, max = 359),
+   #    Station.Number = "16096",
+   #    Ptime = seq(ISOdate(2000, 1, 1), by = "1 hour", length.out = 24),
+   #    lon = 135.7243,
+   #    lat = -33.26625
+   # )
+   w_station_data <-
+      cbind(weather_station_data,
+            data.table("Ptime" = seq(ISOdate(2000, 1, 1),
+                                            by = "1 hour",
+                                            length.out = 10080)))
 
+   expect_warning(
    expect_error(
       format_weather(
-         w = weather_station_data,
+         w = w_station_data,
          YYYY = "Local.Time.YYYY",
          MM = "Local.Time.MM",
          DD = "Local.Time.DD",
@@ -572,14 +553,16 @@ test_that("`format_weather() stops if `wd_sd` is not available", {
          rain = "Precipitation.since.last.observation.in.mm",
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
+         temp = "Temperature.in.Degrees.c",
+         rh = "Relative.Humidity",
          station = "Station.Number",
          lat = "lat",
          lon = "lon",
          POSIXct_time = "Ptime",
          time_zone = "Australia/Brisbane"
       ),
-      regexp = "* was unable to detect or calculate `wd_sd`.*"
-   )
+      regexp = "*Relative humidity inputs are outside expected ranges*"
+   ),regexp = "*was unable to detect or calculate `wd_sd`*")
 })
 
 # stop if no raster, `r` or `time_zone` provided -------------------------------
@@ -675,25 +658,67 @@ weather_station_data <- data.table(
    )),
    Wind.direction.in.degrees.true = runif(n = dat_minutes,
                                           min = 0, max = 359),
-   Station.Number = rep("016096", dat_minutes)
+   Station.Number = rep("016096", dat_minutes),
+   Temperature.in.Degrees.c = rnorm(dat_minutes,15,3),
+   Relative.Humidity = impute_diurnal(1:dat_minutes,
+                                      max_obs = 100,
+                                      min_obs = 35,
+                                      max_hour = 24,
+                                      min_hour = 16) * runif(dat_minutes,0.8,1.2)
 )
 
-test10 <- format_weather(
-   w = weather_station_data,
-   POSIXct_time = "Time",
-   rain = "Precipitation.since.last.observation.in.mm",
-   ws = "Wind.speed.in.km.h",
-   wd = "Wind.direction.in.degrees.true",
-   station = "Station.Number",
-   lonlat_file = file.path(tempdir(), "stat_coord.csv"),
-   time_zone = "Australia/Sydney",
-   data_check = FALSE
-)
+test_that("format weather can handle local timezones with daylight savings and
+          save and read back in preformated data",{
+expect_no_error({
+      test10 <- format_weather(
+      w = weather_station_data,
+      POSIXct_time = "Time",
+      rain = "Precipitation.since.last.observation.in.mm",
+      ws = "Wind.speed.in.km.h",
+      wd = "Wind.direction.in.degrees.true",
+      #temp = "Temperature.in.Degrees.c",
+      rh = "Relative.Humidity",
+      station = "Station.Number",
+      lonlat_file = file.path(tempdir(), "stat_coord.csv"),
+      time_zone = "Australia/Sydney",
+      data_check = FALSE,
+      verbose = FALSE)
+   }
+   )
+   expect_false(test10[, any(is.na(lat))])
+   expect_false(test10[, any(is.na(lon))])
+
+   # since R 4.3 write.csv saves midnight date-times as date without 00:00:00
+   # therefore we need data.tables fwrite function
+   w_path <- paste(tempdir(), "weather_saved.csv", sep = "\\")
+
+   write.csv(test10, file = w_path,
+             row.names = FALSE)
+   weather2 <- read.csv(w_path, stringsAsFactors = FALSE)
+
+   # Verbose = valse to suppress warnings on original run but not on reformating
+   expect_warning(test11 <- format_weather(weather2, time_zone = "UTC",
+                                           data_check = c("temp","rain","ws","wd")),
+                  regexp = "All temperature values are 'NA' or missing*")
+   expect_warning(format_weather(weather2, time_zone = "Australia/Perth",
+                                 data_check = c("temp","rain","ws","wd")),
+                  regexp = "All temperature values are 'NA' or missing*")
+
+
+   expect_equal(class(test11), c("epiphy.weather", "data.table", "data.frame"))
+   expect_equal(class(test11[,times]), c("POSIXct", "POSIXt"))
+   expect_equal(dim(test11), c(8760,15))
+
+   expect_warning(format_weather(weather2, time_zone = "Australia/Sydney",
+                                 data_check = c("temp","rain","ws","wd")),
+                  regexp = "All temperature values are 'NA' or missing*")
+   # tidy up
+   unlink(w_path)
+})
 
 
 test_that("lat and lon are correctly parsed from file to dataset", {
-   expect_false(test10[, any(is.na(lat))])
-   expect_false(test10[, any(is.na(lon))])
+
 
    weather_station_data[, Station.Number := 016096]
 
@@ -712,34 +737,6 @@ test_that("lat and lon are correctly parsed from file to dataset", {
    )
 })
 
-test_that("preformated weather read back in can be reformatted",{
-   # since R 4.3 write.csv saves midnight date-times as date without 00:00:00
-   # therefore we need data.tables fwrite function
-   w_path <- paste(tempdir(), "weather_saved.csv", sep = "\\")
-
-   write.csv(test10, file = w_path,
-             row.names = FALSE)
-   weather2 <- read.csv(w_path, stringsAsFactors = FALSE)
-
-   expect_warning(test11 <- format_weather(weather2, time_zone = "UTC",
-                                           data_check = c("temp","rain","ws","wd")),
-                  regexp = "All temperature values are 'NA' or missing*")
-   expect_warning(format_weather(weather2, time_zone = "Australia/Perth",
-                                 data_check = c("temp","rain","ws","wd")),
-                     regexp = "All temperature values are 'NA' or missing*")
-
-
-   expect_equal(class(test11), c("epiphy.weather", "data.table", "data.frame"))
-   expect_equal(class(test11[,times]), c("POSIXct", "POSIXt"))
-   expect_equal(dim(test11), c(8760,15))
-
-   expect_warning(format_weather(weather2, time_zone = "Australia/Sydney",
-                                 data_check = c("temp","rain","ws","wd")),
-                     regexp = "All temperature values are 'NA' or missing*")
-   # tidy up
-   unlink(w_path)
-})
-
 
 test_that("`format_weather()` fills missing time", {
    scaddan <-
@@ -754,9 +751,9 @@ test_that("`format_weather()` fills missing time", {
    weather_station_data <-
       weather_station_data[-(10:19),]
 
-  expect_warning(
-   expect_error(
    expect_warning(
+      expect_warning(
+         expect_warning(
      weather_dat <- format_weather(
         w = weather_station_data,
         POSIXct_time = "Local.Time",
@@ -769,8 +766,9 @@ test_that("`format_weather()` fills missing time", {
         station = "StationID",
         time_zone = "Australia/Brisbane",
         data_check = c("temp","rain","ws","wd")),
-     regexp = "All temperature values are 'NA' or missing*"
-  ), regexp = "NA values in rainfall"))
+     regexp = "*data contains NA values, imputing missing values"),
+     regexp = "*data contains NA values, imputing missing values"),
+     regexp = "Non-continuous data detected. Extra lines will be merged into data")
 
 
 })
@@ -791,6 +789,9 @@ test_that("`format_weather()` works with blackspot vignette", {
    # Format time into POSIX central time
    raw_weather$Local.Time <-
       lubridate::as_datetime(raw_weather$Local.Time)
+   raw_weather$RelativeHumidity <-
+      impute_diurnal(h = 1:dim(raw_weather)[1],
+                     l_out = 1440)
 
    weather <- format_weather(
       w = raw_weather,
@@ -799,6 +800,7 @@ test_that("`format_weather()` works with blackspot vignette", {
       wd_sd = "stdDevWindDirections",
       rain = "Rainfall",
       temp = "Temperature",
+      rh = "RelativeHumidity",
       wd = "meanWindDirections",
       lon = "Station.Longitude",
       lat = "Station.Latitude",
@@ -858,6 +860,55 @@ test_that("I can make fake datasets and format them through preformat",{
 
 })
 
+test_that("Fill missing pulls weather from openmet",{
+   brisvegas <-
+      system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+   bris <- fread(brisvegas)
+   # Format times
+   bris[,aifstime_utc := as.POSIXct(aifstime_utc,tz = "UTC")]
+
+   # suppress all the other warnings indicating what is wrong
+      suppressWarnings({
+         expect_error(
+            format_weather(w = bris,
+                        POSIXct_time = "aifstime_utc",
+                        temp = "air_temp",
+                        rain = "rain_ten",
+                        rh = "rel_hum",
+                        ws = "wind_spd_kmh",
+                        wd = "wind_dir_deg",
+                        lon = "lon",
+                        lat = "lat",
+                        station = "name",
+                        time_zone = "UTC"),
+         regexp = "NA values")
+      })
+      bris_fixed <-
+         fill_time_gaps(bris,"aifstime_utc")
+
+      # suppress circular warnings
+      suppressWarnings({
+         expect_no_error(
+            format_weather(w = bris_fixed,
+                           POSIXct_time = "aifstime_utc",
+                           temp = "air_temp",
+                           rain = "rain_ten",
+                           rh = "rel_hum",
+                           ws = "wind_spd_kmh",
+                           wd = "wind_dir_deg",
+                           lon = "lon",
+                           lat = "lat",
+                           station = "name",
+                           time_zone = "UTC",
+                           fill_missing = TRUE,)
+         )
+         })
+
+
+})
+
+
+
 # import BOM data file
 brisvegas <-
    system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
@@ -893,6 +944,8 @@ test_that("Non-unique stations and coordinates are detected",{
    # This function causes a warning due to non-continuous weather data
    # data_check is set to false to
    expect_warning(
+      expect_warning(
+         expect_warning(
       out <-
       format_weather(w = b_wther,
                   POSIXct_time = "aifstime_utc",
@@ -905,7 +958,10 @@ test_that("Non-unique stations and coordinates are detected",{
                   lat = "lat",
                   station = "name",
                   time_zone = "UTC",
-                  data_check = FALSE))
+                  data_check = FALSE),
+      regexp = "*data contains NA values, imputing missing values"),
+   regexp = "*data contains NA values, imputing missing values"),
+regexp = "Non-continuous data detected. Extra lines will be merged into data")
 
    expect_false(any(duplicated(out$times)))
 })
@@ -936,4 +992,70 @@ test_that("Non-unique stations and coordinates are detected",{
 # })
 
 # Relative humidity added
-
+# test_that("weather values are imputed",{
+#    wdata <- fread("/home/paul/weather_data/23-24_Applethorpe.csv")
+#
+#    wdata[,aifstime_utc := as.POSIXct(as.character(aifstime_utc),
+#                                      format = "%Y%m%d%H%M%S",
+#                                      tz = "UTC")]
+#
+#    wdata <- wdata[order(aifstime_utc)]
+#
+#    # Check for error entries
+#    wdata[rain_ten < 0, rain_ten := 0]
+#
+#    tm_out <- which(wdata$air_temp < -30 |
+#                       wdata$air_temp > 60)
+#    wdata[tm_out,air_temp := NA_real_]
+#    wdata[tm_out, air_temp := frollmean(air_temp,
+#                                        n = 5,
+#                                        align = "center",
+#                                        na.rm = TRUE)]
+#
+#    rh_out <- which(wdata$rel_hum < 0 |
+#                       wdata$rel_hum > 100)
+#    wdata[rh_out,rel_hum := NA_real_]
+#    wdata[rh_out, rel_hum := frollmean(rel_hum,
+#                                       n = 5,
+#                                       align = "center",
+#                                       na.rm = TRUE)]
+#
+#    ws_out <- which(wdata$wind_spd_kmh < 0 |
+#                       wdata$wind_spd_kmh > 150)
+#    wdata[ws_out, wind_spd_kmh := NA_real_]
+#    wdata[ws_out, wind_spd_kmh := frollmean(wind_spd_kmh,
+#                                            n = 5,
+#                                            align = "center",
+#                                            na.rm = TRUE)]
+#
+#    wd_out <- which(wdata$wind_dir_deg < 0 |
+#                       wdata$wind_dir_deg > 360)
+#    wdata[wd_out, wind_dir_deg := NA_real_]
+#    circle_mean <- function(x){
+#       as.numeric(circular::mean.circular(
+#          circular::circular(x,
+#                             units = "degrees",
+#                             modulo = "2pi"),
+#          na.rm = TRUE))}
+#    wdata[wd_out, wind_dir_deg := frollapply(wind_dir_deg,
+#                                             n = 3,
+#                                             FUN = circle_mean,
+#                                             align = "center")]
+#
+#    data <-
+#       epiphytoolR::format_weather(
+#          wdata,
+#          POSIXct_time = "aifstime_utc",
+#          time_zone = "UTC",
+#          temp = "air_temp",
+#          rain = "rain_ten",
+#          rh = "rel_hum",
+#          ws = "wind_spd_kmh",
+#          wd = "wind_dir_deg",
+#          station = "name",
+#          lon = "lon",
+#          lat = "lat",
+#          impute_nas = c("temp","rh","rain"),
+#          Irolling_window = 60)
+#
+# })

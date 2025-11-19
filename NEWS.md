@@ -1,13 +1,22 @@
-# epiphytoolR (development version)
+# epiphytoolR 0.0.3
 
-# development version  1.0.0.9000
- * *goal is to have released to CRAN*  
+# development version  0.0.3
  *  **Potential breaking changes**  
- * Remove capture warnings functions and format_weather()  
+ * Remove capture warnings functions and `format_weather()`
  * merge_axf_weather() changed to merge_weather() and now reads and merges JSON
    weather data.  
  * update the README, to give more information about the package and how to 
  contribute
+ ### format_weather() fixes and improvements  
+ * `format_weather()` now will fill NA values using 
+ [openmeteo](https://cran.r-project.org/web/packages/openmeteo/refman/openmeteo.html) 
+ package  
+ * Missing times are now filled, adding NA values for any weather data columns.  
+ * bug fixes to `get_weather_coefs()`  
+ * `format_weather` returns which models are compliant with the output weather.  
+ * print_warnings argument removed argument `verbose()` handles messages and 
+ warnings  
+ 
 
 # epiphytoolR 0.0.2
  * Make `pkgdown` site
