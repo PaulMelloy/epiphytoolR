@@ -718,19 +718,7 @@ format_weather <- function(w,
                           is.na(wd) |
                           is.na(ws),times]
          if(verbose){message("Retrieving missing weather with openmeteo data ...\n")}
-        open_weather <-
-           openmeteo::weather_history(
-              location = unique(c(x_out[station == l_n, lat],
-                                  x_out[station == l_n, lon])),
-              start = as.Date(min(na_range)),
-              end = as.Date(max(na_range)),
-              hourly = c(
-                 "rain",
-                 "temperature_2m",
-                 "relative_humidity_2m",
-                 "wind_direction_10m",
-                 "wind_speed_10m"),
-              timezone = "UTC")
+        stop("openmeteo data is no longer available")
 
         data.table::setDT(open_weather)
         # create obscure colnames so they wont match with any input data
