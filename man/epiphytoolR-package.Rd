@@ -20,6 +20,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Paul Melloy \email{Paul.Melloy@csiro.au} (\href{https://orcid.org/0000-0003-4253-7167}{ORCID})
 
+Authors:
+\itemize{
+  \item Paul Melloy \email{Paul.Melloy@csiro.au} (\href{https://orcid.org/0000-0003-4253-7167}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Adam H. Sparks \email{adamhsparks@gmail.com} (\href{https://orcid.org/0000-0002-0061-8359}{ORCID}) [contributor]
