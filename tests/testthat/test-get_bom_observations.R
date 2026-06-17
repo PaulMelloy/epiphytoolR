@@ -1,4 +1,27 @@
+# These tests require network access and external data hosts. They are skipped
+#  on CRAN and when offline, and skip gracefully (rather than erroring) when a
+#  remote resource is unavailable.
+
+# Helper: download a file, skipping the calling test if it cannot be retrieved
+download_or_skip <- function(url, destfile) {
+   testthat::skip_on_cran()
+   testthat::skip_if_offline()
+   ok <- tryCatch(
+      suppressWarnings(
+         utils::download.file(url, destfile = destfile, quiet = TRUE, mode = "wb")
+      ),
+      error = function(e) 1L
+   )
+   if (!identical(as.integer(ok), 0L) ||
+       !file.exists(destfile) ||
+       file.size(destfile) == 0) {
+      testthat::skip(paste("resource unavailable:", url))
+   }
+}
+
 test_that("get_bom_observations works", {
+   skip_on_cran()
+   skip_if_offline()
    expect_no_error({
       dl_location <- tempdir()
       suppressMessages({
@@ -15,10 +38,10 @@ test_that("get_bom_observations works", {
 
 test_that("merge_axf_weather works", {
    tmp_dir <- tempdir()
-   wethr_dl <- tempfile("IDQ60910_",fileext = ".tgz",tmpdir = tmp_dir)
-   download.file("https://filedn.eu/lKw35gljYV2BIxxlGg9SUJb/weather/tgz/240825_0750_IDQ60910.tgz",
-                 destfile = wethr_dl)
-
+   wethr_dl <- tempfile("IDQ60910_", fileext = ".tgz", tmpdir = tmp_dir)
+   download_or_skip(
+      "https://filedn.eu/lKw35gljYV2BIxxlGg9SUJb/weather/tgz/240825_0750_IDQ60910.tgz",
+      wethr_dl)
 
    expect_warning(
       merge_weather(File_compressed = wethr_dl,
@@ -31,19 +54,19 @@ test_that("merge_axf_weather works", {
   file.remove("NTamborine.csv")
 })
 
-# Set up weather import
-tmp_dir <- tempdir()
-wethr_dl <- tempfile("RenmarkWeather_json_",fileext = ".tgz",tmpdir = tmp_dir)
-download.file("https://filedn.eu/lKw35gljYV2BIxxlGg9SUJb/weather/RenmarkWeather_json.tgz",
-              destfile = wethr_dl)
-
-untar(tarfile = wethr_dl,exdir = tmp_dir)
-renmark_weather <- list.files(tmp_dir,
-                              pattern = "DS60910.95687.json",
-                              full.names = TRUE)
-
 
 test_that("read_bom_json works", {
+   tmp_dir <- tempdir()
+   wethr_dl <- tempfile("RenmarkWeather_json_", fileext = ".tgz", tmpdir = tmp_dir)
+   download_or_skip(
+      "https://filedn.eu/lKw35gljYV2BIxxlGg9SUJb/weather/RenmarkWeather_json.tgz",
+      wethr_dl)
+
+   untar(tarfile = wethr_dl, exdir = tmp_dir)
+   renmark_weather <- list.files(tmp_dir,
+                                 pattern = "DS60910.95687.json",
+                                 full.names = TRUE)
+   skip_if(length(renmark_weather) == 0, "expected json file not found in archive")
 
    js1 <- read_bom_json(renmark_weather[1])
 
@@ -81,44 +104,28 @@ test_that("read_bom_json works", {
                          "logical", "logical", "character",
                          "character", "character", "integer",
                          "integer", "integer", "character"))
-
-
-   # w_dat <- do.call(what = "rbind",
-   #                  lapply(renmark_weather,
-   #                         read_bom_json,
-   #                         header = FALSE))
-   # w_dat[,sort_order := NULL]
-   #
-   # W_dat <- unique(w_dat)
-   #
-   # expect_true(any(duplicated(w_dat)))
-   # expect_false(any(duplicated(W_dat)))
-   # expect_true(any(duplicated(w_dat$aifstime_utc)))
-   # expect_false(any(duplicated(W_dat$aifstime_utc)))
-   #
-   # dtimes <- W_dat[duplicated(W_dat$aifstime_utc),aifstime_utc]
-   # W_dat[aifstime_utc %in% dtimes,]
-
 })
 
 
-
 test_that("merge_json_weather works", {
-
-   if(Sys.info()["nodename"] == "PURPLE-DP"){
+   skip_on_cran()
+   # This test relies on a local collection of weather archives that only exists
+   #  on the maintainer's machines. Skip elsewhere.
+   SA_weather <- character(0)
+   if (Sys.info()["nodename"] == "PURPLE-DP") {
       SA_weather <-
          list.files("P:/Public Folder/weather/tgz",
                     full.names = TRUE,
                     pattern = "IDS60910")
    }
-   if(Sys.info()["nodename"] == "pepper"){
+   if (Sys.info()["nodename"] == "pepper") {
       SA_weather <-
          list.files("/home/paul/Documents/weather/tgz",
                     full.names = TRUE,
                     pattern = "IDS60910")
-   }else{
-
    }
+   skip_if(length(SA_weather) == 0,
+           "local SA weather archives not available on this machine")
 
    expect_warning(
       merge_weather(SA_weather[1],
@@ -153,10 +160,5 @@ test_that("merge_json_weather works", {
                            "weather", "wind_dir", "wind_dir_deg",
                            "wind_spd_kmh", "wind_spd_kt", "wind_src"))
 
-
-
-
    unlink(file.path(getwd(),"Renmark.csv"))
-
 })
-

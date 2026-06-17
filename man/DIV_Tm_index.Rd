@@ -4,7 +4,7 @@
 \alias{DIV_Tm_index}
 \title{Daily Infection Value - temperature index}
 \source{
-\url{https://doi.org/10.1007/978-1-4020-6065-6_9}
+\doi{10.1007/978-1-4020-6065-6_9}
 }
 \usage{
 DIV_Tm_index(temp, rainfall = 0.2)

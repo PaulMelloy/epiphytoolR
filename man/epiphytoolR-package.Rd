@@ -6,22 +6,19 @@
 \alias{epiphytoolR-package}
 \title{epiphytoolR: Epiphytotic Modeling Tools}
 \description{
-epiphytoolR provides functions for undertaking epiphytotic modelling and simulation studies in R. This package provides common base level functions that can be used in modelling the spatial movement of splash and wind dispersed plant disease inoculum.
+Provides common base-level functions for undertaking epiphytotic modelling and simulation studies in R. Included are tools for modelling the spatial movement of splash and wind dispersed plant disease inoculum, estimating disease progress, and formatting and imputing weather data for use in process-based plant disease models.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://paulmelloy.github.io/epiphytoolR/}
+  \item \url{https://paulmelloy.com.au/epiphytoolR/}
+  \item \url{https://github.com/PaulMelloy/epiphytoolR}
+  \item Report bugs at \url{https://github.com/PaulMelloy/epiphytoolR/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Paul Melloy \email{Paul.Melloy@csiro.au} (\href{https://orcid.org/0000-0003-4253-7167}{ORCID})
-
-Authors:
-\itemize{
-  \item Paul Melloy \email{Paul.Melloy@csiro.au} (\href{https://orcid.org/0000-0003-4253-7167}{ORCID})
-}
 
 Other contributors:
 \itemize{

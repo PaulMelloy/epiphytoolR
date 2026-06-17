@@ -4,7 +4,7 @@
 \alias{disease_aug_soil}
 \title{DiseaseAUGSoil - number of girdled internodes}
 \source{
-\url{https://doi.org/10.1094/PDIS-01-11-0077}
+\doi{10.1094/PDIS-01-11-0077}
 }
 \usage{
 disease_aug_soil(DNA_pg)
@@ -26,5 +26,5 @@ paper linked in the DOI below
 disease_aug_soil(50)
 }
 \seealso{
-formula one \url{https://doi.org/10.1111/ppa.12044}
+formula one \doi{10.1111/ppa.12044}
 }

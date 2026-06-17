@@ -60,14 +60,16 @@ Audpc <-
        na_i <- c(which(is.na(evaluation)),
                  which(is.na(dates)))
 
-       # remove indices with NA
-       evaluation <- rbind(evaluation[,-na_i])
-       dates <- dates[-na_i]
+       # remove indices with NA (only if any NAs are present; `x[, -integer(0)]`
+       #  would otherwise drop all columns)
+       if(length(na_i) > 0){
+          evaluation <- rbind(evaluation[,-na_i])
+          dates <- dates[-na_i]
 
-       # update lengths
-       n <- length(dates)
-       k <- ncol(evaluation)
-
+          # update lengths
+          n <- length(dates)
+          k <- ncol(evaluation)
+       }
     }
 
     audpc <- 0

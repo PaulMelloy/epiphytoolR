@@ -4,7 +4,7 @@
 \alias{calc_fpea_emergence}
 \title{Calculate field-pea emergence}
 \source{
-\url{https://doi.org/10.1007/978-1-4020-6065-6_9}
+\doi{10.1007/978-1-4020-6065-6_9}
 }
 \usage{
 calc_fpea_emergence(sowing_date, hemisphere = "south")

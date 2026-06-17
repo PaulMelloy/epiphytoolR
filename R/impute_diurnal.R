@@ -33,14 +33,15 @@
 #' impute_diurnal(max_hour = 6,
 #'                min_hour = 14)
 #'
-#' w_dt <- weather
+#' \donttest{
+#' w_dt <- data.table::copy(weather)
 #' w_dt[3000 : 3050, temp := NA_real_]
 #' plot(w_dt[2900:3200, temp], type = "l")
 #'
 #' rolling_window <- 24
 #' w_dt[, tm_imp := round(data.table::frollapply(
 #'                       data.table::hour(times),
-#'                       n = rolling_window,
+#'                       N = rolling_window,
 #'                       fill = NA_real_,
 #'                       FUN = impute_diurnal,
 #'                       max_obs = max(temp, na.rm = TRUE),
@@ -51,6 +52,7 @@
 #'                       ind_out = ceiling(rolling_window/2)),3)]
 #' plot(w_dt[2900:3200, temp], type = "l")
 #' lines(w_dt[2900:3200, tm_imp], type = "l", col = "red")
+#' }
 impute_diurnal <-
    function(h = 1:24,
             max_obs = 95,
@@ -152,13 +154,15 @@ rolling_window <- 2 * 24
 #' @export
 #'
 #' @examples
-#' dt <- weather
+#' \donttest{
+#' dt <- data.table::copy(weather)
+#' dt[3000:3050, temp := NA_real_]
 #' rolling_window <- length(dt[is.na(temp),temp])*2
 #' dt[,indx := .I]
 #'
 #' dt[, tm_imp := round(data.table::frollapply(
 #'   indx,
-#'   n = rolling_window,
+#'   N = rolling_window,
 #'   fill = NA_real_,
 #'   FUN = impute_fill,
 #'   FUN_n = rolling_window,
@@ -169,6 +173,7 @@ rolling_window <- 2 * 24
 #'
 #' plot(dt[2950:3100, temp], type = "l")
 #' lines(dt[2950:3100, tm_imp], type = "l", col = "red")
+#' }
 impute_fill <- function(ind,var,times, FUN_n){
 
    # define data.table globals

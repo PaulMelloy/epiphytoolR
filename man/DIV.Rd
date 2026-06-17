@@ -4,7 +4,7 @@
 \alias{DIV}
 \title{Daily Infection Values}
 \source{
-\url{https://doi.org/10.1007/978-1-4020-6065-6_9}
+\doi{10.1007/978-1-4020-6065-6_9}
 }
 \usage{
 DIV(RH, Tm, rainfall = 0.2)
@@ -22,7 +22,7 @@ infection value for day i ranging between 0 (no fungal growth) and 1
 }
 \description{
 Calculates the Temperature index for day i and hour j. Temperature index is used
-to calculate the Daily Infection Values (DIV) for the model published by Shoeny et. al
+to calculate the Daily Infection Values (DIV) for the model published by Schoeny et. al
 (2007).
 }
 \details{

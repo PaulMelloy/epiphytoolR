@@ -57,14 +57,15 @@ impute_diurnal(max_obs = 99,
 impute_diurnal(max_hour = 6,
                min_hour = 14)
 
-w_dt <- weather
+\donttest{
+w_dt <- data.table::copy(weather)
 w_dt[3000 : 3050, temp := NA_real_]
 plot(w_dt[2900:3200, temp], type = "l")
 
 rolling_window <- 24
 w_dt[, tm_imp := round(data.table::frollapply(
                       data.table::hour(times),
-                      n = rolling_window,
+                      N = rolling_window,
                       fill = NA_real_,
                       FUN = impute_diurnal,
                       max_obs = max(temp, na.rm = TRUE),
@@ -75,4 +76,5 @@ w_dt[, tm_imp := round(data.table::frollapply(
                       ind_out = ceiling(rolling_window/2)),3)]
 plot(w_dt[2900:3200, temp], type = "l")
 lines(w_dt[2900:3200, tm_imp], type = "l", col = "red")
+}
 }

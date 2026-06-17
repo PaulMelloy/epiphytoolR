@@ -9,8 +9,8 @@
 #'  *D. pinodes*, *P. medicaginis* var *pinodella* and *P. koolunga*.
 #'
 #' @return estimated number of girdled field pea internodes at the end of winter.
-#' @source <https://doi.org/10.1094/PDIS-01-11-0077>
-#' @seealso formula one <https://doi.org/10.1111/ppa.12044>
+#' @source \doi{10.1094/PDIS-01-11-0077}
+#' @seealso formula one \doi{10.1111/ppa.12044}
 #' @export
 #'
 #' @examples

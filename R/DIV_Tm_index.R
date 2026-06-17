@@ -9,7 +9,7 @@
 #' Formula adapted from Schoeny. et al. (2007) in European Journal of Plant
 #' Pathology.
 #'
-#' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
+#' @source \doi{10.1007/978-1-4020-6065-6_9}
 #'
 #' @param temp daily average temperature in degrees Celsius
 #' @param rainfall rainfall in mm

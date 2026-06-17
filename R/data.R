@@ -32,7 +32,9 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' raw_bom <- make_bom_data()
+#' }
 make_bom_data <-
    function() {
       set.seed(124)

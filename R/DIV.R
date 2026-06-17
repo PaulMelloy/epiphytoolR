@@ -2,14 +2,14 @@
 #'
 #' @description
 #' Calculates the Temperature index for day i and hour j. Temperature index is used
-#'  to calculate the Daily Infection Values (DIV) for the model published by Shoeny et. al
+#'  to calculate the Daily Infection Values (DIV) for the model published by Schoeny et. al
 #'  (2007).
 #'
 #' @details
 #' Formula adapted from Schoeny. et al. (2007) in European Journal of Plant
 #' Pathology.
 #'
-#' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
+#' @source \doi{10.1007/978-1-4020-6065-6_9}
 #'
 #' @param RH relative humitiy percentage (numeric)
 #' @param Tm daily average temperature in degrees celcius

@@ -25,7 +25,7 @@ format_weather(
   lat = NULL,
   lonlat_file = NULL,
   impute_nas = c("temp", "rh"),
-  fill_missing = NULL,
+  fill_missing = FALSE,
   Irolling_window = 70,
   data_check = TRUE,
   verbose = TRUE
@@ -57,11 +57,12 @@ weather was logged.}
 formatted time. This can be used instead of arguments \code{YYYY}, \code{MM}, \code{DD},
 \code{hh}, \code{mm.}.}
 
-\item{time_zone}{Time zone (Olsen time zone format) \code{character} where the
-weather station is located. May be in a column or supplied as a character string.
-Optional, see also \code{r}. See details.}
+\item{time_zone}{Time zone of the weather observation \code{times} (Olsen time zone
+format) supplied as a \code{character} string.
+Ideally in "UTC" format to avoid errors associated with daylight savings.
+If unsure and time data has continuity, use "UTC".}
 
-\item{temp}{Column name \code{character} or index in \code{x} that refers to temperature in degrees
+\item{temp}{Column name \code{character} or index in \code{w} that refers to temperature in degrees
 Celsius.}
 
 \item{rain}{Column name \code{character} or index in \code{w} that refers to rainfall in millimetres.}
@@ -98,8 +99,15 @@ If \code{TRUE} (logical) it will impute missing values for all available options
 If \code{FALSE} (logical) it will not impute any missing values.
 The default is c("temp,"rh) to impute only temperature and humidity.}
 
-\item{fill_missing}{If \code{TRUE} the function will use \CRANpkg{openmeteo} to fill missing weather
-data. Still experimental!!!}
+\item{fill_missing}{logical. If \code{TRUE}, any remaining missing values for all
+weather variables (\code{temp}, \code{rh}, \code{rain}, \code{ws} and \code{wd}) are imputed using
+the package's internal imputation functions so the returned data has no
+\code{NA} values. Temperature and relative humidity are filled with
+\code{epiphytoolR::impute_temp()} and \code{epiphytoolR::impute_rh()}, rainfall \code{NA}s
+are set to \code{0}, and wind speed and direction are filled with a rolling
+window imputation (\code{epiphytoolR::impute_fill()}). This is broader than
+\code{impute_nas}, which only handles \code{temp}, \code{rh} and \code{rain}. Default is
+\code{FALSE}.}
 
 \item{Irolling_window}{\code{integer} value indicating the number of hours to use
 for the rolling window to impute missing values. See \code{impute_nas}}
@@ -171,6 +179,7 @@ created by specifying the file path to a \acronym{CSV} file using
 # included in ascotraceR. The weather data files both are of the same format,
 # so they will be combined for formatting here.
 
+\donttest{
 # load the weather data to be formatted
 scaddan <-
    system.file("extdata", "scaddan_weather.csv",package = "epiphytoolR")
@@ -204,7 +213,7 @@ weather <- format_weather(
 # Reformat saved weather
 
 # Create file path and save data
-file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\\\")
+file_path_name <- file.path(tempdir(), "weather_saved.csv")
 write.csv(weather, file = file_path_name,
           row.names = FALSE)
 
@@ -215,4 +224,5 @@ weather2 <- read.csv(file_path_name, stringsAsFactors = FALSE)
 weather2 <- format_weather(weather2,
                            time_zone = "UTC")
 unlink(file_path_name) # remove temporary weather file
+}
 }
