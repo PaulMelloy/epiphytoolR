@@ -10,7 +10,7 @@
 #' @param Tm numeric, Temperature in degrees Celsius
 #' @param eq character, Type of equation to use while calculation VPD. defaults to the
 #'  "BOM" (Bureau of Meteorology equation, Australia). Other options are
-#'  "Murray" and "Sapak"
+#'  "Murray" and "Tetens"
 #' @param dp numeric, Dew point, in degrees Celsius
 #'
 #' @return Vapour-pressure in kPa class \CRANpkg{units}
@@ -19,7 +19,7 @@
 #'
 #'  Murray, F. W., 1967: On the Computation of Saturation Vapor Pressure.
 #'  *J. Appl. Meteor. Climatol.*, \emph{6}, 203–204,
-#'  https://doi.org/10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2
+#'  \doi{10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2}
 #' @export
 #' @examples
 #' calc_vp(RH = 99,Tm = 30)

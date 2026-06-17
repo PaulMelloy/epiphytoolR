@@ -10,13 +10,13 @@
 #' @param Tm numeric, Temperature in degrees Celsius
 #' @param eq character, Type of equation to use while calculation VPD. defaults
 #'  to the "BOM" (Bureau of Meteorology equation, Australia). Other options,
-#'  "Murray" and "Sapak"
+#'  "Murray" and "Tetens"
 #' @param verbose logical, prints saturated vapour pressure (SVP) and vapour
 #'  pressure in kPa before returning the VPD result.
 #'
 #' @return Vapour-pressure deficit kPa, class \CRANpkg{units}
 #' @references
-#'  https://doi.org/10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2
+#'  \doi{10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2}
 #' @export
 #'
 #' @examples

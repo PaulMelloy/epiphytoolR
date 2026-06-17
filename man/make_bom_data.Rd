@@ -22,5 +22,7 @@ A data frame with 8,786 rows and 15 columns:
 Simulated raw weather data from AWS weather station
 }
 \examples{
+\donttest{
 raw_bom <- make_bom_data()
+}
 }

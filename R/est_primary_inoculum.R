@@ -4,7 +4,7 @@
 #'  primary inoculumn, or ascospores. Formula interpreted from Schoeny. et al.
 #'  (2007) in European Journal of Plant Pathology.
 #'
-#' @source <https://doi.org/10.1007/978-1-4020-6065-6_9>
+#' @source \doi{10.1007/978-1-4020-6065-6_9}
 #'
 #' @param degree_days sum degree days in celcius over 7 days
 #' @param rainfall vector of daily rainfall, or maximum rainfall in a week

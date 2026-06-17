@@ -13,12 +13,14 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' set.seed(111)
 #' weather[round(rnorm(50,
 #'                     mean = nrow(weather)/2,
 #'                     sd = nrow(weather)/10)),
 #'         temp := NA_real_]
 #' w2 <- impute_temp(weather)
+#' }
 impute_temp <- function(w, rolling_window = 40){
    indx <- temp <- var_imp <- times <- NULL
 
@@ -42,7 +44,7 @@ impute_temp <- function(w, rolling_window = 40){
       wI[, var_imp := round(
          data.table::frollapply(
             indx,
-            n = rolling_window,
+            N = rolling_window,
             fill = NA_real_,
             FUN = epiphytoolR::impute_fill,
             FUN_n = rolling_window,

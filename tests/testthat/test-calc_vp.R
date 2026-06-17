@@ -9,8 +9,8 @@ test_that("calc_vp returns expected output (Murray)", {
    expect_equal(calc_vp(RH = 38.6,
                         Tm = 30, eq = "Murray"),
                 units::set_units(1.637337, "kPa"), tolerance = 1e-06)
-   expect_equal(calc_vp(RH = 38.6, Tm = 25, eq = "Sapak"),
-                units::set_units(1.453966e+28, "kPa"),
+   expect_equal(calc_vp(RH = 38.6, Tm = 25, eq = "Tetens"),
+                units::set_units(1.222722, "kPa"),
                 tolerance = 1e-06)
    expect_equal(
       calc_vp(RH = 50,

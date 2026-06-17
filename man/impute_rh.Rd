@@ -23,10 +23,12 @@ Impute missing relative humidity using a rolling impute fill function on a \code
 class data.table. \code{epiphy.weather} class is created from \code{epiphytoolR::format_weather()}
 }
 \examples{
+\donttest{
 set.seed(111)
 weather[round(rnorm(50,
                     mean = nrow(weather)/2,
                     sd = nrow(weather)/10)),
         rh := NA_real_]
 w2 <- impute_rh(weather)
+}
 }

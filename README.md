@@ -143,4 +143,4 @@ Future versions will look towards an international standard for weather data
 format.  
 
 ## Find out more
-For more information see pkgdown website [epiphytoolR](https://paul.melloy.github.io/epiphytoolR/)  
+For more information see pkgdown website [epiphytoolR](https://paulmelloy.com.au/epiphytoolR/)  

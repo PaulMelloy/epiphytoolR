@@ -860,7 +860,7 @@ test_that("I can make fake datasets and format them through preformat",{
 
 })
 
-test_that("Fill missing pulls weather from openmet",{
+test_that("format_weather errors on non-continuous data with NA times",{
    brisvegas <-
       system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
    bris <- fread(brisvegas)
@@ -883,28 +883,40 @@ test_that("Fill missing pulls weather from openmet",{
                         time_zone = "UTC"),
          regexp = "NA values")
       })
-      bris_fixed <-
-         fill_time_gaps(bris,"aifstime_utc")
+})
 
-      # suppress circular warnings
-      suppressWarnings({
-         expect_no_error(
-            format_weather(w = bris_fixed,
-                           POSIXct_time = "aifstime_utc",
-                           temp = "air_temp",
-                           rain = "rain_ten",
-                           rh = "rel_hum",
-                           ws = "wind_spd_kmh",
-                           wd = "wind_dir_deg",
-                           lon = "lon",
-                           lat = "lat",
-                           station = "name",
-                           time_zone = "UTC",
-                           fill_missing = TRUE,)
-         )
-         })
+test_that("fill_missing imputes all weather variables with internal functions",{
+   brisvegas <-
+      system.file("extdata", "bris_weather_obs.csv", package = "epiphytoolR")
+   bris <- fread(brisvegas)
+   bris[,aifstime_utc := as.POSIXct(aifstime_utc,tz = "UTC")]
+   # fill time gaps so the data is continuous (introduces NA weather rows)
+   bris_fixed <- fill_time_gaps(bris,"aifstime_utc")
 
+   suppressWarnings({
+      w_filled <-
+         format_weather(w = bris_fixed,
+                        POSIXct_time = "aifstime_utc",
+                        temp = "air_temp",
+                        rain = "rain_ten",
+                        rh = "rel_hum",
+                        ws = "wind_spd_kmh",
+                        wd = "wind_dir_deg",
+                        lon = "lon",
+                        lat = "lat",
+                        station = "name",
+                        time_zone = "UTC",
+                        fill_missing = TRUE,
+                        verbose = FALSE)
+   })
 
+   expect_s3_class(w_filled, "epiphy.weather")
+   # no missing values remain in any weather variable
+   expect_false(any(is.na(w_filled$temp)))
+   expect_false(any(is.na(w_filled$rh)))
+   expect_false(any(is.na(w_filled$rain)))
+   expect_false(any(is.na(w_filled$ws)))
+   expect_false(any(is.na(w_filled$wd)))
 })
 
 

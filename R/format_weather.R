@@ -30,14 +30,6 @@
 #'   If unsure and time data has continuity, use "UTC".
 #' @param temp Column name `character` or index in `w` that refers to temperature in degrees
 #'   Celsius.
-#' @param time_zone Time zone (Olsen time zone format) `character` where the
-#'   weather station is located. May be in a column or supplied as a character string.
-#'   Optional, see also `r`. See details.
-#' @param temp Column name `character` or index in `x` that refers to temperature in degrees
-#'   Celsius.
-#' @param lon Column name `character` or index in `w` that refers to weather station's
-#'  `check_weather_warnings()`.
-#'   Celsius.
 #' @param rain Column name `character` or index in `w` that refers to rainfall in millimetres.
 #' @param ws Column name `character` or index in `w` that refers to wind speed in km / h.
 #' @param wd Column name `character` or index in `w` that refers to wind direction in
@@ -72,9 +64,15 @@
 #' @param verbose If `TRUE` (default) it will print messages and warnings associated
 #'   with the internal handling of the weather formatting.
 #'   It is not recommended to use `FALSE` to suppress these messages. Instead
-#' @param fill_missing
-#'   If `TRUE` the function will use \CRANpkg{openmeteo} to fill missing weather
-#'   data. Still experimental!!!
+#' @param fill_missing logical. If `TRUE`, any remaining missing values for all
+#'   weather variables (`temp`, `rh`, `rain`, `ws` and `wd`) are imputed using
+#'   the package's internal imputation functions so the returned data has no
+#'   `NA` values. Temperature and relative humidity are filled with
+#'   `epiphytoolR::impute_temp()` and `epiphytoolR::impute_rh()`, rainfall `NA`s
+#'   are set to `0`, and wind speed and direction are filled with a rolling
+#'   window imputation (`epiphytoolR::impute_fill()`). This is broader than
+#'   `impute_nas`, which only handles `temp`, `rh` and `rain`. Default is
+#'   `FALSE`.
 #' @details `time_zone` The time-zone in which the `time` was recorded. All weather
 #'   stations in `w` must fall within the same time-zone.  If the required stations
 #'   are located in differing time zones, `format_weather()` should be run separately
@@ -120,6 +118,7 @@
 #' # included in ascotraceR. The weather data files both are of the same format,
 #' # so they will be combined for formatting here.
 #'
+#' \donttest{
 #' # load the weather data to be formatted
 #' scaddan <-
 #'    system.file("extdata", "scaddan_weather.csv",package = "epiphytoolR")
@@ -153,7 +152,7 @@
 #' # Reformat saved weather
 #'
 #' # Create file path and save data
-#' file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\")
+#' file_path_name <- file.path(tempdir(), "weather_saved.csv")
 #' write.csv(weather, file = file_path_name,
 #'           row.names = FALSE)
 #'
@@ -164,6 +163,7 @@
 #' weather2 <- format_weather(weather2,
 #'                            time_zone = "UTC")
 #' unlink(file_path_name) # remove temporary weather file
+#' }
 #' @export
 format_weather <- function(w,
                            YYYY = NULL,
@@ -185,14 +185,12 @@ format_weather <- function(w,
                            lat = NULL,
                            lonlat_file = NULL,
                            impute_nas = c("temp","rh"),
-                           fill_missing = NULL,
+                           fill_missing = FALSE,
                            Irolling_window = 70,
                            data_check = TRUE,
                            verbose = TRUE) {
   # CRAN Note avoidance
-  times <- V1 <- datetime <- hourly_rain <-
-     hourly_temperature_2m <- hourly_relative_humidity_2m <-
-     hourly_wind_direction_10m <- hourly_wind_speed_10m <-NULL
+  times <- V1 <- NULL
 
   # Check w class
   if (!is.data.frame(w)) {
@@ -708,56 +706,26 @@ format_weather <- function(w,
   # set specific weather attribute
   setattr(x_out, "class", union("epiphy.weather", class(x_out)))
 
-  # fill missing weather if requested
-  if(is.null(fill_missing) == FALSE){
-     for(l_n in unique(x_out[, station])){
-        # retrieve missing timeframes
-        na_range <- x_out[is.na(rain) |
-                          is.na(temp) |
-                          is.na(rh) |
-                          is.na(wd) |
-                          is.na(ws),times]
-         if(verbose){message("Retrieving missing weather with openmeteo data ...\n")}
-        open_weather <-
-           openmeteo::weather_history(
-              location = unique(c(x_out[station == l_n, lat],
-                                  x_out[station == l_n, lon])),
-              start = as.Date(min(na_range)),
-              end = as.Date(max(na_range)),
-              hourly = c(
-                 "rain",
-                 "temperature_2m",
-                 "relative_humidity_2m",
-                 "wind_direction_10m",
-                 "wind_speed_10m"),
-              timezone = "UTC")
-
-        data.table::setDT(open_weather)
-        # create obscure colnames so they wont match with any input data
-        ow_names <- grep("hourly",names(open_weather),value = TRUE)
-
-        if(any(is.na(x_out$rain))){
-           missed <- x_out[is.na(rain),times]
-           x_out[times %in% missed,rain := open_weather[datetime %in% missed,hourly_rain]]
-        }
-        if(any(is.na(x_out$temp))){
-           missed <- x_out[is.na(temp),times]
-           x_out[times %in% missed,temp := open_weather[datetime %in% missed,hourly_temperature_2m]]
-        }
-        if(any(is.na(x_out$rh))){
-           missed <- x_out[is.na(rh),times]
-           x_out[times %in% missed,rh := open_weather[datetime %in% missed,hourly_relative_humidity_2m]]
-        }
-        if(any(is.na(x_out$wd))){
-           missed <- x_out[is.na(wd),times]
-           x_out[times %in% missed,wd := open_weather[datetime %in% missed,hourly_wind_direction_10m]]
-        }
-        if(any(is.na(x_out$ws))){
-           missed <- x_out[is.na(ws),times]
-           x_out[times %in% missed,ws := open_weather[datetime %in% missed,hourly_wind_speed_10m]]
-        }
-
-     }
+  # fill all missing weather using the package's internal impute functions
+  if (isTRUE(fill_missing)) {
+    if (verbose) {
+      message("Filling missing weather using internal impute functions ...")
+    }
+    if (any(is.na(x_out[, temp]))) {
+      x_out <- impute_temp(x_out, rolling_window = Irolling_window)
+    }
+    if (any(is.na(x_out[, rh]))) {
+      x_out <- impute_rh(x_out, rolling_window = Irolling_window)
+    }
+    x_out[is.na(rain), rain := 0]
+    # wind speed and direction are filled with a rolling-window imputation.
+    #  Note wind direction is filled with a simple rolling mean.
+    if (any(is.na(x_out[, ws]))) {
+      x_out <- .impute_column(x_out, "ws", Irolling_window)
+    }
+    if (any(is.na(x_out[, wd]))) {
+      x_out <- .impute_column(x_out, "wd", Irolling_window)
+    }
   }
 
   # impute missing values if requested
@@ -789,6 +757,36 @@ format_weather <- function(w,
 
 
   return(x_out[])
+}
+
+# Impute NA values in a single numeric column using the package's rolling
+#  window impute_fill() helper. Used by format_weather(fill_missing = TRUE) to
+#  fill variables (ws, wd) that do not have a dedicated impute_*() wrapper.
+.impute_column <- function(w_dt, col, rolling_window) {
+   indx <- var_imp <- times <- NULL
+   wI <- data.table::copy(w_dt)
+   wI[, indx := .I]
+
+   dif <- length(wI[is.na(get(col)), indx])
+   while (dif > 0) {
+      n_nas <- length(wI[is.na(get(col)), indx])
+      wI[, var_imp := data.table::frollapply(
+         indx,
+         N = rolling_window,
+         fill = NA_real_,
+         FUN = epiphytoolR::impute_fill,
+         FUN_n = rolling_window,
+         times = times,
+         var = get(col),
+         align = "center"
+      )]
+      wI[is.na(get(col)), (col) := var_imp]
+      dif <- n_nas - length(wI[is.na(get(col)), indx])
+   }
+   wI[, c("indx", "var_imp") := NULL]
+   # preserve the epiphy.weather class
+   setattr(wI, "class", union("epiphy.weather", class(w_dt)))
+   return(wI)
 }
 
 # Function to fill times

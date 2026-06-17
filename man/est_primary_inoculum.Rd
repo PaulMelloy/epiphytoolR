@@ -4,7 +4,7 @@
 \alias{est_primary_inoculum}
 \title{Estimate blackspot primary inoculum}
 \source{
-\url{https://doi.org/10.1007/978-1-4020-6065-6_9}
+\doi{10.1007/978-1-4020-6065-6_9}
 }
 \usage{
 est_primary_inoculum(degree_days, rainfall)

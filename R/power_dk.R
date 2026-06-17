@@ -12,7 +12,9 @@
 #'
 #' @return estimated lesions per leaf
 #' @export
-#' @references https://apsjournals.apsnet.org/doi/pdf/10.1094/PHYTO-95-0983
+#' @references Sackett, K. E., and Mundt, C. C. (2005). Primary Disease Gradients
+#'  of Wheat Stripe Rust in Large Field Plots. *Phytopathology* **95**, 983-991.
+#'  \doi{10.1094/PHYTO-95-0983}
 #'
 #' @examples
 #' power_dk(5)

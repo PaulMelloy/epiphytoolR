@@ -1,16 +1,16 @@
 #' Splash Distance Dispersal Parameter
 #'
-#' `wind_distance()` Determines distance conidia travel, in metres, via a rain
-#' splash
+#' `splash_distance()` determines the distance conidia travel, in metres, via a
+#' rain splash by sampling from a half-Cauchy distribution.
 #'
 #' @param splash_cauchy_parameter A Cauchy scaling parameter
 #' @param PSPH A numeric vector estimated from '.estimate_spore_discharge()'
 #' @return numerical vector, which returns distance conidia dispersed by a rain
 #'   splash from the source of infection
 #' @examples
-#' wind_distance(10) # returns a single estimate
-#' wind_distance(10, PSPH = 10) # returns 10 estimates
-#' wind_distance(15, PSPH = c(5, 5)) # returns 10 estimates
+#' splash_distance(0.015) # returns a single estimate
+#' splash_distance(0.015, PSPH = 10) # returns 10 estimates
+#' splash_distance(0.02, PSPH = c(5, 5)) # returns 10 estimates
 #' @keywords internal
 #' @noRd
 

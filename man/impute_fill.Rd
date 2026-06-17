@@ -22,13 +22,15 @@ vector of var values filling NA
 Imputes a new vector of variables which can be used to fill NA values.
 }
 \examples{
-dt <- weather
+\donttest{
+dt <- data.table::copy(weather)
+dt[3000:3050, temp := NA_real_]
 rolling_window <- length(dt[is.na(temp),temp])*2
 dt[,indx := .I]
 
 dt[, tm_imp := round(data.table::frollapply(
   indx,
-  n = rolling_window,
+  N = rolling_window,
   fill = NA_real_,
   FUN = impute_fill,
   FUN_n = rolling_window,
@@ -39,4 +41,5 @@ dt[, tm_imp := round(data.table::frollapply(
 
 plot(dt[2950:3100, temp], type = "l")
 lines(dt[2950:3100, tm_imp], type = "l", col = "red")
+}
 }

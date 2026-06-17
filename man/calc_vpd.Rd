@@ -13,7 +13,7 @@ calc_vpd(RH, Tm, eq = "BOM", verbose = FALSE)
 
 \item{eq}{character, Type of equation to use while calculation VPD. defaults
 to the "BOM" (Bureau of Meteorology equation, Australia). Other options,
-"Murray" and "Sapak"}
+"Murray" and "Tetens"}
 
 \item{verbose}{logical, prints saturated vapour pressure (SVP) and vapour
 pressure in kPa before returning the VPD result.}
@@ -32,5 +32,5 @@ humidity can also be called.
 calc_vpd(RH = 99, Tm = 30)
 }
 \references{
-https://doi.org/10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2
+\doi{10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2}
 }
