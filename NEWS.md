@@ -1,6 +1,35 @@
-# epiphytoolR 0.0.3
+# epiphytoolR 0.0.4
 
-# development version  0.0.3
+ ### Potentially breaking changes
+ * `calc_svp()` (and therefore `calc_vp()` and `calc_vpd()`): the `"Sapak"`
+   equation was incorrect and returned implausible values. It has been corrected
+   to the standard Tetens (1930) equation and the option is now named `"Tetens"`.
+   `"Sapak"` is retained as a deprecated alias. An unrecognised `eq` value now
+   raises a clear error instead of failing obscurely.
+ * `format_weather(fill_missing = TRUE)` now fills missing weather using this
+   package's own imputation functions (`impute_temp()`, `impute_rh()`, a
+   rolling-window `impute_fill()` for wind speed and direction, and zero for
+   rainfall) rather than the previously removed `openmeteo` dependency.
+
+ ### Bug fixes
+ * `Audpc(na.rm = TRUE)` no longer errors when the supplied data contain no `NA`
+   values.
+ * `impute_temp()` and `impute_rh()` updated for the renamed `data.table`
+   `frollapply()` argument (`n` is now `N`), removing deprecation warnings.
+
+ ### Documentation
+ * Corrected the `splash_distance()` and `splash_angle()` help, removed
+   duplicated parameters in `format_weather()`, and tidied references to use
+   `\doi{}`.
+ * Reworded the package Description, updated the package URL and added a
+   `BugReports` field.
+
+ ### Testing and CRAN preparation
+ * Added tests for `impute_rh()` and `fill_time_gaps()`.
+ * Network-dependent tests now skip on CRAN and when offline.
+ * Long-running examples are wrapped in `\donttest{}`.
+
+# epiphytoolR 0.0.3
  *  **Potential breaking changes**  
  * Remove capture warnings functions and `format_weather()`
  * merge_axf_weather() changed to merge_weather() and now reads and merges JSON
