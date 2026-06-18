@@ -13,7 +13,7 @@ disease_aug_soil(DNA_pg)
 
 ## Source
 
-<https://doi.org/10.1094/PDIS-01-11-0077>
+[doi:10.1094/PDIS-01-11-0077](https://doi.org/10.1094/PDIS-01-11-0077)
 
 ## Arguments
 
@@ -28,7 +28,7 @@ estimated number of girdled field pea internodes at the end of winter.
 
 ## See also
 
-formula one <https://doi.org/10.1111/ppa.12044>
+formula one [doi:10.1111/ppa.12044](https://doi.org/10.1111/ppa.12044)
 
 ## Examples
 

@@ -13,7 +13,7 @@ impute_temp(w, rolling_window = 40)
 - w:
 
   Weather data of class `epiphy.weather`, an output from
-  [`epiphytoolR::format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+  [`epiphytoolR::format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 
 - rolling_window:
 
@@ -22,18 +22,19 @@ impute_temp(w, rolling_window = 40)
 ## Value
 
 Weather data of class `epiphy.weather`, *See*
-[`epiphytoolR::format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+[`epiphytoolR::format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 
 ## Details
 
 Impute missing temperatures using a rolling impute fill function on a
 `epiphy.weather` class data.table. `epiphy.weather` class is created
 from
-[`epiphytoolR::format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+[`epiphytoolR::format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 
 ## Examples
 
 ``` r
+# \donttest{
 set.seed(111)
 weather[round(rnorm(50,
                     mean = nrow(weather)/2,
@@ -67,4 +68,5 @@ weather[round(rnorm(50,
 #> 8785: -33.13 scaddan  2020    10    13     0     0
 #> 8786: -33.13 scaddan  2020    10    13     1     0
 w2 <- impute_temp(weather)
+# }
 ```

@@ -2,7 +2,7 @@
 
 Calculates the Temperature index for day i and hour j. Temperature index
 is used to calculate the Daily Infection Values (DIV) for the model
-published by Shoeny et. al (2007).
+published by Schoeny et. al (2007).
 
 ## Usage
 
@@ -12,7 +12,7 @@ DIV(RH, Tm, rainfall = 0.2)
 
 ## Source
 
-<https://doi.org/10.1007/978-1-4020-6065-6_9>
+[doi:10.1007/978-1-4020-6065-6_9](https://doi.org/10.1007/978-1-4020-6065-6_9)
 
 ## Arguments
 

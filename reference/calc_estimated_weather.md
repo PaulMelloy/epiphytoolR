@@ -21,7 +21,7 @@ calc_estimated_weather(
 - w:
 
   A `data.table` of weather coefficients, output from
-  [`get_weather_coefs`](https://paulmelloy.github.io/epiphytoolR/reference/get_weather_coefs.md)\`
+  [`get_weather_coefs`](https://paulmelloy.com.au/epiphytoolR/reference/get_weather_coefs.md)\`
 
 - start_date:
 
@@ -62,11 +62,11 @@ calc_estimated_weather(
 ## Value
 
 A `data.table` output of calculated on
-[`get_weather_coefs`](https://paulmelloy.github.io/epiphytoolR/reference/get_weather_coefs.md)
+[`get_weather_coefs`](https://paulmelloy.com.au/epiphytoolR/reference/get_weather_coefs.md)
 with the following columns: *station* - Weather station name; *lat* -
 latitude; *lon* - longitude; *rh* - NA currently not supported see
 epiphytoolR github issue \#14; *yearday* - integer, day of the year, see
-[`data.table::yday()`](https://rdatatable.gitlab.io/data.table/reference/IDateTime.html);
+[`data.table::yday()`](https://rdrr.io/pkg/data.table/man/IDateTime.html);
 *wd_rd* - numeric, mean wind direction from raw data; *wd_sd_rd* -
 numeric, standard deviation of wind direction from raw data; *ws_rd* -
 numeric, mean wind speed from raw data; *ws_sd_rd* - numeric, standard
@@ -74,7 +74,7 @@ deviation of wind speed from raw data; *rain_freq* - numeric,
 proportional chance of rainfall on this dat 0 - 1
 
 Output can be formatted with
-[`format_weather`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+[`format_weather`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 
 ## Examples
 

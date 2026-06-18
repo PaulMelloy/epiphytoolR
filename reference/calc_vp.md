@@ -30,7 +30,7 @@ calc_vp(RH, Tm, dp = NULL, eq = "BOM")
 
   character, Type of equation to use while calculation VPD. defaults to
   the "BOM" (Bureau of Meteorology equation, Australia). Other options
-  are "Murray" and "Sapak"
+  are "Murray" and "Tetens"
 
 ## Value
 
@@ -43,7 +43,7 @@ http://www.bom.gov.au/climate/austmaps/about-vprp-maps.shtml
 
 Murray, F. W., 1967: On the Computation of Saturation Vapor Pressure.
 *J. Appl. Meteor. Climatol.*, *6*, 203–204,
-https://doi.org/10.1175/1520-0450(1967)006\<0203:OTCOSV\>2.0.CO;2
+[doi:10.1175/1520-0450(1967)006\<0203:OTCOSV\>2.0.CO;2](https://doi.org/10.1175/1520-0450%281967%29006%3C0203%3AOTCOSV%3E2.0.CO%3B2)
 
 ## Examples
 

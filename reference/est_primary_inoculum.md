@@ -12,7 +12,7 @@ est_primary_inoculum(degree_days, rainfall)
 
 ## Source
 
-<https://doi.org/10.1007/978-1-4020-6065-6_9>
+[doi:10.1007/978-1-4020-6065-6_9](https://doi.org/10.1007/978-1-4020-6065-6_9)
 
 ## Arguments
 

@@ -31,5 +31,7 @@ A data frame with 8,786 rows and 15 columns:
 ## Examples
 
 ``` r
+# \donttest{
 raw_bom <- make_bom_data()
+# }
 ```

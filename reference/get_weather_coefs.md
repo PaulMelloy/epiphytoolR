@@ -53,7 +53,7 @@ event. If no rainfall data is recorded in the raw weather NULL is
 returned without warning. *station_name* - Weather station name; *lat* -
 latitude; *lon* - longitude; *state* - political juristiction or state;
 *yearday* - integer, day of the year, see
-[`data.table::yday()`](https://rdatatable.gitlab.io/data.table/reference/IDateTime.html);
+[`data.table::yday()`](https://rdrr.io/pkg/data.table/man/IDateTime.html);
 *temp* - numeric, mean temperature; *rh* - numeric, mean temperature;
 *wd_rd* - numeric, mean wind direction from rolling window; *wd_sd_rd* -
 numeric, standard deviation of wind direction from rolling window;

@@ -70,7 +70,7 @@ impute_diurnal()
 #>  [9] 73.55790 66.44216 59.61465 53.62851 48.96868 46.01269 45.00000 45.72644
 #> [17] 47.86358 51.28720 55.79834 61.13483 66.98653 73.01336 78.86507 84.20157
 impute_diurnal(Sys.time())
-#> [1] 93.98733
+#> [1] 84.20157
 impute_diurnal(max_obs = 22,
                min_obs = 18)
 #>  [1] 21.49702 21.77091 21.94188 22.00000 21.91899 21.68251 21.30972 20.83083
@@ -92,7 +92,8 @@ impute_diurnal(max_hour = 6,
 #>  [9] 79.56711 70.00003 60.43294 52.32236 46.90303 45.00000 45.48036 46.90299
 #> [17] 49.21323 52.32230 56.11070 60.43287 65.12269 69.99994 74.87720 79.56703
 
-w_dt <- weather
+# \donttest{
+w_dt <- data.table::copy(weather)
 w_dt[3000 : 3050, temp := NA_real_]
 #> Index: <station>
 #>                     times      temp    rh  rain    ws    wd        wd_sd    lon
@@ -126,7 +127,7 @@ plot(w_dt[2900:3200, temp], type = "l")
 rolling_window <- 24
 w_dt[, tm_imp := round(data.table::frollapply(
                       data.table::hour(times),
-                      n = rolling_window,
+                      N = rolling_window,
                       fill = NA_real_,
                       FUN = impute_diurnal,
                       max_obs = max(temp, na.rm = TRUE),
@@ -164,4 +165,6 @@ w_dt[, tm_imp := round(data.table::frollapply(
 #> 8786: -33.13 scaddan  2020    10    13     1     0     NA
 plot(w_dt[2900:3200, temp], type = "l")
 lines(w_dt[2900:3200, tm_imp], type = "l", col = "red")
+
+# }
 ```

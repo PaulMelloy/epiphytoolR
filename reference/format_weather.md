@@ -31,7 +31,7 @@ format_weather(
   lat = NULL,
   lonlat_file = NULL,
   impute_nas = c("temp", "rh"),
-  fill_missing = NULL,
+  fill_missing = FALSE,
   Irolling_window = 70,
   data_check = TRUE,
   verbose = TRUE
@@ -83,13 +83,14 @@ format_weather(
 
 - time_zone:
 
-  Time zone (Olsen time zone format) `character` where the weather
-  station is located. May be in a column or supplied as a character
-  string. Optional, see also `r`. See details.
+  Time zone of the weather observation `times` (Olsen time zone format)
+  supplied as a `character` string. Ideally in "UTC" format to avoid
+  errors associated with daylight savings. If unsure and time data has
+  continuity, use "UTC".
 
 - temp:
 
-  Column name `character` or index in `x` that refers to temperature in
+  Column name `character` or index in `w` that refers to temperature in
   degrees Celsius.
 
 - rain:
@@ -143,9 +144,9 @@ format_weather(
 
   `character` vector indicating which variables to impute missing or
   `NA` values. Options include, "temp" (see
-  [`epiphytoolR::impute_temp()`](https://paulmelloy.github.io/epiphytoolR/reference/impute_temp.md)),
+  [`epiphytoolR::impute_temp()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_temp.md)),
   "rh"(see
-  [`epiphytoolR::impute_rh()`](https://paulmelloy.github.io/epiphytoolR/reference/impute_rh.md)).
+  [`epiphytoolR::impute_rh()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_rh.md)).
   "rain" will be filled with zeros. If `TRUE` (logical) it will impute
   missing values for all available options. If `FALSE` (logical) it will
   not impute any missing values. The default is c("temp,"rh) to impute
@@ -153,9 +154,18 @@ format_weather(
 
 - fill_missing:
 
-  If `TRUE` the function will use
-  [openmeteo](https://CRAN.R-project.org/package=openmeteo) to fill
-  missing weather data. Still experimental!!!
+  logical. If `TRUE`, any remaining missing values for all weather
+  variables (`temp`, `rh`, `rain`, `ws` and `wd`) are imputed using the
+  package's internal imputation functions so the returned data has no
+  `NA` values. Temperature and relative humidity are filled with
+  [`epiphytoolR::impute_temp()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_temp.md)
+  and
+  [`epiphytoolR::impute_rh()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_rh.md),
+  rainfall `NA`s are set to `0`, and wind speed and direction are filled
+  with a rolling window imputation
+  ([`epiphytoolR::impute_fill()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_fill.md)).
+  This is broader than `impute_nas`, which only handles `temp`, `rh` and
+  `rain`. Default is `FALSE`.
 
 - Irolling_window:
 
@@ -231,6 +241,7 @@ created by specifying the file path to a CSV file using `lonlat_file`.
 # included in ascotraceR. The weather data files both are of the same format,
 # so they will be combined for formatting here.
 
+# \donttest{
 # load the weather data to be formatted
 scaddan <-
    system.file("extdata", "scaddan_weather.csv",package = "epiphytoolR")
@@ -267,7 +278,7 @@ weather <- format_weather(
 # Reformat saved weather
 
 # Create file path and save data
-file_path_name <- paste(tempdir(), "weather_saved.csv", sep = "\\")
+file_path_name <- file.path(tempdir(), "weather_saved.csv")
 write.csv(weather, file = file_path_name,
           row.names = FALSE)
 
@@ -279,4 +290,5 @@ weather2 <- format_weather(weather2,
                            time_zone = "UTC")
 #> Warning: All relative humidity values are 'NA' or missing, check data if this is not intentional
 unlink(file_path_name) # remove temporary weather file
+# }
 ```

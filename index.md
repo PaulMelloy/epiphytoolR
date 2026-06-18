@@ -89,11 +89,12 @@ add them to this package through a pull request.
 
 #### Contribution Example
 
-$y = a*(x + c)^{- b}$
+$`y=a*(x+c)^{-b}`$
 
 can become a function
 
 ``` r
+
 calc_spores <- function(x, a, con, b){
    return(a * (x + con) ^ (-b))
 }
@@ -156,4 +157,4 @@ data format.
 ## Find out more
 
 For more information see pkgdown website
-[epiphytoolR](https://paul.melloy.github.io/epiphytoolR/)
+[epiphytoolR](https://paulmelloy.com.au/epiphytoolR/)

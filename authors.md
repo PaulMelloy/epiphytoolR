@@ -10,13 +10,16 @@
 
 ## Citation
 
-Melloy P (2025). *epiphytoolR: Epiphytotic Modeling Tools*. R package
-version 0.0.3, <https://paulmelloy.github.io/epiphytoolR/>.
+Source:
+[`DESCRIPTION`](https://github.com/PaulMelloy/epiphytoolR/blob/main/DESCRIPTION)
+
+Melloy P (2026). *epiphytoolR: Epiphytotic Modeling Tools*. R package
+version 0.0.4, <https://paulmelloy.com.au/epiphytoolR/>.
 
     @Manual{,
       title = {epiphytoolR: Epiphytotic Modeling Tools},
       author = {Paul Melloy},
-      year = {2025},
-      note = {R package version 0.0.3},
-      url = {https://paulmelloy.github.io/epiphytoolR/},
+      year = {2026},
+      note = {R package version 0.0.4},
+      url = {https://paulmelloy.com.au/epiphytoolR/},
     }

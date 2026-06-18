@@ -1,24 +1,65 @@
 # Changelog
 
-## epiphytoolR 0.0.3
+## epiphytoolR 0.0.4
 
-## development version 0.0.3
+\### Potentially breaking changes \*
+[`calc_svp()`](https://paulmelloy.com.au/epiphytoolR/reference/calc_svp.md)
+(and therefore
+[`calc_vp()`](https://paulmelloy.com.au/epiphytoolR/reference/calc_vp.md)
+and
+[`calc_vpd()`](https://paulmelloy.com.au/epiphytoolR/reference/calc_vpd.md)):
+the `"Sapak"` equation was incorrect and returned implausible values. It
+has been corrected to the standard Tetens (1930) equation and the option
+is now named `"Tetens"`. `"Sapak"` is retained as a deprecated alias. An
+unrecognised `eq` value now raises a clear error instead of failing
+obscurely. \* `format_weather(fill_missing = TRUE)` now fills missing
+weather using this package’s own imputation functions
+([`impute_temp()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_temp.md),
+[`impute_rh()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_rh.md),
+a rolling-window
+[`impute_fill()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_fill.md)
+for wind speed and direction, and zero for rainfall) rather than the
+previously removed `openmeteo` dependency.
+
+\### Bug fixes \* `Audpc(na.rm = TRUE)` no longer errors when the
+supplied data contain no `NA` values. \*
+[`impute_temp()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_temp.md)
+and
+[`impute_rh()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_rh.md)
+updated for the renamed `data.table`
+[`frollapply()`](https://rdrr.io/pkg/data.table/man/frollapply.html)
+argument (`n` is now `N`), removing deprecation warnings.
+
+\### Documentation \* Corrected the `splash_distance()` and
+`splash_angle()` help, removed duplicated parameters in
+[`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md),
+and tidied references to use `\doi{}`. \* Reworded the package
+Description, updated the package URL and added a `BugReports` field.
+
+\### Testing and CRAN preparation \* Added tests for
+[`impute_rh()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_rh.md)
+and
+[`fill_time_gaps()`](https://paulmelloy.com.au/epiphytoolR/reference/fill_time_gaps.md).
+\* Network-dependent tests now skip on CRAN and when offline. \*
+Long-running examples are wrapped in `\donttest{}`.
+
+## epiphytoolR 0.0.3
 
 - **Potential breaking changes**  
 - Remove capture warnings functions and
-  [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+  [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 - merge_axf_weather() changed to merge_weather() and now reads and
   merges JSON weather data.  
 - update the README, to give more information about the package and how
   to contribute \### format_weather() fixes and improvements  
-- [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+- [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
   now will fill NA values using
   [openmeteo](https://cran.r-project.org/web/packages/openmeteo/refman/openmeteo.html)
   package  
 - Missing times are now filled, adding NA values for any weather data
   columns.  
 - bug fixes to
-  [`get_weather_coefs()`](https://paulmelloy.github.io/epiphytoolR/reference/get_weather_coefs.md)  
+  [`get_weather_coefs()`](https://paulmelloy.com.au/epiphytoolR/reference/get_weather_coefs.md)  
 - `format_weather` returns which models are compliant with the output
   weather.  
 - print_warnings argument removed argument `verbose()` handles messages
@@ -29,25 +70,25 @@
 - Make `pkgdown` site
 
 - R function to generate mock raw bom file for testing and examples
-  [`make_bom_data()`](https://paulmelloy.github.io/epiphytoolR/reference/make_bom_data.md)  
+  [`make_bom_data()`](https://paulmelloy.com.au/epiphytoolR/reference/make_bom_data.md)  
 
 - tests for
-  [`get_weather_coefs()`](https://paulmelloy.github.io/epiphytoolR/reference/get_weather_coefs.md)  
+  [`get_weather_coefs()`](https://paulmelloy.com.au/epiphytoolR/reference/get_weather_coefs.md)  
 
 - patch some bugs to tests and allow calc_estimated_weather to return
   `rh` and `temp`
 
-- [`calc_estimated_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/calc_estimated_weather.md)
+- [`calc_estimated_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/calc_estimated_weather.md)
   now returns `epiphy.weather` classed data.tables eliminating the need
   for subsequent parsing through
-  [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+  [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 
 - new functions
-  [`impute_temp()`](https://paulmelloy.github.io/epiphytoolR/reference/impute_temp.md)
+  [`impute_temp()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_temp.md)
   and
-  [`impute_rh()`](https://paulmelloy.github.io/epiphytoolR/reference/impute_rh.md)
+  [`impute_rh()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_rh.md)
   for imputing temperatures and relative humidity using a
-  [`impute_fill()`](https://paulmelloy.github.io/epiphytoolR/reference/impute_fill.md)
+  [`impute_fill()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_fill.md)
   on a rolling window function
 
 - Add README.md
@@ -62,16 +103,16 @@
 
 - Add functions for estimating future weather for environments.:
 
-  - [`calc_estimated_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/calc_estimated_weather.md)
-  - [`impute_diurnal()`](https://paulmelloy.github.io/epiphytoolR/reference/impute_diurnal.md)
-  - [`get_weather_coefs()`](https://paulmelloy.github.io/epiphytoolR/reference/get_weather_coefs.md)
+  - [`calc_estimated_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/calc_estimated_weather.md)
+  - [`impute_diurnal()`](https://paulmelloy.com.au/epiphytoolR/reference/impute_diurnal.md)
+  - [`get_weather_coefs()`](https://paulmelloy.com.au/epiphytoolR/reference/get_weather_coefs.md)
 
 - Better time format detection and more informative
-  [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+  [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
   errors.
 
 - Add a function
-  [`fill_time_gaps()`](https://paulmelloy.github.io/epiphytoolR/reference/fill_time_gaps.md)
+  [`fill_time_gaps()`](https://paulmelloy.com.au/epiphytoolR/reference/fill_time_gaps.md)
   that fills time gaps in data.frame with time vector. This is common in
   many weather data sets to have missing data. This function helps fill
   the lines which are missing and inserts NAs for any column with
@@ -81,7 +122,7 @@
   testing and practising the use of functions in this package. The
   format reflect some BOM weather data.
 
-- [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
+- [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
 
   - *New feature* allows data.checks of specific variable. Previously
     this was all or nothing.
@@ -98,12 +139,13 @@
 - Initialise news file  
 - Added scripts to download BOM observational data by state from the FTP
   server. See
-  [`help(get_bom_observations)`](https://paulmelloy.github.io/epiphytoolR/reference/get_bom_observations.md)  
+  [`help(get_bom_observations)`](https://paulmelloy.com.au/epiphytoolR/reference/get_bom_observations.md)  
 - **Bug fix** in
-  [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
-  see issue \#10. Detects midnight datetime and corrects HMS
-  formatting  
+  [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
+  see issue [\#10](https://github.com/PaulMelloy/epiphytoolR/issues/10).
+  Detects midnight datetime and corrects HMS formatting  
 - **Bug fix** in
-  [`format_weather()`](https://paulmelloy.github.io/epiphytoolR/reference/format_weather.md)
-  see issue \#11. Internal function to fill missing times would not work
-  correctly when formatting weather from multiple stations.
+  [`format_weather()`](https://paulmelloy.com.au/epiphytoolR/reference/format_weather.md)
+  see issue [\#11](https://github.com/PaulMelloy/epiphytoolR/issues/11).
+  Internal function to fill missing times would not work correctly when
+  formatting weather from multiple stations.
