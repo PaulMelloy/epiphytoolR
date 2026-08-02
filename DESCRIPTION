@@ -39,4 +39,4 @@ Depends:
 URL: https://paulmelloy.com.au/epiphytoolR/, https://github.com/PaulMelloy/epiphytoolR
 BugReports: https://github.com/PaulMelloy/epiphytoolR/issues
 Config/roxygen2/version: 8.0.0
-RoxygenNote: 7.3.3
+RoxygenNote: 8.0.0

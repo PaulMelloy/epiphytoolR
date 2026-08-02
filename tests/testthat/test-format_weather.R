@@ -51,7 +51,8 @@ test_that("`format_weather()` is able to identify the correct lat and lon values
                 rh = "Relative.Humidity",
                 station = "Station.Number",
                 lonlat_file = file.path(tempdir(), "stat_coord.csv"),
-                time_zone = "UTC"
+                time_zone = "UTC",
+                verbose = FALSE
              )
 
              expect_s3_class(weather_dt, "epiphy.weather")
@@ -142,7 +143,8 @@ test_that("`format_weather()` handles multiple stations", {
          lat = "Station.Latitude",
          station = "StationID",
          time_zone = "Australia/Brisbane",
-         impute_nas = FALSE
+         impute_nas = FALSE,
+         verbose = FALSE
       )
    ), regexp = "NA values in *")
 
@@ -159,7 +161,8 @@ test_that("`format_weather()` handles multiple stations", {
       station = "StationID",
       time_zone = "Australia/Adelaide",
       impute_nas = FALSE,
-      data_check = FALSE
+      data_check = FALSE,
+      verbose = FALSE
       )))
 
    expect_s3_class(weather_dat, "epiphy.weather")
@@ -213,7 +216,8 @@ test_that("`format_weather()` works when lat lon are in data", {
       lon = "lon",
       lat = "lat",
       time_zone = "UTC",
-      data_check = c("temp","rain","ws","wd")
+      data_check = c("temp","rain","ws","wd"),
+      verbose = FALSE
    )
 
    expect_s3_class(weather_dt, "epiphy.weather")
@@ -282,7 +286,8 @@ test_that("`format_weather()` stops if time cols are not provided", {
       lon = "lon",
       lat = "lat",
       time_zone = "UTC",
-      data_check = c("temp","rain","ws","wd")
+      data_check = c("temp","rain","ws","wd"),
+      verbose = FALSE
       )
 
    expect_error(
@@ -344,7 +349,8 @@ test_that("`format_weather() stops if lonlat input lacks proper names", {
          wd = "Wind.direction.in.degrees.true",
          station = "Station.Number",
          lonlat_file = file.path(tempdir(), "stat_coord.csv"),
-         time_zone = "UTC"
+         time_zone = "UTC",
+         verbose = FALSE
       ), regexp = "The CSV file of weather station coordinates should contain column names *"
    )
 
@@ -386,7 +392,8 @@ test_that("`format_weather() stops if lonlat input lacks proper names", {
          ws = "Wind.speed.in.km.h",
          wd = "Wind.direction.in.degrees.true",
          station = "Station.Number",
-         time_zone = "UTC"
+         time_zone = "UTC",
+         verbose = FALSE
       ),
       regexp = "You must provide lonlat values for the weather *"
    )
@@ -441,7 +448,8 @@ test_that("`format_weather() creates a `mm` column if not provided", {
          lat = "lat",
          lon = "lon",
          time_zone = "UTC",
-         data_check = c("temp","rain","ws","wd")
+         data_check = c("temp","rain","ws","wd"),
+         verbose = FALSE
       ),
       c(
          "times",
@@ -500,7 +508,8 @@ test_that("`format_weather() creates a YYYY MM DD... cols", {
          lon = "lon",
          POSIXct_time = "Ptime",
          time_zone = "Australia/Brisbane",
-         data_check = c("temp","rain","ws","wd")
+         data_check = c("temp","rain","ws","wd"),
+         verbose = FALSE
       ),
       c(
          "times",
@@ -542,7 +551,6 @@ test_that("`format_weather() warns if `wd_sd` is not available", {
                                             by = "1 hour",
                                             length.out = 10080)))
 
-   expect_warning(
    expect_error(
       format_weather(
          w = w_station_data,
@@ -559,10 +567,11 @@ test_that("`format_weather() warns if `wd_sd` is not available", {
          lat = "lat",
          lon = "lon",
          POSIXct_time = "Ptime",
-         time_zone = "Australia/Brisbane"
+         time_zone = "Australia/Brisbane",
+         verbose = FALSE
       ),
       regexp = "*Relative humidity inputs are outside expected ranges*"
-   ),regexp = "*was unable to detect or calculate `wd_sd`*")
+   )
 })
 
 # stop if no raster, `r` or `time_zone` provided -------------------------------
@@ -630,7 +639,8 @@ test_that("format_weather detects impossible times", {
          lon = "StationLongitude",
          lat = "StationLatitude",
          station = "stationID",
-         time_zone = "Australia/Darwin"
+         time_zone = "Australia/Darwin",
+         verbose = FALSE
       ), regexp = "Time records contain NA values or duplicated times *"
    ))
 })
@@ -731,7 +741,8 @@ test_that("lat and lon are correctly parsed from file to dataset", {
          wd = "Wind.direction.in.degrees.true",
          station = "Station.Number",
          lonlat_file = file.path(tempdir(), "stat_coord.csv"),
-         time_zone = "Australia/Sydney"
+         time_zone = "Australia/Sydney",
+         verbose = FALSE
       ),
       regexp = "'station' name '16096' cannot be found in latlon_file."
    )
@@ -752,8 +763,6 @@ test_that("`format_weather()` fills missing time", {
       weather_station_data[-(10:19),]
 
    expect_warning(
-      expect_warning(
-         expect_warning(
      weather_dat <- format_weather(
         w = weather_station_data,
         POSIXct_time = "Local.Time",
@@ -765,10 +774,9 @@ test_that("`format_weather()` fills missing time", {
         lat = "Station.Latitude",
         station = "StationID",
         time_zone = "Australia/Brisbane",
-        data_check = c("temp","rain","ws","wd")),
-     regexp = "*data contains NA values, imputing missing values"),
-     regexp = "*data contains NA values, imputing missing values"),
-     regexp = "Non-continuous data detected. Extra lines will be merged into data")
+        data_check = c("temp","rain","ws","wd"),
+        verbose = FALSE),
+     regexp = "*Non-continuous data detected. Extra lines will be merged into data")
 
 
 })
@@ -806,7 +814,8 @@ test_that("`format_weather()` works with blackspot vignette", {
       lat = "Station.Latitude",
       station = "StationID",
       time_zone = "UTC",
-      data_check = c("temp","rain","ws","wd")
+      data_check = c("temp","rain","ws","wd"),
+      verbose = FALSE
    )
    expect_equal(dim(weather), c(8786,15))
 
@@ -880,7 +889,8 @@ test_that("format_weather errors on non-continuous data with NA times",{
                         lon = "lon",
                         lat = "lat",
                         station = "name",
-                        time_zone = "UTC"),
+                        time_zone = "UTC",
+                        verbose = FALSE),
          regexp = "NA values")
       })
 })
@@ -956,8 +966,6 @@ test_that("Non-unique stations and coordinates are detected",{
    # This function causes a warning due to non-continuous weather data
    # data_check is set to false to
    expect_warning(
-      expect_warning(
-         expect_warning(
       out <-
       format_weather(w = b_wther,
                   POSIXct_time = "aifstime_utc",
@@ -970,11 +978,9 @@ test_that("Non-unique stations and coordinates are detected",{
                   lat = "lat",
                   station = "name",
                   time_zone = "UTC",
-                  data_check = FALSE),
-      regexp = "*data contains NA values, imputing missing values"),
-   regexp = "*data contains NA values, imputing missing values"),
-regexp = "Non-continuous data detected. Extra lines will be merged into data")
-
+                  data_check = FALSE,
+                  verbose = FALSE),
+      regexp = "Non-continuous data detected. Extra lines will be merged into data")
    expect_false(any(duplicated(out$times)))
 })
 #-----------------------------------------------------------------
