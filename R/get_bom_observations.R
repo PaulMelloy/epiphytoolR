@@ -35,36 +35,23 @@ get_bom_observations <- function(ftp_url,
                                  download_location,
                                  access_warning = TRUE,
                                  state = "QLD",
-                                 file_prefix = format(Sys.time(), format = "%y%m%d_%H%M")) {
+                                 file_prefix = format(Sys.time(), format = "%y%m%d_%H%M"),
+                                 verbose = TRUE) {
 
+   if(verbose){
+      message("'get_bom_warnings()' is schedualed for deprecation.",
+               "Please use 'get_bom' instead. Use 'verbose = FALSE' to muffle this message")
+      }
    if (missing(ftp_url)) {
       stop(
-         "'get_bom_observations' requires the Bureau of Meterology FTP address. ",
+         paste("'get_bom_observations' requires the Bureau of Meterology FTP address. ",
          "This can be obtained from the BOM website. Please read their policies on ",
-         "scraping data and accessing their public FTP site before using this function.
-           The author of this function provides the code as is, and is free to use but takes no ",
-         "responsibility for how this code is used and assumes the user has done their ",
-         "due diligence in understanding the copyright assigned to BOM weather data. ",
-         "Read more at the BOM website:
-              http://www.bom.gov.au/other/copyright.shtml
-              http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state
-              http://reg.bom.gov.au/other/disclaimer.shtml
-          "
+         "scraping data and accessing their public FTP site before using this function.\n",
+         bom_warning_string)
       )
    }
    if (access_warning) {
-      warning(
-         "The author of this function provides the code as is, and is free to use but takes no ",
-         "responsibility for how this code is used and assumes the user has done their ",
-         "due diligence in understanding the copyright assigned to BOM weather data. ",
-         "Data is not to be used for third parties unless the user (you) is a registered user with",
-         "The Bureau of Meterology",
-         "Read more at the BOM website:
-              http://www.bom.gov.au/other/copyright.shtml
-              http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state
-              http://reg.bom.gov.au/other/disclaimer.shtml
-          "
-      )
+      warning(bom_warning_string)
    }
 
    if (dir.exists(download_location) == FALSE) {
