@@ -11,6 +11,7 @@
 #'  you are there.
 #'
 #' @param ftp_url character, ftp URL obtained from the BOMs website
+#' @param folder character, ftp folder where product ID is
 #' @param download_location character, Folder location of where to download the
 #'  compressed data
 #' @param access_warning logical, default = `TRUE`. Elects whether to print the warning
@@ -35,6 +36,7 @@
 #'}
 get_bom <- function(ftp_url,
                     product_id = "IDQ60910",
+                    folder = "fwo",
                     download_location,
                     filetype = NULL,
                     file_prefix = format(Sys.time(), format = "%y%m%d_%H%M"),
@@ -71,8 +73,10 @@ get_bom <- function(ftp_url,
       file_list <- readLines(ftp_con)
       close(ftp_con)
 
-      shortlist <- strsplit(grep(product_id, file_list,value = TRUE),product_id)
+      #shortlist <- strsplit(grep(product_id, file_list,value = TRUE),product_id)
       shortlist <- strsplit(grep(product_id, file_list,value = TRUE),"ID")
+
+      if(length(shortlist) == 0) stop(product_id," not found in BOM FTP site")
 
       bom_ftp_files <-
          lapply(shortlist,function(x){

@@ -29,3 +29,31 @@ test_that("Code defaults work", {
    #
 
 })
+
+test_that("monthly_water work", {
+
+   monthly_water <- get_bom(ftp_url = "ftp://ftp.bom.gov.au/anon/gen/fwo/",
+                            product_id = "IDA30006",
+                            download_location = tempdir(),
+                            verbose = FALSE)
+
+   list.files(monthly_water)
+
+
+
+})
+test_that("Get climate data", {
+
+   daily_clim <- get_bom(ftp_url = "ftp://ftp.bom.gov.au/anon/gen/clim_data/",
+                            product_id = "IDCK000082",
+                            download_location = tempdir(),
+                            verbose = FALSE)
+
+   unzip(zipfile = daily_clim)
+
+   clim_dat <- jsonlite::read_json(path = "sstOutlooks.iod.20260818.json")
+   jsonlite::fromJSON("sstOutlooks.iod.20260818.json",simplifyDataFrame = TRUE)
+
+   clim <- sf::st_read("sam_index.daily.20260818.nc")
+
+})
