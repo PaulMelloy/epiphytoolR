@@ -1,3 +1,11 @@
+# epiphytoolR 0.0.5  
+
+ * `openmeteo` package removed as a dependency as it no longer is on CRAN.  
+ * New function `get_bom` now retrieves any bom data product listed on th public 
+ ftp site.  
+ 
+ 
+
 # epiphytoolR 0.0.4
 
  ### Potentially breaking changes
