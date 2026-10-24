@@ -1,4 +1,4 @@
-#' Get Bureau of Meterology data
+#' Get Bureau of Meteorology data
 #'
 #' @description
 #' Wrapper function that accesses the Bureau of Meterology (BOM) FTP site and
