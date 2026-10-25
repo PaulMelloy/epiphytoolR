@@ -28,7 +28,7 @@
 #'  *station_name* - Weather station name;
 #'  *lat* - latitude;
 #'  *lon* - longitude;
-#'  *state* - political juristiction or state;
+#'  *state* - political jurisdiction or state;
 #'  *yearday* - integer, day of the year, see `data.table::yday()`;
 #'  *temp* - numeric, mean temperature;
 #'  *rh* - numeric, mean temperature;
