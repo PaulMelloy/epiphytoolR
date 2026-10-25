@@ -61,28 +61,28 @@ make_bom_data <-
          `Quality of precipitation since last (AWS) observation value` = "Y",
          `Period over which precipitation since last (AWS) observation is measured in minutes` = 1,
          `Air Temperature in degrees Celsius` =
-            c(replicate(
+            round(c(replicate(
                365 * 3,
                epiphytoolR::impute_diurnal(
                   h = rep(0:23, each = 60),
-                  max_obs = rnorm(1, 26, 3),
-                  min_obs = rnorm(1, 10, 3),
+                  max_obs = round(rnorm(1, 26, 3),1),
+                  min_obs =  round(rnorm(1, 10, 3),1),
                   max_hour = round(runif(1, 12, 16)),
                   min_hour = round(runif(1, 3, 5))
                )
-            ), 24),
+            ), 24),2),
          `Quality of air temperature` = "Y",
          `Wet bulb temperature in degrees Celsius` =
-            c(replicate(
+            round(c(replicate(
                365 * 3,
                epiphytoolR::impute_diurnal(
                   h = rep(0:23, each = 60),
-                  max_obs = rnorm(1, 22, 3),
-                  min_obs = rnorm(1, 8, 3),
+                  max_obs =  rnorm(1, 22, 3),
+                  min_obs =  rnorm(1, 8, 3),
                   max_hour = round(runif(1, 12, 16)),
                   min_hour = round(runif(1, 3, 5))
                )
-            ), 22),
+            ), 22),2),
          `Quality of Wet bulb temperature` = "Y",
          `Dew point temperature in degrees Celsius` =
             c(replicate(
@@ -97,14 +97,14 @@ make_bom_data <-
             ), 18),
          `Quality of dew point temperature` = "Y",
          `Relative humidity in percentage %` =
-            c(replicate(
+            round(c(replicate(
                365 * 3,
                epiphytoolR::impute_diurnal(
                   h = rep(0:23, each = 60),
                   max_obs = runif(1, 70, 100),
                   min_obs = runif(1, 50, 69)
                )
-            ), 88),
+            ), 88),1),
          `Quality of relative humidity` = "Y",
          `Wind (1 minute) speed in km/h` = round(abs(rnorm(
             ts_length, mean = 4, 7
