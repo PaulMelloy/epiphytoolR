@@ -14,7 +14,8 @@ get_bom_observations(
   download_location,
   access_warning = TRUE,
   state = "QLD",
-  file_prefix = format(Sys.time(), format = "\%y\%m\%d_\%H\%M")
+  file_prefix = format(Sys.time(), format = "\%y\%m\%d_\%H\%M"),
+  verbose = TRUE
 )
 }
 \arguments{
