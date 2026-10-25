@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_bom.R
 \name{get_bom}
 \alias{get_bom}
-\title{Get Bureau of Meterology data}
+\title{Get Bureau of Meteorology data}
 \source{
 http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state ;
 http://www.bom.gov.au/other/copyright.shtml;
@@ -12,6 +12,7 @@ http://reg.bom.gov.au/other/disclaimer.shtml
 get_bom(
   ftp_url,
   product_id = "IDQ60910",
+  folder = "fwo",
   download_location,
   filetype = NULL,
   file_prefix = format(Sys.time(), format = "\%y\%m\%d_\%H\%M"),
@@ -20,6 +21,8 @@ get_bom(
 }
 \arguments{
 \item{ftp_url}{character, ftp URL obtained from the BOMs website}
+
+\item{folder}{character, ftp folder where product ID is}
 
 \item{download_location}{character, Folder location of where to download the
 compressed data}

@@ -1,4 +1,6 @@
-#' Download state weather observations
+#' **Deprecated** Download state weather observations
+#'
+#' Use `get_bom()` instead.
 #'
 #' Function downloads a compressed file to a designated location. The downloaded
 #'  file contains three file formats for all automated weather station, xml, axf,
