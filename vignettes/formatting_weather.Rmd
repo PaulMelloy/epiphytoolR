@@ -1,0 +1,42 @@
+---
+title: "formatting_weather"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{formatting_weather}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(epiphytoolR)
+```
+
+Getting weather data for epidemiological modelling from the Australian Bueru
+of Meteorology.
+
+## Weather observations  
+
+Get recent observations in Queensland Australia.
+
+```{r}
+dl_loc <- tempdir()
+
+w_dat <- get_bom(ftp_url = "ftp://ftp.bom.gov.au/anon/",
+                 folder = "gen/fwo/",
+                 product_id = "IDQ60910",
+                 download_location = dl_loc)
+```
+
+
+```{r}
+w_dat
+extract_bom_obs(w_dat)
+```
+

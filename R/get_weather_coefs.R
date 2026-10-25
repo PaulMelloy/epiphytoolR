@@ -6,7 +6,7 @@
 #'  wind speed and direction at the time of the rainfall.
 #'  Formally called impute_rainywind
 #'
-#' @param raw_bom_file character, file path to raw bureau of Meteorology txt file
+#' @param raw_bom_file character, file path to raw Bureau of Meteorology txt file
 #' @param rolling_window integer, number of days to summarise over a rolling window
 #' @param meta_data data.table Bureau of Meteorology, meta-data
 #' @param i_year integer, the year the coeffients are likely to be imputed. Defaults
@@ -49,11 +49,12 @@
 #'    get_weather_coefs(raw_bom_file = "./data/Weather_data/HD01D_Data_090182_999999999959761.txt",
 #'                     rolling_window = 60,
 #'                     meta_data = meta_dat)}
-get_weather_coefs <- function(raw_bom_file,
-                             rolling_window = 60,
-                             meta_data,
-                             i_year = 2020,
-                             rainfall_na_fill = "mean"){
+get_weather_coefs <-
+   function(raw_bom_file,
+            rolling_window = 60,
+            meta_data,
+            i_year = 2020,
+            rainfall_na_fill = "mean"){
 
    # binding the global variable locally to the function.
    MM <- `Station Number` <- DD <- `station_name` <- `station_number` <- lat <-

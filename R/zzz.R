@@ -46,3 +46,28 @@ read_bom_json <- function(f_path,
    out <- as.data.table(weathr_j$observations$data)
    return(out)
 }
+
+#' Extract BOM observations
+#'
+#' @param filename
+#' @param exdir
+#' @param ...
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+extract_bom_obs <-
+   function(filename, exdir = ".",...){
+
+      if(isFALSE(file.exists(filename))){
+         stop("file path does not exist")
+      }
+      if(isFALSE(dir.exists(exdir))){
+         warning("exdir does not exist, creating dir...")
+         dir.create(exdir)
+      }
+
+      untar(filename, exdir = exdir,...)
+
+   }

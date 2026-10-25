@@ -32,10 +32,13 @@ Imports:
 Suggests:
     agricolae,
     testthat (>= 3.0.0),
-    lubridate (>= 1.7.10)
+    lubridate (>= 1.7.10),
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.0.1)
 URL: https://paulmelloy.com.au/epiphytoolR/, https://github.com/PaulMelloy/epiphytoolR
 BugReports: https://github.com/PaulMelloy/epiphytoolR/issues
 Config/roxygen2/version: 8.1.0
+VignetteBuilder: knitr
