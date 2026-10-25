@@ -4,6 +4,9 @@
 #' Wrapper function that accesses the Bureau of Meterology (BOM) FTP site and
 #' download it to a specified file path.
 #' For more information see https://www.bom.gov.au/catalogue/anon-ftp.shtml
+#' Works with most codes on the catalogue, however some have not been linked with
+#' this current version.
+#' Leave a issue on github if you want a specific product code patched.
 #'
 #' An FTP URL is needed for this function, find this on the Bureau of Meteorology
 #'  (\acronym{BOM}) website.
@@ -27,7 +30,30 @@
 #' @export
 #' @source http://reg.bom.gov.au/catalogue/data-feeds.shtml#obs-state ;
 #'  http://www.bom.gov.au/other/copyright.shtml;
-#'  http://reg.bom.gov.au/other/disclaimer.shtml
+#'  http://reg.bom.gov.au/other/disclaimer.shtml;
+#'  https://www.bom.gov.au/catalogue/anon-ftp.shtml
+#'
+#' @details
+#' Some common product id codes:
+#'  "IDCK000081":	Climate indices weekly observations (IOD, NINO, MJO, SAM, SOI)
+#'  "IDCK000082":	Climate indices daily forecasts (IOD, MJO, SAM)
+#'  "IDD60910":	Weather Observations 72hr History - Northern Territory - XML (NT)
+#'  "IDQ60910":	Weather Observations 72hr History - Queensland - XML (QLD)	Observation	0
+#'  "IDW60910":	Weather Observations 72hr History - Western Australia - XML (WA)
+#'  "IDN60910":	Weather Observations 72hr History - New South Wales and Australian Capital Territory - XML (NSW)
+#'  "IDS60910":	Weather Observations 72hr History - South Australia - XML (SA)
+#'  "IDT60910":	Weather Observations 72hr History - Tasmania - XML (TAS)
+#'  "IDV60910":	Weather Observations 72hr History - Victoria - XML (VIC)
+#'  "IDD60910":	Weather Observations 72hr History - Northern Territory - XML (NT)
+#'  "IDN10031":	State Forecast (NSW)	240 hours
+#'  "IDQ10700":	State Forecast (QLD)	240 hours
+#'  "IDS10033":	State Forecast (SA)	15 hours
+#'  "IDT13100":	State Forecast (TAS)	24 hours
+#'  "IDV10310":	State Forecast (VIC)	24 hours
+#'  "IDV17300":	Interstate Cities Forecast (VIC)	24 hours
+#'  "IDW10100":	State Forecast (WA)	24 hours
+#'
+#'  More codes searchable on the BOM website https://www.bom.gov.au/catalogue/anon-ftp.shtml
 #'
 #' @examples
 #' \dontrun{
@@ -36,7 +62,7 @@
 #'}
 get_bom <- function(ftp_url,
                     product_id = "IDQ60910",
-                    folder = "fwo",
+                    folder = NULL,
                     download_location,
                     filetype = NULL,
                     file_prefix = format(Sys.time(), format = "%y%m%d_%H%M"),
@@ -66,6 +92,31 @@ get_bom <- function(ftp_url,
        "/") {
       download_location <- paste0(download_location, "/")
    }
+   if (substr(ftp_url,
+              nchar(ftp_url),
+              nchar(ftp_url)) !=
+       "/") {
+      ftp_url <- paste0(ftp_url, "/")
+   }
+
+
+   # detect folders
+   if(is.null(folder)){
+      foldr_lvl <- last(unlist(strsplit(ftp_url,"/")))
+      # if specific folder is not provided
+      if(foldr_lvl == "gen"){
+         folder <- .get_ftp_folder(prod_code = product_id)
+         ftp_url <- paste0(ftp_url,folder,"/")
+      }else if(foldr_lvl == "anon"){
+         folder <- .get_ftp_folder(prod_code = product_id)
+         ftp_url <- paste0(ftp_url,"gen/",folder,"/")
+      }else if(foldr_lvl == "ftp.bom.gov.au"){
+         folder <- .get_ftp_folder(prod_code = product_id)
+         ftp_url <- paste0(ftp_url,"anon/gen/",folder,"/")
+      }
+   }else{
+      ftp_url <- paste0(ftp_url,folder,"/")
+      }
 
    # detect filetype
    if(is.null(filetype)){
@@ -104,5 +155,41 @@ get_bom <- function(ftp_url,
       }
    message("Compressed file saved to ", paste0(dl_floc,sep = "  \n"))
    return(dl_floc)
+
+}
+
+
+.get_ftp_folder <- function(prod_code){
+
+   gen_fold <-
+      data.table::fcase(
+         grepl("IDCKWCDE",prod_code),"fault",
+         grepl("IDCK",prod_code),"clim_data",
+         grepl("IDX0",prod_code),"difacs",
+         grepl("IDE00",prod_code),"gms",
+         grepl("IDG",prod_code),"nmgu",
+         grepl("IDR",prod_code),"radar", #Also could be "radar_transparencies"
+         grepl("IDY",prod_code),"fault", #volcano alerts also need year
+         grepl("IDA",prod_code),"fwo",
+         grepl("IDD",prod_code),"fwo",
+         grepl("IDN",prod_code),"fwo",
+         grepl("IDQ",prod_code),"fwo",
+         grepl("IDS",prod_code),"fwo",
+         grepl("IDT",prod_code),"fwo",
+         grepl("IDV",prod_code),"fwo",
+         grepl("IDW",prod_code),"fwo",
+         # grepl("IDY0",prod_code),"fwo",
+         # grepl("IDY1",prod_code),"fwo",
+         # grepl("IDY2",prod_code),"fwo",
+         # grepl("IDY4",prod_code),"fwo",
+         # grepl("IDY6",prod_code),"fwo",
+         grepl("IDZ",prod_code),"fwo",
+         default = "fault")
+   if(gen_fold == "fault"){
+      stop("Can't determine the FTP location of this product",
+           "check entry or specify a folder to get around error",
+           "If it still fails submit a issue on github to include in next version")
+   }
+   return(gen_fold)
 
 }
